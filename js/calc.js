@@ -22,6 +22,28 @@ function calcNetTuition(programKey, scholarship) {
 }
 
 /**
+ * Calculate cost for a specific year (1 or 2).
+ * Scholarship is split proportionally by quarters in that year.
+ */
+function calcYearCost(programKey, year, scholarship, rentMonthly, foodMonthly) {
+    const p = PROGRAMS[programKey];
+    const yr = p.years[year];
+    const scholarshipForYear = scholarship * (yr.quarters / p.quarters);
+    const netTuition = Math.max(yr.tuition + yr.fees - scholarshipForYear, 0);
+    const living = (rentMonthly + foodMonthly) * yr.months;
+    return {
+        tuition: yr.tuition,
+        fees: yr.fees,
+        scholarshipForYear,
+        netTuition,
+        living,
+        total: netTuition + living,
+        months: yr.months,
+        quarters: yr.quarters,
+    };
+}
+
+/**
  * Calculate total living expenses for the program duration.
  */
 function calcLivingExpenses(rentMonthly, foodMonthly, months) {
@@ -240,15 +262,15 @@ function calcIndianLoanTotalCostUSD(principalUSD, annualRate, termYears, payoffY
  * Uses bisection method. Supports early payoff scenario.
  * Returns null if no crossover in [low, high] range.
  */
-function calcBreakevenRate(principalUSD, usRate, usTerm, indiaParams, payoffYears) {
-    const usTotal = calcUSLoanTotalCost(principalUSD, usRate, usTerm, payoffYears);
+function calcBreakevenRate(principalUSD, usRate, usTerm, indiaParams, usPayoffYears, indiaPayoffYears) {
+    const usTotal = calcUSLoanTotalCost(principalUSD, usRate, usTerm, usPayoffYears);
 
     const low = 1;
     const high = 25;
 
     // Check if crossover exists
-    const costAtLow = calcIndianLoanTotalCostUSD(principalUSD, low, indiaParams.term, payoffYears, indiaParams);
-    const costAtHigh = calcIndianLoanTotalCostUSD(principalUSD, high, indiaParams.term, payoffYears, indiaParams);
+    const costAtLow = calcIndianLoanTotalCostUSD(principalUSD, low, indiaParams.term, indiaPayoffYears, indiaParams);
+    const costAtHigh = calcIndianLoanTotalCostUSD(principalUSD, high, indiaParams.term, indiaPayoffYears, indiaParams);
 
     if (costAtLow >= usTotal) return { rate: null, message: 'Indian loan is always more expensive in this range.' };
     if (costAtHigh <= usTotal) return { rate: null, message: 'Indian loan is always cheaper in this range.' };
@@ -257,7 +279,7 @@ function calcBreakevenRate(principalUSD, usRate, usTerm, indiaParams, payoffYear
     let lo = low, hi = high;
     for (let i = 0; i < 50; i++) {
         const mid = (lo + hi) / 2;
-        const cost = calcIndianLoanTotalCostUSD(principalUSD, mid, indiaParams.term, payoffYears, indiaParams);
+        const cost = calcIndianLoanTotalCostUSD(principalUSD, mid, indiaParams.term, indiaPayoffYears, indiaParams);
         if (cost < usTotal) {
             lo = mid;
         } else {
@@ -271,10 +293,10 @@ function calcBreakevenRate(principalUSD, usRate, usTerm, indiaParams, payoffYear
 
 /**
  * Generate breakeven chart data: sweep Indian rate from min to max.
- * Supports early payoff scenario.
+ * Supports separate early payoff for US and Indian loans.
  */
-function calcBreakevenChartData(principalUSD, usRate, usTerm, indiaParams, depRates, payoffYears) {
-    const usTotal = calcUSLoanTotalCost(principalUSD, usRate, usTerm, payoffYears);
+function calcBreakevenChartData(principalUSD, usRate, usTerm, indiaParams, depRates, usPayoffYears, indiaPayoffYears) {
+    const usTotal = calcUSLoanTotalCost(principalUSD, usRate, usTerm, usPayoffYears);
     const ratePoints = [];
     for (let r = 4; r <= 15; r += 0.25) {
         ratePoints.push(r);
@@ -283,7 +305,7 @@ function calcBreakevenChartData(principalUSD, usRate, usTerm, indiaParams, depRa
     const datasets = depRates.map(dep => {
         const params = { ...indiaParams, depreciation: dep };
         const costs = ratePoints.map(r =>
-            calcIndianLoanTotalCostUSD(principalUSD, r, indiaParams.term, payoffYears, params)
+            calcIndianLoanTotalCostUSD(principalUSD, r, indiaParams.term, indiaPayoffYears, params)
         );
         return { depreciation: dep, costs };
     });

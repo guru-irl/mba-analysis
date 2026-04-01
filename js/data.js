@@ -6,39 +6,34 @@ const PROGRAMS = {
     booth: {
         name: 'Booth MBA/MPCS',
         school: 'University of Chicago',
-        tuition: {
-            year1: 96084,
-            year2: 92619,
-        },
-        fees: {
-            studentServices: 3018,   // $1,509/yr × 2
-            adminFee: 3100,          // one-time
-            transcriptFee: 81,       // one-time
-        },
+        tuition: { year1: 96084, year2: 92619 },
         totalFees: 6199,
-        grossTotal: 194902,          // tuition + fees
+        grossTotal: 194902,
         quarters: 6,
         programMonths: 21,
+        // Per-year breakdown for year-over-year loan analysis
+        years: {
+            1: { tuition: 96084, fees: 4690, months: 12, quarters: 3 },
+            // fees: services $1,509 + admin $3,100 + transcript $81
+            2: { tuition: 92619, fees: 1509, months: 9, quarters: 3 },
+            // fees: services $1,509 only
+        },
     },
     kellogg: {
         name: 'Kellogg MMM',
         school: 'Northwestern University',
-        tuition: {
-            year1: 115160,           // includes summer quarter
-            year2: 86370,
-        },
-        fees: {
-            courseMaterial: 310,
-            healthServices: 861,
-            activityFee: 1400,
-            studentAssoc: 520,
-            firstYearFee: 2000,
-            loanFees: 2512,
-        },
+        tuition: { year1: 115160, year2: 86370 },
         totalFees: 7603,
-        grossTotal: 209133,          // tuition + fees
-        quarters: 7,                  // includes summer quarter
-        programMonths: 21,
+        grossTotal: 209133,
+        quarters: 7,                  // 4 Y1 (incl. summer) + 3 Y2
+        programMonths: 24,            // full 2 years
+        // Per-year breakdown — Y1 higher due to summer quarter
+        years: {
+            1: { tuition: 115160, fees: 5091, months: 12, quarters: 4 },
+            // fees: material $310 + health $861 + activity $1,400 + assoc $520 + first-year $2,000
+            2: { tuition: 86370, fees: 2512, months: 12, quarters: 3 },
+            // fees: loan fees $2,512
+        },
     },
 };
 

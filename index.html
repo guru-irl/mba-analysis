@@ -25,7 +25,7 @@
     <div class="header-inner">
         <div class="brand">
             <h1 class="brand-title">MBA Financial Analysis</h1>
-            <p class="brand-subtitle">Booth MBA/MPCS &middot; Kellogg MMM &middot; Class of 2027</p>
+            <p class="brand-subtitle">Booth MBA/MPCS &middot; Kellogg MMM &middot; Class of 2028</p>
         </div>
         <nav class="tab-nav" role="tablist">
             <button class="tab-btn active" data-tab="cost" role="tab" aria-selected="true">
@@ -142,7 +142,7 @@
     </div>
 
     <!-- ── LIVING EXPENSES ─────────────────────────────────────── -->
-    <div class="section-label">Living Expenses <span class="section-note">Both programs in Chicago · 21 months</span></div>
+    <div class="section-label">Living Expenses <span class="section-note">Both programs in Chicago</span></div>
     <div class="panel">
         <div class="slider-grid">
             <div class="slider-row">
@@ -176,8 +176,8 @@
                 <span class="pill-value mono" id="booth-living-total">$58,800</span>
             </div>
             <div class="summary-pill summary-pill--kellogg">
-                <span class="pill-label">Kellogg · 21 mo</span>
-                <span class="pill-value mono" id="kellogg-living-total">$58,800</span>
+                <span class="pill-label">Kellogg · 24 mo</span>
+                <span class="pill-value mono" id="kellogg-living-total">$67,200</span>
             </div>
         </div>
     </div>
@@ -204,6 +204,17 @@
 
     <!-- ── LOAN COMPARISON ─────────────────────────────────────── -->
     <div class="section-label">Loan Comparison</div>
+    <div class="config-bar" style="margin-bottom: var(--space-lg);">
+        <div class="toggle-group">
+            <span class="toggle-label">Loan Disbursement Period</span>
+            <div class="toggle-btns">
+                <button class="toggle-btn active" id="loan-year-total" data-year="total">Total</button>
+                <button class="toggle-btn" id="loan-year-1" data-year="1">Year 1</button>
+                <button class="toggle-btn" id="loan-year-2" data-year="2">Year 2</button>
+            </div>
+        </div>
+        <div class="loan-year-note" id="loan-year-note" style="font-size:0.75rem; color:var(--text-muted);"></div>
+    </div>
     <div class="loan-grid">
 
         <!-- US Loan Panel -->
@@ -400,13 +411,34 @@
     <!-- ── BREAKEVEN ANALYSIS ──────────────────────────────────── -->
     <div class="section-label">Breakeven Analysis <span class="section-note">At what Indian rate does US win?</span></div>
     <div class="panel">
-        <div class="slider-row" style="max-width: 480px; margin-bottom: var(--space-lg);">
-            <label class="slider-label" for="early-payoff">Actual Payoff Period <span class="section-note">(pay off early = less interest)</span></label>
-            <div class="slider-control">
-                <input type="range" id="early-payoff" class="slider" min="1" max="20" step="1" value="10">
-                <div class="slider-value">
-                    <input type="number" id="early-payoff-num" class="num-input" min="1" max="20" step="1" value="10">
-                    <span class="unit">yr</span>
+        <div class="config-bar" style="margin-bottom: var(--space-lg); padding: var(--space-sm) var(--space-md);">
+            <div class="toggle-group">
+                <span class="toggle-label">Program</span>
+                <div class="toggle-btns">
+                    <button class="toggle-btn toggle-btn--booth active" id="breakeven-booth" data-program="booth">Booth</button>
+                    <button class="toggle-btn toggle-btn--kellogg" id="breakeven-kellogg" data-program="kellogg">Kellogg</button>
+                </div>
+            </div>
+        </div>
+        <div class="slider-grid" style="margin-bottom: var(--space-lg);">
+            <div class="slider-row">
+                <label class="slider-label" for="us-early-payoff">US Loan Payoff Period <span class="section-note">(early payoff = less interest)</span></label>
+                <div class="slider-control">
+                    <input type="range" id="us-early-payoff" class="slider slider--us" min="1" max="20" step="1" value="10">
+                    <div class="slider-value">
+                        <input type="number" id="us-early-payoff-num" class="num-input" min="1" max="20" step="1" value="10">
+                        <span class="unit">yr</span>
+                    </div>
+                </div>
+            </div>
+            <div class="slider-row">
+                <label class="slider-label" for="india-early-payoff">Indian Loan Payoff Period</label>
+                <div class="slider-control">
+                    <input type="range" id="india-early-payoff" class="slider slider--india" min="1" max="15" step="1" value="10">
+                    <div class="slider-value">
+                        <input type="number" id="india-early-payoff-num" class="num-input" min="1" max="15" step="1" value="10">
+                        <span class="unit">yr</span>
+                    </div>
                 </div>
             </div>
         </div>

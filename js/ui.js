@@ -44,7 +44,8 @@ const SLIDER_PAIRS = [
     ['salary-growth', 'salary-growth-num'],
     ['post-mba-living', 'post-mba-living-num'],
     ['extra-payment', 'extra-payment-num'],
-    ['early-payoff', 'early-payoff-num'],
+    ['us-early-payoff', 'us-early-payoff-num'],
+    ['india-early-payoff', 'india-early-payoff-num'],
 ];
 
 function initSliders() {
@@ -97,37 +98,37 @@ function initTabs() {
     });
 }
 
-/* ── TOGGLE BUTTONS (Tab 2) ────────────────────────────────────── */
+/* ── TOGGLE BUTTONS ────────────────────────────────────────────── */
 let payoffProgram = 'booth';
 let payoffSource = 'us';
+let loanYear = 'total';       // 'total', '1', or '2'
+let breakevenProgram = 'booth';
+
+function initToggleGroup(btnIds, stateSetter) {
+    for (const id of btnIds) {
+        const el = $(id);
+        if (!el) continue;
+        el.addEventListener('click', () => {
+            btnIds.forEach(bid => $(bid)?.classList.remove('active'));
+            el.classList.add('active');
+            stateSetter(el);
+            scheduleUpdate();
+        });
+    }
+}
 
 function initToggles() {
-    $('payoff-booth').addEventListener('click', () => {
-        payoffProgram = 'booth';
-        $('payoff-booth').classList.add('active');
-        $('payoff-kellogg').classList.remove('active');
-        scheduleUpdate();
+    initToggleGroup(['payoff-booth', 'payoff-kellogg'], el => {
+        payoffProgram = el.dataset.program;
     });
-
-    $('payoff-kellogg').addEventListener('click', () => {
-        payoffProgram = 'kellogg';
-        $('payoff-kellogg').classList.add('active');
-        $('payoff-booth').classList.remove('active');
-        scheduleUpdate();
+    initToggleGroup(['payoff-us', 'payoff-india'], el => {
+        payoffSource = el.dataset.source;
     });
-
-    $('payoff-us').addEventListener('click', () => {
-        payoffSource = 'us';
-        $('payoff-us').classList.add('active');
-        $('payoff-india').classList.remove('active');
-        scheduleUpdate();
+    initToggleGroup(['loan-year-total', 'loan-year-1', 'loan-year-2'], el => {
+        loanYear = el.dataset.year;
     });
-
-    $('payoff-india').addEventListener('click', () => {
-        payoffSource = 'india';
-        $('payoff-india').classList.add('active');
-        $('payoff-us').classList.remove('active');
-        scheduleUpdate();
+    initToggleGroup(['breakeven-booth', 'breakeven-kellogg'], el => {
+        breakevenProgram = el.dataset.program;
     });
 }
 
@@ -158,7 +159,8 @@ function updateCalculations() {
     const fxRate = parseFloat($('fx-rate').value) || 93;
     const indiaDepreciation = parseFloat($('india-depreciation').value) || 0;
 
-    const earlyPayoff = parseInt($('early-payoff').value) || 10;
+    const usEarlyPayoff = parseInt($('us-early-payoff').value) || 10;
+    const indiaEarlyPayoff = parseInt($('india-early-payoff').value) || 10;
 
     const annualSalary = parseFloat($('annual-salary').value) || 0;
     const salaryGrowth = parseFloat($('salary-growth').value) || 0;
@@ -193,9 +195,32 @@ function updateCalculations() {
     $('total-cost-diff').parentElement.querySelector('.card-detail').textContent =
         diff >= 0 ? 'Kellogg costs more' : 'Booth costs more';
 
+    // ── Loan principal based on year selection ──
+    let loanBoothPrincipal, loanKelloggPrincipal, loanBoothQuarters, loanKelloggQuarters;
+    const noteEl = $('loan-year-note');
+
+    if (loanYear === '1' || loanYear === '2') {
+        const yr = parseInt(loanYear);
+        const boothYr = calcYearCost('booth', yr, scholarshipBooth, rentMonthly, foodMonthly);
+        const kelloggYr = calcYearCost('kellogg', yr, scholarshipKellogg, rentMonthly, foodMonthly);
+        loanBoothPrincipal = boothYr.total;
+        loanKelloggPrincipal = kelloggYr.total;
+        loanBoothQuarters = boothYr.quarters;
+        loanKelloggQuarters = kelloggYr.quarters;
+        if (noteEl) noteEl.textContent =
+            `Year ${yr}: Booth ${formatUSD(boothYr.tuition)} tuition + ${formatUSD(boothYr.fees)} fees + ${boothYr.months}mo living` +
+            ` · Kellogg ${formatUSD(kelloggYr.tuition)} tuition + ${formatUSD(kelloggYr.fees)} fees + ${kelloggYr.months}mo living`;
+    } else {
+        loanBoothPrincipal = totalBooth;
+        loanKelloggPrincipal = totalKellogg;
+        loanBoothQuarters = PROGRAMS.booth.quarters;
+        loanKelloggQuarters = PROGRAMS.kellogg.quarters;
+        if (noteEl) noteEl.textContent = '';
+    }
+
     // ── US Loan ──
-    const usBoothLoan = calcUSLoan(totalBooth, usRate, usTerm);
-    const usKelloggLoan = calcUSLoan(totalKellogg, usRate, usTerm);
+    const usBoothLoan = calcUSLoan(loanBoothPrincipal, usRate, usTerm);
+    const usKelloggLoan = calcUSLoan(loanKelloggPrincipal, usRate, usTerm);
 
     $('us-booth-monthly').textContent = formatUSD(usBoothLoan.monthlyPayment);
     $('us-booth-total-interest').textContent = formatUSD(usBoothLoan.totalInterest);
@@ -213,11 +238,11 @@ function updateCalculations() {
         depreciation: indiaDepreciation,
     };
 
-    const indiaBoothLoan = calcIndianLoan(totalBooth, indiaRate, indiaTerm, {
-        ...indiaParams, quarters: PROGRAMS.booth.quarters,
+    const indiaBoothLoan = calcIndianLoan(loanBoothPrincipal, indiaRate, indiaTerm, {
+        ...indiaParams, quarters: loanBoothQuarters,
     });
-    const indiaKelloggLoan = calcIndianLoan(totalKellogg, indiaRate, indiaTerm, {
-        ...indiaParams, quarters: PROGRAMS.kellogg.quarters,
+    const indiaKelloggLoan = calcIndianLoan(loanKelloggPrincipal, indiaRate, indiaTerm, {
+        ...indiaParams, quarters: loanKelloggQuarters,
     });
 
     $('india-booth-emi').textContent = formatINR(indiaBoothLoan.emiINR);
@@ -232,9 +257,8 @@ function updateCalculations() {
     $('india-kellogg-effective-total').textContent = formatUSD(indiaKelloggLoan.effectiveTotalUSD);
 
     // ── Breakeven Chart ──
-    // Use Booth principal for breakeven (user's program)
-    const breakevenPrincipal = totalBooth;
-    const breakevenQuarters = PROGRAMS.booth.quarters;
+    const breakevenPrincipal = breakevenProgram === 'booth' ? totalBooth : totalKellogg;
+    const breakevenQuarters = breakevenProgram === 'booth' ? PROGRAMS.booth.quarters : PROGRAMS.kellogg.quarters;
     const depRates = [
         Math.max(indiaDepreciation - 1.5, -2),
         indiaDepreciation,
@@ -244,34 +268,36 @@ function updateCalculations() {
     const breakevenIndiaParams = { ...indiaParams, quarters: breakevenQuarters, term: indiaTerm };
     const breakevenData = calcBreakevenChartData(
         breakevenPrincipal, usRate, usTerm,
-        breakevenIndiaParams, depRates, earlyPayoff
+        breakevenIndiaParams, depRates, usEarlyPayoff, indiaEarlyPayoff
     );
     createBreakevenChart('breakeven-chart', breakevenData);
 
     // Breakeven text
     const breakevenResult = calcBreakevenRate(
         breakevenPrincipal, usRate, usTerm,
-        breakevenIndiaParams, earlyPayoff
+        breakevenIndiaParams, usEarlyPayoff, indiaEarlyPayoff
     );
-    const payoffNote = earlyPayoff < Math.min(usTerm, indiaTerm)
-        ? ` Assumes early payoff in <strong>${earlyPayoff}</strong> years.`
-        : '';
+    let payoffNote = '';
+    if (usEarlyPayoff < usTerm || indiaEarlyPayoff < indiaTerm) {
+        payoffNote = ` Early payoff: US in <strong>${usEarlyPayoff}yr</strong>, India in <strong>${indiaEarlyPayoff}yr</strong>.`;
+    }
+    const progLabel = breakevenProgram === 'booth' ? 'Booth' : 'Kellogg';
     if (breakevenResult.rate !== null) {
         $('breakeven-text').innerHTML =
-            `At <strong>${indiaDepreciation}%</strong> annual INR depreciation, an Indian bank loan is cheaper when the rate is below <strong>${breakevenResult.rate.toFixed(2)}%</strong>. ` +
-            `Currently comparing against US loan at <strong>${usRate}%</strong> APR.` + payoffNote;
+            `<strong>${progLabel}</strong>: At <strong>${indiaDepreciation}%</strong> annual INR depreciation, an Indian bank loan is cheaper when the rate is below <strong>${breakevenResult.rate.toFixed(2)}%</strong>. ` +
+            `US loan at <strong>${usRate}%</strong> APR.` + payoffNote;
     } else {
-        $('breakeven-text').innerHTML = breakevenResult.message + payoffNote;
+        $('breakeven-text').innerHTML = `<strong>${progLabel}</strong>: ` + breakevenResult.message + payoffNote;
     }
 
     // ── Cost Comparison Bar Chart ──
     const usBoothInterest = usBoothLoan.totalInterest;
     const usKelloggInterest = usKelloggLoan.totalInterest;
-    const indiaBoothInterest = indiaBoothLoan.effectiveTotalUSD - totalBooth - indiaBoothLoan.disbursementCostUSD - indiaBoothLoan.tcsUSD;
-    const indiaKelloggInterest = indiaKelloggLoan.effectiveTotalUSD - totalKellogg - indiaKelloggLoan.disbursementCostUSD - indiaKelloggLoan.tcsUSD;
+    const indiaBoothInterest = indiaBoothLoan.effectiveTotalUSD - loanBoothPrincipal - indiaBoothLoan.disbursementCostUSD - indiaBoothLoan.tcsUSD;
+    const indiaKelloggInterest = indiaKelloggLoan.effectiveTotalUSD - loanKelloggPrincipal - indiaKelloggLoan.disbursementCostUSD - indiaKelloggLoan.tcsUSD;
 
     createCostComparisonChart('cost-comparison-chart', {
-        principal: [totalBooth, totalBooth, totalKellogg, totalKellogg],
+        principal: [loanBoothPrincipal, loanBoothPrincipal, loanKelloggPrincipal, loanKelloggPrincipal],
         interest: [usBoothInterest, Math.max(indiaBoothInterest, 0), usKelloggInterest, Math.max(indiaKelloggInterest, 0)],
         fees: [0, indiaBoothLoan.disbursementCostUSD + indiaBoothLoan.tcsUSD, 0, indiaKelloggLoan.disbursementCostUSD + indiaKelloggLoan.tcsUSD],
     });
