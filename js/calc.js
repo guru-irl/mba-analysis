@@ -443,13 +443,16 @@ function calcPayoffTimeline(params) {
     } = params;
 
     const timeline = [];
-    let balance = loanBalance;
+    // In-school interest capitalization: interest accrues during 2-year MBA
+    // and capitalizes (adds to principal) before repayment begins
+    const monthlyRate = annualLoanRate / 100 / 12;
+    const inSchoolMonths = 24;
+    let balance = loanBalance * Math.pow(1 + monthlyRate, inSchoolMonths);
     let currentSalary = salary;
     let cumulativePaid = 0;
     let cumulativeInterest = 0;
     let cumulativeSavings = 0;
     let cumulativeStock = 0;
-    const monthlyRate = annualLoanRate / 100 / 12;
     const savPct = (savingsRate || 0) / 100;
     const bonusPct = (bonusPercent || 0) / 100;
     const monthlyStock = (annualStock || 0) / 12;
@@ -457,7 +460,7 @@ function calcPayoffTimeline(params) {
 
     // Compute fixed monthly payment from target payoff period
     const targetMonths = (targetPayoffYears || 10) * 12;
-    const fixedMonthlyPayment = calcMonthlyPayment(loanBalance, annualLoanRate, targetPayoffYears || 10);
+    const fixedMonthlyPayment = calcMonthlyPayment(balance, annualLoanRate, targetPayoffYears || 10);
 
     for (let month = 1; month <= 360; month++) {
         // Annual salary raise
@@ -491,7 +494,8 @@ function calcPayoffTimeline(params) {
         balance = Math.max(balance - principalPortion, 0);
         cumulativePaid += payment;
         cumulativeInterest += interestThisMonth;
-        // Only explicit savings accumulate
+        // Only explicit savings accumulate into net worth
+        const leftover = Math.max(availableForLoan - payment, 0);
         cumulativeSavings += monthlySavings;
 
         const balanceGrowing = payment < interestThisMonth;
@@ -510,7 +514,7 @@ function calcPayoffTimeline(params) {
             cumulativeSavings,
             netWorth: baseNetWorth + cumulativeSavings - balance,
             disposable,
-            leftover: disposable - monthlySavings - payment,
+            leftover,
             monthlySavings,
             warning: balanceGrowing ? 'Balance growing' : null,
         });
@@ -532,10 +536,10 @@ function calcPayoffTimeline(params) {
             const totalAnnualComp = currentSalary + annualBonus + (annualStock || 0);
             const tax = calcPostTax(totalAnnualComp, filingStatus, location);
             const disposable = tax.netMonthly - monthlyLiving;
-            // After payoff, all disposable goes to savings
-            cumulativeSavings += Math.max(disposable, 0);
-            // Stock is already in totalAnnualComp → taxed → disposable → savings
-        // No separate cumulativeStock to avoid double counting
+            // After payoff, no loan payment — savings + all leftover accumulates
+            const monthlySavings = Math.max(disposable * savPct, 0);
+            const leftover = Math.max(disposable - monthlySavings, 0);
+            cumulativeSavings += monthlySavings + leftover;
             timeline.push({
                 month,
                 year: Math.ceil(month / 12),
@@ -548,9 +552,10 @@ function calcPayoffTimeline(params) {
                 cumulativePaid,
                 cumulativeInterest,
                 cumulativeSavings,
-                    netWorth: baseNetWorth + cumulativeSavings,
+                netWorth: baseNetWorth + cumulativeSavings,
                 disposable,
-                monthlySavings: Math.max(disposable, 0),
+                leftover,
+                monthlySavings,
                 warning: null,
             });
         }

@@ -440,8 +440,10 @@ function updateCalculations() {
         const term = loanSource === 'us' ? usTerm : indiaTerm;
         const isIndian = loanSource === 'india';
 
-        // Loan summary
-        $('p2-' + prefix + '-principal').textContent = formatUSD(principal);
+        // Loan summary — show capitalized balance (includes 2yr in-school interest)
+        const monthlyLoanRate = rate / 100 / 12;
+        const capitalizedBalance = principal * Math.pow(1 + monthlyLoanRate, 24);
+        $('p2-' + prefix + '-principal').textContent = formatUSD(capitalizedBalance);
         $('p2-' + prefix + '-rate').textContent = rate + '%';
 
         // Bonus dollar display
@@ -454,7 +456,7 @@ function updateCalculations() {
         const yearlyComp = salary + annualBonus + signing + annualStock;
         const yearlyTax = calcPostTax(yearlyComp, 'single', loc);
 
-        const required = calcMonthlyPayment(principal, rate, payoffYr);
+        const required = calcMonthlyPayment(capitalizedBalance, rate, payoffYr);
         const monthlySav = Math.max((monthlyTax.netMonthly - living) * (saveRate / 100), 0);
         const disposableMonthly = monthlyTax.netMonthly - living - monthlySav - required;
 
@@ -686,7 +688,7 @@ function renderHouseholdCashFlowTable(boothPerson, kelloggPerson) {
 
     function addToYear(timeline, person, loc) {
         for (const e of timeline) {
-            if (!years[e.year]) years[e.year] = { year: e.year, income: 0, tax: 0, living: 0, savings: 0, loan: 0, disposable: 0 };
+            if (!years[e.year]) years[e.year] = { year: e.year, income: 0, tax: 0, living: 0, savings: 0, loan: 0, interest: 0, disposable: 0 };
             const monthlyGross = (e.totalComp || e.salary) / 12;
             const tax = calcPostTax(e.totalComp || e.salary, 'single', loc);
             years[e.year].income += monthlyGross;
@@ -694,6 +696,7 @@ function renderHouseholdCashFlowTable(boothPerson, kelloggPerson) {
             years[e.year].living += person.living;
             years[e.year].savings += e.monthlySavings || 0;
             years[e.year].loan += e.payment;
+            years[e.year].interest += e.interest || 0;
             years[e.year].disposable += e.leftover || 0;
         }
     }
@@ -717,6 +720,7 @@ function renderHouseholdCashFlowTable(boothPerson, kelloggPerson) {
             <td>${formatUSD(row.living)}</td>
             <td>${formatUSD(row.savings)}</td>
             <td>${formatUSD(row.loan)}</td>
+            <td>${formatUSD(row.interest)}</td>
             <td style="color:${dispColor};">${formatUSD(row.disposable)}</td>
             <td>${formatUSD(row.balance)}</td>
             <td style="color:${nwColor}; font-weight:600;">${formatUSD(row.netWorth)}</td>
