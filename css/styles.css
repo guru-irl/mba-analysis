@@ -925,6 +925,69 @@ body {
     border-left: 3px solid var(--india-loan);
 }
 
+/* Breakeven result — prominent callout */
+.breakeven-result {
+    margin-top: var(--space-lg);
+    padding: var(--space-lg);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.06), rgba(245, 158, 11, 0.06));
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    text-align: center;
+}
+
+.breakeven-result-rate {
+    font-family: var(--font-mono);
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--india-loan-light);
+    line-height: 1.1;
+    margin-bottom: var(--space-sm);
+}
+
+.breakeven-result-label {
+    font-family: var(--font-heading);
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-md);
+}
+
+.breakeven-result-detail {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.breakeven-result-detail strong {
+    color: var(--text-primary);
+}
+
+.breakeven-result-tags {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+    flex-wrap: wrap;
+}
+
+.breakeven-tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 3px 10px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-deep);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+    .breakeven-result-rate {
+        font-size: 1.8rem;
+    }
+}
+
 /* ── CONFIG BAR (Tab 2) ────────────────────────────────────────── */
 .config-bar {
     display: flex;

@@ -103,6 +103,7 @@ let payoffProgram = 'booth';
 let payoffSource = 'us';
 let loanYear = '1';            // '1' or '2'
 let breakevenProgram = 'booth';
+let costCurrency = 'usd';      // 'usd' or 'inr'
 
 function initToggleGroup(btnIds, stateSetter) {
     for (const id of btnIds) {
@@ -136,6 +137,22 @@ function initToggles() {
     initToggleGroup(['breakeven-booth', 'breakeven-kellogg'], el => {
         breakevenProgram = el.dataset.program;
     });
+    initToggleGroup(['cost-currency-usd', 'cost-currency-inr'], el => {
+        costCurrency = el.dataset.currency;
+    });
+
+    // Sync cost-fx-rate with the main fx-rate input (bidirectional)
+    const costFxInput = $('cost-fx-rate');
+    const mainFxInput = $('fx-rate');
+    if (costFxInput && mainFxInput) {
+        costFxInput.addEventListener('input', () => {
+            mainFxInput.value = costFxInput.value;
+            scheduleUpdate();
+        });
+        mainFxInput.addEventListener('input', () => {
+            costFxInput.value = mainFxInput.value;
+        });
+    }
 }
 
 /* ── DEBOUNCED UPDATE ──────────────────────────────────────────── */
@@ -274,18 +291,34 @@ function updateCalculations() {
         breakevenPrincipal, usRate, usTerm,
         breakevenIndiaParams, usEarlyPayoff, indiaEarlyPayoff
     );
-    let payoffNote = '';
-    if (usEarlyPayoff < usTerm || indiaEarlyPayoff < indiaTerm) {
-        payoffNote = ` Early payoff: US in <strong>${usEarlyPayoff}yr</strong>, India in <strong>${indiaEarlyPayoff}yr</strong>.`;
-    }
     const progLabel = breakevenProgram === 'booth' ? 'Booth' : 'Kellogg';
     const yearLabel = `Year ${yr}`;
+    const rateEl = $('breakeven-result-rate');
+    const labelEl = $('breakeven-result-label');
+    const detailEl = $('breakeven-result-detail');
+    const tagsEl = $('breakeven-result-tags');
+
     if (breakevenResult.rate !== null) {
-        $('breakeven-text').innerHTML =
-            `<strong>${progLabel} ${yearLabel}</strong> (${formatUSD(breakevenPrincipal)} principal): Indian loan is cheaper when rate is below <strong>${breakevenResult.rate.toFixed(2)}%</strong> at <strong>${indiaDepreciation}%</strong> depreciation. ` +
-            `US loan at <strong>${usRate}%</strong> APR.` + payoffNote;
+        labelEl.textContent = `${progLabel} ${yearLabel} — Breakeven Indian Loan Rate`;
+        rateEl.textContent = breakevenResult.rate.toFixed(2) + '%';
+        detailEl.innerHTML =
+            `An Indian bank loan is <strong>cheaper</strong> than the US loan when the Indian rate is below this threshold. ` +
+            `Above this rate, the US loan wins.`;
+        // Tags
+        let tagsHTML =
+            `<span class="breakeven-tag">Principal: ${formatUSD(breakevenPrincipal)}</span>` +
+            `<span class="breakeven-tag">US APR: ${usRate}%</span>` +
+            `<span class="breakeven-tag">INR dep: ${indiaDepreciation}%/yr</span>`;
+        if (usEarlyPayoff < usTerm) tagsHTML += `<span class="breakeven-tag">US payoff: ${usEarlyPayoff}yr</span>`;
+        if (indiaEarlyPayoff < indiaTerm) tagsHTML += `<span class="breakeven-tag">India payoff: ${indiaEarlyPayoff}yr</span>`;
+        tagsEl.innerHTML = tagsHTML;
     } else {
-        $('breakeven-text').innerHTML = `<strong>${progLabel} ${yearLabel}</strong>: ` + breakevenResult.message + payoffNote;
+        labelEl.textContent = `${progLabel} ${yearLabel}`;
+        rateEl.textContent = 'N/A';
+        detailEl.textContent = breakevenResult.message;
+        tagsEl.innerHTML =
+            `<span class="breakeven-tag">Principal: ${formatUSD(breakevenPrincipal)}</span>` +
+            `<span class="breakeven-tag">US APR: ${usRate}%</span>`;
     }
 
     // ── Cost Comparison Bar Chart ──
@@ -294,10 +327,14 @@ function updateCalculations() {
     const indiaBoothInterest = indiaBoothLoan.effectiveTotalUSD - loanBoothPrincipal - indiaBoothLoan.disbursementCostUSD - indiaBoothLoan.tcsUSD;
     const indiaKelloggInterest = indiaKelloggLoan.effectiveTotalUSD - loanKelloggPrincipal - indiaKelloggLoan.disbursementCostUSD - indiaKelloggLoan.tcsUSD;
 
+    const costFxRate = parseFloat($('cost-fx-rate').value) || fxRate;
+    const cx = costCurrency === 'inr' ? costFxRate : 1; // multiplier
     createCostComparisonChart('cost-comparison-chart', {
-        principal: [loanBoothPrincipal, loanBoothPrincipal, loanKelloggPrincipal, loanKelloggPrincipal],
-        interest: [usBoothInterest, Math.max(indiaBoothInterest, 0), usKelloggInterest, Math.max(indiaKelloggInterest, 0)],
-        fees: [0, indiaBoothLoan.disbursementCostUSD + indiaBoothLoan.tcsUSD, 0, indiaKelloggLoan.disbursementCostUSD + indiaKelloggLoan.tcsUSD],
+        principal: [loanBoothPrincipal * cx, loanBoothPrincipal * cx, loanKelloggPrincipal * cx, loanKelloggPrincipal * cx],
+        interest: [usBoothInterest * cx, Math.max(indiaBoothInterest, 0) * cx, usKelloggInterest * cx, Math.max(indiaKelloggInterest, 0) * cx],
+        fees: [0, (indiaBoothLoan.disbursementCostUSD + indiaBoothLoan.tcsUSD) * cx, 0, (indiaKelloggLoan.disbursementCostUSD + indiaKelloggLoan.tcsUSD) * cx],
+        currency: costCurrency,
+        fxRate: costFxRate,
     });
 
     // ── FX History (create once, recreated when live rate arrives) ──

@@ -482,7 +482,12 @@
         <div class="chart-container chart-container--lg">
             <canvas id="breakeven-chart"></canvas>
         </div>
-        <p class="chart-insight" id="breakeven-text">Adjust parameters above to see the breakeven point.</p>
+        <div class="breakeven-result" id="breakeven-result">
+            <div class="breakeven-result-label" id="breakeven-result-label">Breakeven Indian Loan Rate</div>
+            <div class="breakeven-result-rate" id="breakeven-result-rate">—</div>
+            <div class="breakeven-result-detail" id="breakeven-result-detail">Adjust parameters above to see the breakeven point.</div>
+            <div class="breakeven-result-tags" id="breakeven-result-tags"></div>
+        </div>
         <details class="methodology">
             <summary>How we calculate the breakeven</summary>
             <div class="methodology-body">
@@ -498,6 +503,23 @@
     <!-- ── COST COMPARISON CHART ───────────────────────────────── -->
     <div class="section-label">Total Loan Cost Comparison</div>
     <div class="panel">
+        <div class="config-bar" style="margin-bottom: var(--space-md); padding: var(--space-sm) var(--space-md);">
+            <div class="toggle-group">
+                <span class="toggle-label">Currency</span>
+                <div class="toggle-btns">
+                    <button class="toggle-btn active" id="cost-currency-usd" data-currency="usd">USD ($)</button>
+                    <button class="toggle-btn" id="cost-currency-inr" data-currency="inr">INR (&#8377;)</button>
+                </div>
+            </div>
+            <div class="toggle-group">
+                <span class="toggle-label">Exchange Rate</span>
+                <div class="currency-input currency-input--sm">
+                    <span class="currency-symbol">&#8377;</span>
+                    <input type="number" id="cost-fx-rate" class="num-input" min="60" max="120" step="0.5" value="93">
+                    <span class="fx-status" id="cost-fx-status"></span>
+                </div>
+            </div>
+        </div>
         <div class="chart-container">
             <canvas id="cost-comparison-chart"></canvas>
         </div>

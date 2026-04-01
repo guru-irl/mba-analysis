@@ -184,6 +184,27 @@ function createCostComparisonChart(canvasId, data) {
     destroyChart('costComparison');
     const ctx = document.getElementById(canvasId).getContext('2d');
 
+    const isINR = data.currency === 'inr';
+    const symbol = isINR ? '₹' : '$';
+
+    const yTickCallback = isINR
+        ? function(v) {
+            if (v >= 10000000) return '₹' + (v / 10000000).toFixed(1) + 'Cr';
+            if (v >= 100000) return '₹' + (v / 100000).toFixed(1) + 'L';
+            return '₹' + (v / 1000).toFixed(0) + 'k';
+        }
+        : function(v) { return '$' + (v / 1000).toFixed(0) + 'k'; };
+
+    const tooltipLabel = function(ctx) {
+        const val = ctx.parsed.y;
+        if (isINR) {
+            if (Math.abs(val) >= 10000000) return ctx.dataset.label + ': ₹' + (val / 10000000).toFixed(2) + ' Cr';
+            if (Math.abs(val) >= 100000) return ctx.dataset.label + ': ₹' + (val / 100000).toFixed(2) + ' L';
+            return ctx.dataset.label + ': ₹' + val.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+        }
+        return ctx.dataset.label + ': $' + val.toLocaleString('en-US', { maximumFractionDigits: 0 });
+    };
+
     const options = deepMerge(DARK_THEME, {
         scales: {
             x: {
@@ -195,6 +216,7 @@ function createCostComparisonChart(canvasId, data) {
             tooltip: {
                 ...DARK_THEME.plugins.tooltip,
                 mode: 'index',
+                callbacks: { label: tooltipLabel },
             },
         },
     });
@@ -229,7 +251,14 @@ function createCostComparisonChart(canvasId, data) {
             scales: {
                 ...options.scales,
                 x: { ...options.scales.x, stacked: true },
-                y: { ...options.scales.y, stacked: true },
+                y: {
+                    ...options.scales.y,
+                    stacked: true,
+                    ticks: {
+                        ...options.scales.y?.ticks,
+                        callback: yTickCallback,
+                    },
+                },
             },
         },
     });
