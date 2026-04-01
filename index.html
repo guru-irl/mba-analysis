@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBA Financial Analysis — Booth vs Kellogg</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Sora:wght@300;400;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3/dist/chartjs-plugin-annotation.min.js"></script>
+
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════ HEADER ═══════════════════════════ -->
+<header class="site-header">
+    <div class="header-glow header-glow--maroon"></div>
+    <div class="header-glow header-glow--purple"></div>
+    <div class="header-inner">
+        <div class="brand">
+            <h1 class="brand-title">MBA Financial Analysis</h1>
+            <p class="brand-subtitle">Booth MBA/MPCS &middot; Kellogg MMM &middot; Class of 2027</p>
+        </div>
+        <nav class="tab-nav" role="tablist">
+            <button class="tab-btn active" data-tab="cost" role="tab" aria-selected="true">
+                <span class="tab-icon">&#9638;</span> Cost &amp; Loan Analysis
+            </button>
+            <button class="tab-btn" data-tab="payoff" role="tab" aria-selected="false">
+                <span class="tab-icon">&#9650;</span> Post-MBA Payoff
+            </button>
+        </nav>
+    </div>
+</header>
+
+<!-- ═══════════════════════════ MAIN ═══════════════════════════ -->
+<main class="main-content">
+
+<!-- ╔═══════════════════════════════════════════════════════════════╗
+     ║  TAB 1: COST & LOAN ANALYSIS                                 ║
+     ╚═══════════════════════════════════════════════════════════════╝ -->
+<section id="tab-cost" class="tab-panel active" role="tabpanel">
+
+    <!-- ── TUITION COMPARISON ──────────────────────────────────── -->
+    <div class="section-label">Tuition Comparison</div>
+    <div class="program-grid">
+
+        <!-- Booth Card -->
+        <div class="program-card program-card--booth">
+            <div class="card-accent"></div>
+            <div class="card-body">
+                <div class="card-header">
+                    <span class="school-badge school-badge--booth">BOOTH</span>
+                    <h3 class="program-name">MBA / MPCS</h3>
+                    <p class="school-name">University of Chicago</p>
+                </div>
+                <table class="tuition-table">
+                    <tr>
+                        <td class="tuition-label">Year 1 (3 qtrs)</td>
+                        <td class="tuition-amount">$96,084</td>
+                    </tr>
+                    <tr>
+                        <td class="tuition-label">Year 2 (3 qtrs)</td>
+                        <td class="tuition-amount">$92,619</td>
+                    </tr>
+                    <tr>
+                        <td class="tuition-label">Program Fees</td>
+                        <td class="tuition-amount">$6,199</td>
+                    </tr>
+                    <tr class="tuition-total-row">
+                        <td class="tuition-label">Gross Total</td>
+                        <td class="tuition-amount tuition-amount--total">$194,902</td>
+                    </tr>
+                </table>
+                <div class="scholarship-block">
+                    <label class="input-label" for="scholarship-booth">Scholarship Award</label>
+                    <div class="currency-input">
+                        <span class="currency-symbol">$</span>
+                        <input type="number" id="scholarship-booth" class="num-input num-input--lg" min="0" max="200000" step="1000" value="0">
+                    </div>
+                    <div class="computed-row">
+                        <span class="computed-label">Per quarter (÷6)</span>
+                        <span class="computed-value mono" id="booth-scholarship-per-period">$0</span>
+                    </div>
+                    <div class="computed-row computed-row--highlight">
+                        <span class="computed-label">Net Tuition</span>
+                        <span class="computed-value mono" id="booth-net-tuition">$194,902</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kellogg Card -->
+        <div class="program-card program-card--kellogg">
+            <div class="card-accent"></div>
+            <div class="card-body">
+                <div class="card-header">
+                    <span class="school-badge school-badge--kellogg">KELLOGG</span>
+                    <h3 class="program-name">MMM</h3>
+                    <p class="school-name">Northwestern University</p>
+                </div>
+                <table class="tuition-table">
+                    <tr>
+                        <td class="tuition-label">Year 1 (4 qtrs incl. summer)</td>
+                        <td class="tuition-amount">$115,160</td>
+                    </tr>
+                    <tr>
+                        <td class="tuition-label">Year 2 (3 qtrs)</td>
+                        <td class="tuition-amount">$86,370</td>
+                    </tr>
+                    <tr>
+                        <td class="tuition-label">Program Fees</td>
+                        <td class="tuition-amount">$7,603</td>
+                    </tr>
+                    <tr class="tuition-total-row">
+                        <td class="tuition-label">Gross Total</td>
+                        <td class="tuition-amount tuition-amount--total">$209,133</td>
+                    </tr>
+                </table>
+                <div class="scholarship-block">
+                    <label class="input-label" for="scholarship-kellogg">Scholarship Award</label>
+                    <div class="currency-input">
+                        <span class="currency-symbol">$</span>
+                        <input type="number" id="scholarship-kellogg" class="num-input num-input--lg" min="0" max="210000" step="1000" value="0">
+                    </div>
+                    <div class="computed-row">
+                        <span class="computed-label">Per quarter (÷7)</span>
+                        <span class="computed-value mono" id="kellogg-scholarship-per-period">$0</span>
+                    </div>
+                    <div class="computed-row computed-row--highlight">
+                        <span class="computed-label">Net Tuition</span>
+                        <span class="computed-value mono" id="kellogg-net-tuition">$209,133</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── LIVING EXPENSES ─────────────────────────────────────── -->
+    <div class="section-label">Living Expenses <span class="section-note">Both programs in Chicago · 21 months</span></div>
+    <div class="panel">
+        <div class="slider-grid">
+            <div class="slider-row">
+                <label class="slider-label" for="rent-monthly">Monthly Rent</label>
+                <div class="slider-control">
+                    <input type="range" id="rent-monthly" class="slider" min="500" max="5000" step="50" value="2200">
+                    <div class="slider-value">
+                        <span class="currency-symbol">$</span>
+                        <input type="number" id="rent-monthly-num" class="num-input" min="500" max="5000" step="50" value="2200">
+                    </div>
+                </div>
+            </div>
+            <div class="slider-row">
+                <label class="slider-label" for="food-monthly">Monthly Food</label>
+                <div class="slider-control">
+                    <input type="range" id="food-monthly" class="slider" min="100" max="2000" step="25" value="600">
+                    <div class="slider-value">
+                        <span class="currency-symbol">$</span>
+                        <input type="number" id="food-monthly-num" class="num-input" min="100" max="2000" step="25" value="600">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="living-summary">
+            <div class="summary-pill">
+                <span class="pill-label">Monthly Total</span>
+                <span class="pill-value mono" id="monthly-living">$2,800</span>
+            </div>
+            <div class="summary-pill summary-pill--booth">
+                <span class="pill-label">Booth · 21 mo</span>
+                <span class="pill-value mono" id="booth-living-total">$58,800</span>
+            </div>
+            <div class="summary-pill summary-pill--kellogg">
+                <span class="pill-label">Kellogg · 21 mo</span>
+                <span class="pill-value mono" id="kellogg-living-total">$58,800</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── TOTAL COST SUMMARY ──────────────────────────────────── -->
+    <div class="section-label">Total Cost of Attendance</div>
+    <div class="summary-cards">
+        <div class="summary-card summary-card--booth">
+            <span class="card-kicker">Booth MBA/MPCS</span>
+            <span class="card-figure mono" id="total-cost-booth">$253,702</span>
+            <span class="card-detail">Net Tuition + Living</span>
+        </div>
+        <div class="summary-card summary-card--kellogg">
+            <span class="card-kicker">Kellogg MMM</span>
+            <span class="card-figure mono" id="total-cost-kellogg">$267,933</span>
+            <span class="card-detail">Net Tuition + Living</span>
+        </div>
+        <div class="summary-card summary-card--diff">
+            <span class="card-kicker">Difference</span>
+            <span class="card-figure mono" id="total-cost-diff">+$14,231</span>
+            <span class="card-detail">Kellogg costs more</span>
+        </div>
+    </div>
+
+    <!-- ── LOAN COMPARISON ─────────────────────────────────────── -->
+    <div class="section-label">Loan Comparison</div>
+    <div class="loan-grid">
+
+        <!-- US Loan Panel -->
+        <div class="loan-panel loan-panel--us">
+            <div class="loan-header">
+                <h3 class="loan-title">US Loan <span class="loan-provider">(Earnest)</span></h3>
+                <span class="loan-badge loan-badge--green">No fees</span>
+            </div>
+            <div class="loan-sliders">
+                <div class="slider-row">
+                    <label class="slider-label" for="us-rate">Interest Rate (APR)</label>
+                    <div class="slider-control">
+                        <input type="range" id="us-rate" class="slider slider--us" min="2.5" max="10.24" step="0.01" value="5.50">
+                        <div class="slider-value">
+                            <input type="number" id="us-rate-num" class="num-input" min="2.5" max="10.24" step="0.01" value="5.50">
+                            <span class="unit">%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="slider-row">
+                    <label class="slider-label" for="us-term">Loan Term</label>
+                    <div class="slider-control">
+                        <input type="range" id="us-term" class="slider slider--us" min="5" max="20" step="1" value="10">
+                        <div class="slider-value">
+                            <input type="number" id="us-term-num" class="num-input" min="5" max="20" step="1" value="10">
+                            <span class="unit">yr</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="loan-results-grid">
+                <div class="loan-result-block loan-result-block--booth">
+                    <h4 class="result-school">Booth</h4>
+                    <div class="result-row">
+                        <span>Monthly Payment</span>
+                        <span class="mono" id="us-booth-monthly">—</span>
+                    </div>
+                    <div class="result-row">
+                        <span>Total Interest</span>
+                        <span class="mono" id="us-booth-total-interest">—</span>
+                    </div>
+                    <div class="result-row result-row--total">
+                        <span>Total Cost</span>
+                        <span class="mono" id="us-booth-total-cost">—</span>
+                    </div>
+                </div>
+                <div class="loan-result-block loan-result-block--kellogg">
+                    <h4 class="result-school">Kellogg</h4>
+                    <div class="result-row">
+                        <span>Monthly Payment</span>
+                        <span class="mono" id="us-kellogg-monthly">—</span>
+                    </div>
+                    <div class="result-row">
+                        <span>Total Interest</span>
+                        <span class="mono" id="us-kellogg-total-interest">—</span>
+                    </div>
+                    <div class="result-row result-row--total">
+                        <span>Total Cost</span>
+                        <span class="mono" id="us-kellogg-total-cost">—</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Indian Loan Panel -->
+        <div class="loan-panel loan-panel--india">
+            <div class="loan-header">
+                <h3 class="loan-title">Indian Bank Loan</h3>
+                <span class="loan-badge loan-badge--amber">SBI / HDFC / ICICI</span>
+            </div>
+            <div class="loan-sliders">
+                <div class="slider-row">
+                    <label class="slider-label" for="india-rate">Interest Rate</label>
+                    <div class="slider-control">
+                        <input type="range" id="india-rate" class="slider slider--india" min="7" max="15" step="0.01" value="9.50">
+                        <div class="slider-value">
+                            <input type="number" id="india-rate-num" class="num-input" min="7" max="15" step="0.01" value="9.50">
+                            <span class="unit">%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="slider-row">
+                    <label class="slider-label" for="india-term">Loan Term</label>
+                    <div class="slider-control">
+                        <input type="range" id="india-term" class="slider slider--india" min="5" max="15" step="1" value="10">
+                        <div class="slider-value">
+                            <input type="number" id="india-term-num" class="num-input" min="5" max="15" step="1" value="10">
+                            <span class="unit">yr</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="slider-row">
+                    <label class="slider-label" for="india-processing">Processing Fee</label>
+                    <div class="slider-control">
+                        <input type="range" id="india-processing" class="slider slider--india" min="0" max="2" step="0.1" value="1.0">
+                        <div class="slider-value">
+                            <input type="number" id="india-processing-num" class="num-input" min="0" max="2" step="0.1" value="1.0">
+                            <span class="unit">%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="slider-row">
+                    <label class="slider-label" for="india-forex">Forex Markup</label>
+                    <div class="slider-control">
+                        <input type="range" id="india-forex" class="slider slider--india" min="1" max="4" step="0.1" value="2.5">
+                        <div class="slider-value">
+                            <input type="number" id="india-forex-num" class="num-input" min="1" max="4" step="0.1" value="2.5">
+                            <span class="unit">%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="inline-inputs">
+                    <div class="inline-input-group">
+                        <label class="slider-label" for="india-swift">SWIFT Fee / Transfer</label>
+                        <div class="currency-input currency-input--sm">
+                            <span class="currency-symbol">$</span>
+                            <input type="number" id="india-swift" class="num-input" min="0" max="100" step="5" value="20">
+                        </div>
+                    </div>
+                    <div class="inline-input-group">
+                        <label class="slider-label" for="fx-rate">Current INR/USD Rate</label>
+                        <div class="currency-input currency-input--sm">
+                            <span class="currency-symbol">₹</span>
+                            <input type="number" id="fx-rate" class="num-input" min="60" max="120" step="0.5" value="84">
+                        </div>
+                    </div>
+                    <div class="inline-input-group">
+                        <label class="slider-label">TCS Rate</label>
+                        <div class="static-value mono">0.5%</div>
+                    </div>
+                </div>
+                <div class="slider-row">
+                    <label class="slider-label" for="india-depreciation">Annual INR Depreciation</label>
+                    <div class="slider-control">
+                        <input type="range" id="india-depreciation" class="slider slider--india" min="-2" max="10" step="0.1" value="3.5">
+                        <div class="slider-value">
+                            <input type="number" id="india-depreciation-num" class="num-input" min="-2" max="10" step="0.1" value="3.5">
+                            <span class="unit">%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="loan-results-grid">
+                <div class="loan-result-block loan-result-block--booth">
+                    <h4 class="result-school">Booth</h4>
+                    <div class="result-row">
+                        <span>EMI (₹)</span>
+                        <span class="mono" id="india-booth-emi">—</span>
+                    </div>
+                    <div class="result-row">
+                        <span>Processing + GST</span>
+                        <span class="mono" id="india-booth-processing-cost">—</span>
+                    </div>
+                    <div class="result-row">
+                        <span>Forex + SWIFT Costs</span>
+                        <span class="mono" id="india-booth-forex-cost">—</span>
+                    </div>
+                    <div class="result-row">
+                        <span>TCS (refundable)</span>
+                        <span class="mono" id="india-booth-tcs-cost">—</span>
+                    </div>
+                    <div class="result-row result-row--total">
+                        <span>Effective Total (USD)</span>
+                        <span class="mono" id="india-booth-effective-total">—</span>
+                    </div>
+                </div>
+                <div class="loan-result-block loan-result-block--kellogg">
+                    <h4 class="result-school">Kellogg</h4>
+                    <div class="result-row">
+                        <span>EMI (₹)</span>
+                        <span class="mono" id="india-kellogg-emi">—</span>
+                    </div>
+                    <div class="result-row">
+                        <span>Processing + GST</span>
+                        <span class="mono" id="india-kellogg-processing-cost">—</span>
+                    </div>
+                    <div class="result-row">
+                        <span>Forex + SWIFT Costs</span>
+                        <span class="mono" id="india-kellogg-forex-cost">—</span>
+                    </div>
+                    <div class="result-row">
+                        <span>TCS (refundable)</span>
+                        <span class="mono" id="india-kellogg-tcs-cost">—</span>
+                    </div>
+                    <div class="result-row result-row--total">
+                        <span>Effective Total (USD)</span>
+                        <span class="mono" id="india-kellogg-effective-total">—</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── BREAKEVEN ANALYSIS ──────────────────────────────────── -->
+    <div class="section-label">Breakeven Analysis <span class="section-note">At what Indian rate does US win?</span></div>
+    <div class="panel">
+        <div class="chart-container chart-container--lg">
+            <canvas id="breakeven-chart"></canvas>
+        </div>
+        <p class="chart-insight" id="breakeven-text">Adjust parameters above to see the breakeven point.</p>
+    </div>
+
+    <!-- ── COST COMPARISON CHART ───────────────────────────────── -->
+    <div class="section-label">Total Loan Cost Comparison</div>
+    <div class="panel">
+        <div class="chart-container">
+            <canvas id="cost-comparison-chart"></canvas>
+        </div>
+    </div>
+
+    <!-- ── HISTORICAL FX ───────────────────────────────────────── -->
+    <div class="section-label">Historical INR/USD Depreciation <span class="section-note">2016–2025</span></div>
+    <div class="panel">
+        <div class="chart-container chart-container--sm">
+            <canvas id="fx-history-chart"></canvas>
+        </div>
+    </div>
+
+</section>
+
+<!-- ╔═══════════════════════════════════════════════════════════════╗
+     ║  TAB 2: POST-MBA PAYOFF                                      ║
+     ╚═══════════════════════════════════════════════════════════════╝ -->
+<section id="tab-payoff" class="tab-panel" role="tabpanel">
+
+    <!-- ── CONFIGURATION BAR ───────────────────────────────────── -->
+    <div class="config-bar">
+        <div class="toggle-group">
+            <span class="toggle-label">Program</span>
+            <div class="toggle-btns">
+                <button class="toggle-btn toggle-btn--booth active" id="payoff-booth" data-program="booth">Booth</button>
+                <button class="toggle-btn toggle-btn--kellogg" id="payoff-kellogg" data-program="kellogg">Kellogg</button>
+            </div>
+        </div>
+        <div class="toggle-group">
+            <span class="toggle-label">Loan Source</span>
+            <div class="toggle-btns">
+                <button class="toggle-btn toggle-btn--us active" id="payoff-us" data-source="us">US Loan</button>
+                <button class="toggle-btn toggle-btn--india" id="payoff-india" data-source="india">Indian Loan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── INCOME & EXPENSE INPUTS ─────────────────────────────── -->
+    <div class="section-label">Income &amp; Expenses</div>
+    <div class="panel">
+        <div class="slider-grid">
+            <div class="slider-row">
+                <label class="slider-label" for="annual-salary">Annual Salary (pre-tax)</label>
+                <div class="slider-control">
+                    <input type="range" id="annual-salary" class="slider slider--green" min="80000" max="400000" step="5000" value="180000">
+                    <div class="slider-value">
+                        <span class="currency-symbol">$</span>
+                        <input type="number" id="annual-salary-num" class="num-input" min="80000" max="400000" step="5000" value="180000">
+                    </div>
+                </div>
+            </div>
+            <div class="slider-row">
+                <label class="slider-label" for="salary-growth">Annual Salary Growth</label>
+                <div class="slider-control">
+                    <input type="range" id="salary-growth" class="slider slider--green" min="0" max="10" step="0.5" value="3">
+                    <div class="slider-value">
+                        <input type="number" id="salary-growth-num" class="num-input" min="0" max="10" step="0.5" value="3">
+                        <span class="unit">%</span>
+                    </div>
+                </div>
+            </div>
+            <div class="slider-row">
+                <label class="slider-label" for="post-mba-living">Monthly Living Expenses</label>
+                <div class="slider-control">
+                    <input type="range" id="post-mba-living" class="slider slider--green" min="1000" max="10000" step="100" value="4000">
+                    <div class="slider-value">
+                        <span class="currency-symbol">$</span>
+                        <input type="number" id="post-mba-living-num" class="num-input" min="1000" max="10000" step="100" value="4000">
+                    </div>
+                </div>
+            </div>
+            <div class="slider-row">
+                <label class="slider-label" for="extra-payment">Extra Monthly Loan Payment</label>
+                <div class="slider-control">
+                    <input type="range" id="extra-payment" class="slider slider--green" min="0" max="5000" step="100" value="0">
+                    <div class="slider-value">
+                        <span class="currency-symbol">$</span>
+                        <input type="number" id="extra-payment-num" class="num-input" min="0" max="5000" step="100" value="0">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p class="panel-note">Tax: Federal 2025 brackets + FICA + Illinois 4.95% flat</p>
+    </div>
+
+    <!-- ── PAYOFF SUMMARY CARDS ────────────────────────────────── -->
+    <div class="section-label">Payoff Summary</div>
+    <div class="summary-cards">
+        <div class="summary-card summary-card--time">
+            <span class="card-kicker">Time to Pay Off</span>
+            <span class="card-figure mono" id="payoff-time">—</span>
+            <span class="card-detail">from graduation</span>
+        </div>
+        <div class="summary-card summary-card--paid">
+            <span class="card-kicker">Total Amount Paid</span>
+            <span class="card-figure mono" id="total-paid">—</span>
+            <span class="card-detail">principal + interest</span>
+        </div>
+        <div class="summary-card summary-card--interest">
+            <span class="card-kicker">Total Interest Paid</span>
+            <span class="card-figure mono" id="total-interest-paid">—</span>
+            <span class="card-detail">cost of borrowing</span>
+        </div>
+    </div>
+
+    <!-- ── PAYOFF TRAJECTORY CHART ─────────────────────────────── -->
+    <div class="section-label">Loan Payoff Trajectory</div>
+    <div class="panel">
+        <div class="chart-container chart-container--lg">
+            <canvas id="payoff-chart"></canvas>
+        </div>
+    </div>
+
+    <!-- ── NET WORTH TRAJECTORY ────────────────────────────────── -->
+    <div class="section-label">Net Worth Trajectory</div>
+    <div class="panel">
+        <div class="chart-container">
+            <canvas id="networth-chart"></canvas>
+        </div>
+    </div>
+
+    <!-- ── SALARY SENSITIVITY ──────────────────────────────────── -->
+    <div class="section-label">Salary Sensitivity Analysis</div>
+    <div class="panel">
+        <div class="chart-container">
+            <canvas id="sensitivity-chart"></canvas>
+        </div>
+    </div>
+
+    <!-- ── ANNUAL CASH FLOW TABLE ──────────────────────────────── -->
+    <div class="section-label">Annual Cash Flow Projection</div>
+    <div class="panel panel--table">
+        <div class="table-wrap">
+            <table class="cashflow-table" id="cashflow-table">
+                <thead>
+                    <tr>
+                        <th>Year</th>
+                        <th>Gross Income</th>
+                        <th>Total Tax</th>
+                        <th>Living Expenses</th>
+                        <th>Loan Payment</th>
+                        <th>Remaining Balance</th>
+                    </tr>
+                </thead>
+                <tbody id="cashflow-table-body">
+                    <!-- Populated by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</section>
+
+</main>
+
+<!-- ═══════════════════════════ FOOTER ══════════════════════════ -->
+<footer class="site-footer">
+    <p>Data sourced from official university websites &middot; Calculations are estimates for planning purposes only</p>
+</footer>
+
+<!-- App Scripts -->
+<script src="js/data.js"></script>
+<script src="js/calc.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>
