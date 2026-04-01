@@ -141,6 +141,20 @@
         </div>
     </div>
 
+    <details class="methodology">
+        <summary>How we calculate tuition</summary>
+        <div class="methodology-body">
+            <p>Tuition figures are sourced from official 2025-26 university pages. Booth MBA/MPCS charges a higher per-quarter rate than the standard MBA ($32,028 vs $29,118) to cover up to 2,400 coursework units. Kellogg MMM has the same per-quarter rate as the 2Y MBA ($28,790) but includes an extra summer quarter in Year 1.</p>
+            <ul>
+                <li><strong>Booth Y1:</strong> $96,084 tuition + $4,690 fees (services $1,509 + admin $3,100 + transcript $81)</li>
+                <li><strong>Booth Y2:</strong> $92,619 tuition + $1,509 fees (services only, continuing rate)</li>
+                <li><strong>Kellogg Y1:</strong> $115,160 tuition (4 qtrs incl. summer) + $5,091 fees</li>
+                <li><strong>Kellogg Y2:</strong> $86,370 tuition (3 qtrs, same as standard 2Y) + $2,512 fees</li>
+            </ul>
+            <p>Scholarships are split proportionally by quarters per year. Booth: 3/6 per year. Kellogg: 4/7 in Y1 (summer quarter), 3/7 in Y2.</p>
+        </div>
+    </details>
+
     <!-- ── LIVING EXPENSES ─────────────────────────────────────── -->
     <div class="section-label">Living Expenses <span class="section-note">Both programs in Chicago</span></div>
     <div class="panel">
@@ -408,6 +422,24 @@
         </div>
     </div>
 
+    <details class="methodology">
+        <summary>How we calculate loan costs</summary>
+        <div class="methodology-body">
+            <p><strong>US Loan (Earnest):</strong> Standard amortization. Monthly payment <code>M = P &times; r(1+r)^n / ((1+r)^n - 1)</code> where P = principal, r = monthly rate, n = total payments. Earnest charges zero origination fees, late fees, or prepayment penalties.</p>
+            <p><strong>Indian Bank Loan:</strong> More complex because of currency conversion costs and FX depreciation.</p>
+            <ul>
+                <li><strong>Principal:</strong> Converted to INR at the current spot rate</li>
+                <li><strong>Processing fee:</strong> % of INR principal + 18% GST on the fee</li>
+                <li><strong>TCS:</strong> 0.5% tax collected at source on amounts exceeding &#8377;7,00,000 (refundable in tax filing)</li>
+                <li><strong>Disbursement costs:</strong> Each quarterly tranche incurs forex markup (% of tranche) + SWIFT fee ($20) + correspondent bank fee ($25)</li>
+                <li><strong>EMI:</strong> Computed in INR on (principal + processing fee) using standard amortization</li>
+                <li><strong>USD-equivalent cost:</strong> Each month's INR EMI is divided by the projected FX rate: <code>EMI&#8377; / (spot &times; (1 + depreciation)^(month/12))</code>. As INR weakens, each EMI costs fewer USD — this is the FX advantage for USD earners</li>
+                <li><strong>Effective total:</strong> Sum of all USD-equivalent EMIs + disbursement costs + TCS</li>
+            </ul>
+            <p><strong>Year-over-year view:</strong> When "Year 1" or "Year 2" is selected, the loan principal = that year's tuition + fees - proportional scholarship + living costs for that year's duration. Kellogg Y1 is notably higher due to the summer quarter.</p>
+        </div>
+    </details>
+
     <!-- ── BREAKEVEN ANALYSIS ──────────────────────────────────── -->
     <div class="section-label">Breakeven Analysis <span class="section-note">At what Indian rate does US win?</span></div>
     <div class="panel">
@@ -446,6 +478,15 @@
             <canvas id="breakeven-chart"></canvas>
         </div>
         <p class="chart-insight" id="breakeven-text">Adjust parameters above to see the breakeven point.</p>
+        <details class="methodology">
+            <summary>How we calculate the breakeven</summary>
+            <div class="methodology-body">
+                <p>The chart sweeps the Indian loan interest rate from 4% to 15% in 0.25% steps. At each rate, it computes the total USD-equivalent cost of the Indian loan (including all fees, FX conversion, and depreciation effects) and plots it against the fixed US loan total cost.</p>
+                <p>Three curves are shown for different INR depreciation assumptions (your selected rate &plusmn;1.5%) to show how sensitive the breakeven is to FX movement.</p>
+                <p><strong>Early payoff:</strong> When the payoff period is shorter than the loan term, both loans are computed as: regular EMI for the payoff period + lump-sum payment of the remaining balance. This reduces total interest for both loans but affects them differently — the Indian loan's FX advantage shrinks with shorter payoff since there's less time for depreciation to compound.</p>
+                <p>The exact breakeven rate is found using bisection (binary search) to 0.01% precision.</p>
+            </div>
+        </details>
     </div>
 
     <!-- ── COST COMPARISON CHART ───────────────────────────────── -->
@@ -454,6 +495,18 @@
         <div class="chart-container">
             <canvas id="cost-comparison-chart"></canvas>
         </div>
+        <details class="methodology">
+            <summary>How to read this chart</summary>
+            <div class="methodology-body">
+                <p>Stacked bars show the total cost of each loan broken into three components:</p>
+                <ul>
+                    <li><strong>Principal</strong> (gray): The amount you actually borrow — net tuition + fees + living expenses</li>
+                    <li><strong>Interest</strong> (blue): Total interest paid over the loan term. For Indian loans, this is the USD-equivalent interest after accounting for FX depreciation</li>
+                    <li><strong>Fees &amp; FX costs</strong> (amber): Indian loan only — processing fee + GST, forex markup on each quarterly disbursement, SWIFT/correspondent fees, and TCS</li>
+                </ul>
+                <p>US loans (Earnest) have zero fees, so the bar is just principal + interest. Indian loans have an additional fees layer. Compare the total bar height to see which option is cheaper overall.</p>
+            </div>
+        </details>
     </div>
 
     <!-- ── HISTORICAL FX ───────────────────────────────────────── -->
@@ -462,6 +515,14 @@
         <div class="chart-container chart-container--sm">
             <canvas id="fx-history-chart"></canvas>
         </div>
+        <details class="methodology">
+            <summary>About this data</summary>
+            <div class="methodology-body">
+                <p>Bars show year-over-year INR depreciation (red = weaker, green = stronger). The line tracks the absolute INR/USD rate. Historical data uses year-end approximate rates from 2016-2025.</p>
+                <p>The 2026* data point is the <strong>live rate</strong> fetched from <code>open.er-api.com</code> on page load. Its depreciation is computed against the 2025 year-end rate (&#8377;88.72).</p>
+                <p><strong>10-year average:</strong> ~3.5% annual depreciation (CAGR). Excluding the 2021 anomaly (rupee strengthened during COVID recovery), the average is ~4.2%. Worst year: 2022 at 9.1% (Ukraine war, Fed hikes). This historical range informs the default depreciation slider.</p>
+            </div>
+        </details>
     </div>
 
 </section>
@@ -535,6 +596,18 @@
             </div>
         </div>
         <p class="panel-note">Tax: Federal 2025 brackets + FICA + Illinois 4.95% flat</p>
+        <details class="methodology">
+            <summary>How we calculate post-tax income</summary>
+            <div class="methodology-body">
+                <p>Take-home pay is computed by deducting three layers of tax from gross salary:</p>
+                <ul>
+                    <li><strong>Federal income tax:</strong> 2025 brackets with standard deduction ($14,600 single). Progressive rates from 10% to 37%</li>
+                    <li><strong>FICA:</strong> Social Security 6.2% (capped at $168,600) + Medicare 1.45% (no cap) + Additional Medicare 0.9% above $200k</li>
+                    <li><strong>Illinois state tax:</strong> Flat 4.95% on taxable income</li>
+                </ul>
+                <p>Disposable income = post-tax monthly income - monthly living expenses. This is what goes toward loan repayment (plus any extra payment you set).</p>
+            </div>
+        </details>
     </div>
 
     <!-- ── PAYOFF SUMMARY CARDS ────────────────────────────────── -->
@@ -563,6 +636,21 @@
         <div class="chart-container chart-container--lg">
             <canvas id="payoff-chart"></canvas>
         </div>
+        <details class="methodology">
+            <summary>How we simulate the payoff</summary>
+            <div class="methodology-body">
+                <p>Month-by-month simulation starting from graduation. Each month:</p>
+                <ul>
+                    <li>Salary grows annually at the growth rate you set</li>
+                    <li>Post-tax income is computed, then living expenses are subtracted</li>
+                    <li>All remaining disposable income (+ any extra payment) goes toward the loan</li>
+                    <li>Interest accrues on the remaining balance at the loan rate</li>
+                    <li>For Indian loans: interest accrues in INR but your payments are in USD, so each month's cost is adjusted for depreciation</li>
+                </ul>
+                <p>If your disposable income can't cover the monthly interest, the balance grows and a warning is shown. The simulation caps at 30 years.</p>
+                <p>The red area shows the declining loan balance (left axis). The green line shows cumulative amount paid (right axis).</p>
+            </div>
+        </details>
     </div>
 
     <!-- ── NET WORTH TRAJECTORY ────────────────────────────────── -->
@@ -571,6 +659,13 @@
         <div class="chart-container">
             <canvas id="networth-chart"></canvas>
         </div>
+        <details class="methodology">
+            <summary>How we calculate net worth</summary>
+            <div class="methodology-body">
+                <p>Net worth = negative loan balance while repaying, then accumulated savings after payoff. The "Break Even" line at $0 marks when you've fully paid off the loan. After that, your disposable income accumulates as savings (simplified — no investment returns modeled).</p>
+                <p>The simulation runs 24 months past loan payoff to show the trajectory of savings accumulation. The green dot marks the exact break-even month.</p>
+            </div>
+        </details>
     </div>
 
     <!-- ── SALARY SENSITIVITY ──────────────────────────────────── -->
@@ -579,6 +674,13 @@
         <div class="chart-container">
             <canvas id="sensitivity-chart"></canvas>
         </div>
+        <details class="methodology">
+            <summary>How we run the sensitivity analysis</summary>
+            <div class="methodology-body">
+                <p>Runs the same payoff simulation at five salary levels: your selected salary &plusmn;$20k and &plusmn;$40k. All other parameters (growth rate, living expenses, loan terms) stay the same.</p>
+                <p>The solid line is your current salary selection. Dashed lines show the alternatives. This helps you see how much salary matters — often a $20k salary difference changes payoff time by 1-2 years.</p>
+            </div>
+        </details>
     </div>
 
     <!-- ── ANNUAL CASH FLOW TABLE ──────────────────────────────── -->
@@ -601,6 +703,13 @@
                 </tbody>
             </table>
         </div>
+        <details class="methodology">
+            <summary>How we project cash flow</summary>
+            <div class="methodology-body">
+                <p>Each row aggregates the month-by-month simulation into annual totals. Gross income grows at your set rate. Total tax = federal + FICA + Illinois state. Living expenses = monthly amount &times; 12. Loan payment = sum of all monthly payments that year. Balance = remaining loan at year-end.</p>
+                <p>Note: this assumes you start working immediately after graduation and allocate all disposable income to loan repayment. In practice, you may have a signing bonus, relocation costs, or other one-time events not modeled here.</p>
+            </div>
+        </details>
     </div>
 
 </section>
