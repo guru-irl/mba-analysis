@@ -528,27 +528,27 @@ function renderHouseholdBalanceSheet(b, k) {
     const tbody = $('hh-bs-body');
     if (!tbody) return;
 
+    const bState = LOCATIONS.find(l => l.key === b.loc)?.state || 'IL';
+    const kState = LOCATIONS.find(l => l.key === k.loc)?.state || 'IL';
+
     const rows = [
-        ['Pre-Tax Income', b.totalComp / 12, k.totalComp / 12],
-        ['Federal Tax', -b.tax.federal / 12, -k.tax.federal / 12],
-        ['State Tax', -b.tax.state / 12, -k.tax.state / 12],
-        ['FICA', -b.tax.fica / 12, -k.tax.fica / 12],
-        ['Post-Tax Income', b.tax.netMonthly, k.tax.netMonthly],
-        ['Living Expenses', -b.living, -k.living],
-        ['Savings', -b.monthlySav, -k.monthlySav],
-        ['Loan Repayment', -b.required, -k.required],
-        ['Disposable', b.disposableAfterAll, k.disposableAfterAll],
+        { label: 'Pre-Tax Income', bv: b.totalComp / 12, kv: k.totalComp / 12, cls: '' },
+        { label: 'Federal Tax', bv: -b.tax.federal / 12, kv: -k.tax.federal / 12, cls: 'hh-bs-sub' },
+        { label: `State Tax (${bState}/${kState})`, bv: -b.tax.state / 12, kv: -k.tax.state / 12, cls: 'hh-bs-sub' },
+        { label: 'FICA', bv: -b.tax.fica / 12, kv: -k.tax.fica / 12, cls: 'hh-bs-sub' },
+        { label: 'Post-Tax Income', bv: b.tax.netMonthly, kv: k.tax.netMonthly, cls: 'hh-bs-net' },
+        { label: 'Living Expenses', bv: -b.living, kv: -k.living, cls: 'hh-bs-expense' },
+        { label: `Savings (${b.saveRate}%/${k.saveRate}%)`, bv: -b.monthlySav, kv: -k.monthlySav, cls: 'hh-bs-expense' },
+        { label: 'Loan Repayment', bv: -b.required, kv: -k.required, cls: 'hh-bs-expense' },
+        { label: 'Disposable', bv: b.disposableAfterAll, kv: k.disposableAfterAll, cls: 'hh-bs-bottom' },
     ];
 
-    const highlightRows = new Set(['Post-Tax Income', 'Disposable']);
-
-    tbody.innerHTML = rows.map(([label, bv, kv]) => {
-        const hv = bv + kv;
-        const cls = highlightRows.has(label) ? ' style="font-weight:600; border-top:2px solid var(--border-light);"' : '';
-        return `<tr${cls}>
-            <td>${label}</td>
-            <td>${formatUSD(bv * m)}</td>
-            <td>${formatUSD(kv * m)}</td>
+    tbody.innerHTML = rows.map(r => {
+        const hv = r.bv + r.kv;
+        return `<tr class="${r.cls}">
+            <td>${r.label}</td>
+            <td>${formatUSD(r.bv * m)}</td>
+            <td>${formatUSD(r.kv * m)}</td>
             <td>${formatUSD(hv * m)}</td>
         </tr>`;
     }).join('');

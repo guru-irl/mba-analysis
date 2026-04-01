@@ -838,10 +838,15 @@
 
     <!-- ── HOUSEHOLD BALANCE SHEET ────────────────────────────── -->
     <div class="section-label">Household Balance Sheet <div class="toggle-btns toggle-btns--inline"><button class="toggle-btn active" id="bs-hh-monthly" data-period="monthly">Monthly</button><button class="toggle-btn" id="bs-hh-yearly" data-period="yearly">Yearly</button></div></div>
-    <div class="panel">
-        <table class="cashflow-table" style="margin: 0;">
+    <div class="panel hh-bs-panel">
+        <table class="hh-bs-table">
             <thead>
-                <tr><th></th><th>Booth</th><th>Kellogg</th><th>Household</th></tr>
+                <tr>
+                    <th class="hh-bs-label-col"></th>
+                    <th class="hh-bs-col hh-bs-col--booth">Booth</th>
+                    <th class="hh-bs-col hh-bs-col--kellogg">Kellogg</th>
+                    <th class="hh-bs-col hh-bs-col--total">Household</th>
+                </tr>
             </thead>
             <tbody id="hh-bs-body">
             </tbody>

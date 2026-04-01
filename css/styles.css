@@ -2083,6 +2083,116 @@ body {
     padding: 2px 8px;
 }
 
+/* ── HOUSEHOLD BALANCE SHEET TABLE ──────────────────────────────── */
+.hh-bs-panel {
+    padding: 0;
+    overflow: hidden;
+}
+
+.hh-bs-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.hh-bs-table th {
+    font-family: var(--font-heading);
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: var(--space-md) var(--space-lg);
+    text-align: right;
+}
+
+.hh-bs-label-col {
+    text-align: left !important;
+    width: 30%;
+}
+
+.hh-bs-col--booth {
+    color: var(--booth-light);
+    background: linear-gradient(180deg, var(--booth-glow), transparent);
+}
+
+.hh-bs-col--kellogg {
+    color: var(--kellogg-light);
+    background: linear-gradient(180deg, var(--kellogg-glow), transparent);
+}
+
+.hh-bs-col--total {
+    color: var(--positive);
+    background: linear-gradient(180deg, rgba(16, 185, 129, 0.06), transparent);
+}
+
+.hh-bs-table td {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: var(--text-primary);
+    padding: var(--space-sm) var(--space-lg);
+    text-align: right;
+    border-bottom: 1px solid var(--border);
+}
+
+.hh-bs-table td:first-child {
+    font-family: var(--font-body);
+    text-align: left;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+.hh-bs-table tr.hh-bs-sub td {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    padding-left: var(--space-xl);
+}
+
+.hh-bs-table tr.hh-bs-sub td:first-child {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.hh-bs-table tr.hh-bs-sub td:not(:first-child) {
+    color: var(--negative);
+    font-size: 0.75rem;
+}
+
+.hh-bs-table tr.hh-bs-net td {
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-top: 2px solid var(--border-light);
+    padding-top: var(--space-md);
+}
+
+.hh-bs-table tr.hh-bs-net td:not(:first-child) {
+    color: var(--positive);
+}
+
+.hh-bs-table tr.hh-bs-net td:first-child {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.hh-bs-table tr.hh-bs-expense td:not(:first-child) {
+    color: var(--negative);
+}
+
+.hh-bs-table tr.hh-bs-bottom td {
+    font-weight: 700;
+    font-size: 0.95rem;
+    border-top: 2px solid var(--border-light);
+    padding-top: var(--space-md);
+    padding-bottom: var(--space-md);
+}
+
+.hh-bs-table tr.hh-bs-bottom td:first-child {
+    color: var(--text-primary);
+}
+
+.hh-bs-table tbody tr:hover {
+    background: var(--bg-hover);
+}
+
 /* ── DUAL SPLIT LAYOUT (Tab 2) ──────────────────────────────────── */
 .dual-split {
     display: grid;

@@ -11,6 +11,16 @@ const DARK_THEME = {
     borderColor: CHART_COLORS.gridBorder,
     responsive: true,
     maintainAspectRatio: false,
+    interaction: {
+        mode: 'nearest',
+        axis: 'x',
+        intersect: false,
+    },
+    hover: {
+        mode: 'nearest',
+        axis: 'x',
+        intersect: false,
+    },
     plugins: {
         legend: {
             labels: {
