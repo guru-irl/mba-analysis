@@ -445,33 +445,61 @@ function updateCalculations() {
         const annualBonus = salary * (bonus / 100);
         $('bonus-' + prefix + '-dollar').textContent = formatUSD(annualBonus);
 
-        // Tax + budget
-        const totalComp = salary + annualBonus + signing;
-        const tax = calcPostTax(totalComp, 'single', loc);
+        // Monthly: base salary only (no bonus, no signing)
+        const monthlyTax = calcPostTax(salary, 'single', loc);
+        // Yearly: salary + bonus + signing (Year 1)
+        const yearlyComp = salary + annualBonus + signing;
+        const yearlyTax = calcPostTax(yearlyComp, 'single', loc);
+
         const required = calcMonthlyPayment(principal, rate, payoffYr);
-        const monthlySav = Math.max((tax.netMonthly - living) * (saveRate / 100), 0);
-        const disposableAfterAll = tax.netMonthly - living - monthlySav - required;
+        const monthlySav = Math.max((monthlyTax.netMonthly - living) * (saveRate / 100), 0);
+        const disposableMonthly = monthlyTax.netMonthly - living - monthlySav - required;
+
+        // Yearly disposable includes bonus + signing
+        const yearlySav = Math.max((yearlyTax.netAnnual - living * 12) * (saveRate / 100), 0);
+        const disposableYearly = yearlyTax.netAnnual - living * 12 - yearlySav - required * 12;
 
         // Balance sheet — monthly or yearly
         const bsPeriod = prefix === 'booth' ? boothBsPeriod : kelloggBsPeriod;
-        const m = bsPeriod === 'yearly' ? 12 : 1;
+        const isYearly = bsPeriod === 'yearly';
         const stateLabel = LOCATIONS.find(l => l.key === loc)?.state || 'IL';
 
-        $('p2-' + prefix + '-pretax').textContent = formatUSD(totalComp / 12 * m);
-        $('p2-' + prefix + '-federal').textContent = '-' + formatUSD(tax.federal / 12 * m);
+        if (isYearly) {
+            $('p2-' + prefix + '-pretax').textContent = formatUSD(yearlyComp);
+            $('p2-' + prefix + '-federal').textContent = '-' + formatUSD(yearlyTax.federal);
+            $('p2-' + prefix + '-state').textContent = '-' + formatUSD(yearlyTax.state);
+            $('p2-' + prefix + '-fica').textContent = '-' + formatUSD(yearlyTax.fica);
+            $('p2-' + prefix + '-net-monthly').textContent = formatUSD(yearlyTax.netAnnual);
+            $('p2-' + prefix + '-bs-living').textContent = '-' + formatUSD(living * 12);
+            $('p2-' + prefix + '-bs-savings').textContent = '-' + formatUSD(yearlySav);
+            $('p2-' + prefix + '-bs-payment').textContent = '-' + formatUSD(required * 12);
+            const dispEl = $('p2-' + prefix + '-disposable');
+            dispEl.textContent = formatUSD(disposableYearly);
+            dispEl.style.color = disposableYearly >= 0 ? 'var(--positive)' : 'var(--negative)';
+        } else {
+            $('p2-' + prefix + '-pretax').textContent = formatUSD(salary / 12);
+            $('p2-' + prefix + '-federal').textContent = '-' + formatUSD(monthlyTax.federal / 12);
+            $('p2-' + prefix + '-state').textContent = '-' + formatUSD(monthlyTax.state / 12);
+            $('p2-' + prefix + '-fica').textContent = '-' + formatUSD(monthlyTax.fica / 12);
+            $('p2-' + prefix + '-net-monthly').textContent = formatUSD(monthlyTax.netMonthly);
+            $('p2-' + prefix + '-bs-living').textContent = '-' + formatUSD(living);
+            $('p2-' + prefix + '-bs-savings').textContent = '-' + formatUSD(monthlySav);
+            $('p2-' + prefix + '-bs-payment').textContent = '-' + formatUSD(required);
+            const dispEl = $('p2-' + prefix + '-disposable');
+            dispEl.textContent = formatUSD(disposableMonthly);
+            dispEl.style.color = disposableMonthly >= 0 ? 'var(--positive)' : 'var(--negative)';
+        }
+
         $('p2-' + prefix + '-state-label').textContent = stateLabel;
-        $('p2-' + prefix + '-state').textContent = '-' + formatUSD(tax.state / 12 * m);
-        $('p2-' + prefix + '-fica').textContent = '-' + formatUSD(tax.fica / 12 * m);
-        $('p2-' + prefix + '-net-monthly').textContent = formatUSD(tax.netMonthly * m);
-        $('p2-' + prefix + '-bs-living').textContent = '-' + formatUSD(living * m);
         $('p2-' + prefix + '-save-pct').textContent = saveRate;
-        $('p2-' + prefix + '-bs-savings').textContent = '-' + formatUSD(monthlySav * m);
         $('p2-' + prefix + '-payment').textContent = formatUSD(required);
-        $('p2-' + prefix + '-bs-payment').textContent = '-' + formatUSD(required * m);
-        const dispEl = $('p2-' + prefix + '-disposable');
-        dispEl.textContent = formatUSD(disposableAfterAll * m);
-        // Color the disposable based on sign
-        dispEl.style.color = disposableAfterAll >= 0 ? 'var(--positive)' : 'var(--negative)';
+
+        // Stock row — only in yearly view
+        const stockRow = $('p2-' + prefix + '-stock-row');
+        if (stockRow) {
+            stockRow.style.display = isYearly && annualStock > 0 ? '' : 'none';
+            $('p2-' + prefix + '-bs-stock').textContent = formatUSD(annualStock);
+        }
 
         // Payoff simulation
         const result = calcPayoffTimeline({
@@ -494,7 +522,14 @@ function updateCalculations() {
             startingNetWorth,
         });
 
-        return { result, salary, living, saveRate, totalComp, tax, required, monthlySav, disposableAfterAll, loc };
+        return {
+            result, salary, living, saveRate, loc,
+            // Monthly figures (base salary only)
+            monthlyTax, monthlySav, disposableMonthly, required,
+            // Yearly figures (salary + bonus + signing)
+            yearlyComp, yearlyTax, yearlySav, disposableYearly,
+            annualBonus, signing, annualStock,
+        };
     }
 
     const boothPerson = computePerson('booth', 'booth', boothLoanSource, boothLocation);
@@ -524,32 +559,54 @@ function updateCalculations() {
 
 /* ── HOUSEHOLD BALANCE SHEET ────────────────────────────────────── */
 function renderHouseholdBalanceSheet(b, k) {
-    const m = hhBsPeriod === 'yearly' ? 12 : 1;
+    const isYearly = hhBsPeriod === 'yearly';
     const tbody = $('hh-bs-body');
     if (!tbody) return;
 
     const bState = LOCATIONS.find(l => l.key === b.loc)?.state || 'IL';
     const kState = LOCATIONS.find(l => l.key === k.loc)?.state || 'IL';
 
-    const rows = [
-        { label: 'Pre-Tax Income', bv: b.totalComp / 12, kv: k.totalComp / 12, cls: '' },
-        { label: 'Federal Tax', bv: -b.tax.federal / 12, kv: -k.tax.federal / 12, cls: 'hh-bs-sub' },
-        { label: `State Tax (${bState}/${kState})`, bv: -b.tax.state / 12, kv: -k.tax.state / 12, cls: 'hh-bs-sub' },
-        { label: 'FICA', bv: -b.tax.fica / 12, kv: -k.tax.fica / 12, cls: 'hh-bs-sub' },
-        { label: 'Post-Tax Income', bv: b.tax.netMonthly, kv: k.tax.netMonthly, cls: 'hh-bs-net' },
-        { label: 'Living Expenses', bv: -b.living, kv: -k.living, cls: 'hh-bs-expense' },
-        { label: `Savings (${b.saveRate}%/${k.saveRate}%)`, bv: -b.monthlySav, kv: -k.monthlySav, cls: 'hh-bs-expense' },
-        { label: 'Loan Repayment', bv: -b.required, kv: -k.required, cls: 'hh-bs-expense' },
-        { label: 'Disposable', bv: b.disposableAfterAll, kv: k.disposableAfterAll, cls: 'hh-bs-bottom' },
-    ];
+    let rows;
+    if (isYearly) {
+        rows = [
+            { label: 'Pre-Tax Income', bv: b.yearlyComp, kv: k.yearlyComp, cls: '' },
+            { label: 'Federal Tax', bv: -b.yearlyTax.federal, kv: -k.yearlyTax.federal, cls: 'hh-bs-sub' },
+            { label: `State Tax (${bState}/${kState})`, bv: -b.yearlyTax.state, kv: -k.yearlyTax.state, cls: 'hh-bs-sub' },
+            { label: 'FICA', bv: -b.yearlyTax.fica, kv: -k.yearlyTax.fica, cls: 'hh-bs-sub' },
+            { label: 'Post-Tax Income', bv: b.yearlyTax.netAnnual, kv: k.yearlyTax.netAnnual, cls: 'hh-bs-net' },
+            { label: 'Living Expenses', bv: -b.living * 12, kv: -k.living * 12, cls: 'hh-bs-expense' },
+            { label: `Savings (${b.saveRate}%/${k.saveRate}%)`, bv: -b.yearlySav, kv: -k.yearlySav, cls: 'hh-bs-expense' },
+            { label: 'Loan Repayment', bv: -b.required * 12, kv: -k.required * 12, cls: 'hh-bs-expense' },
+            { label: 'Stock/Equity (vesting)', bv: b.annualStock, kv: k.annualStock, cls: '' },
+            { label: 'Disposable', bv: b.disposableYearly + b.annualStock, kv: k.disposableYearly + k.annualStock, cls: 'hh-bs-bottom' },
+        ];
+        // Remove stock row if both are 0
+        if (b.annualStock === 0 && k.annualStock === 0) {
+            rows = rows.filter(r => r.label !== 'Stock/Equity (vesting)');
+            rows.find(r => r.label === 'Disposable').bv = b.disposableYearly;
+            rows.find(r => r.label === 'Disposable').kv = k.disposableYearly;
+        }
+    } else {
+        rows = [
+            { label: 'Pre-Tax Income', bv: b.salary / 12, kv: k.salary / 12, cls: '' },
+            { label: 'Federal Tax', bv: -b.monthlyTax.federal / 12, kv: -k.monthlyTax.federal / 12, cls: 'hh-bs-sub' },
+            { label: `State Tax (${bState}/${kState})`, bv: -b.monthlyTax.state / 12, kv: -k.monthlyTax.state / 12, cls: 'hh-bs-sub' },
+            { label: 'FICA', bv: -b.monthlyTax.fica / 12, kv: -k.monthlyTax.fica / 12, cls: 'hh-bs-sub' },
+            { label: 'Post-Tax Income', bv: b.monthlyTax.netMonthly, kv: k.monthlyTax.netMonthly, cls: 'hh-bs-net' },
+            { label: 'Living Expenses', bv: -b.living, kv: -k.living, cls: 'hh-bs-expense' },
+            { label: `Savings (${b.saveRate}%/${k.saveRate}%)`, bv: -b.monthlySav, kv: -k.monthlySav, cls: 'hh-bs-expense' },
+            { label: 'Loan Repayment', bv: -b.required, kv: -k.required, cls: 'hh-bs-expense' },
+            { label: 'Disposable', bv: b.disposableMonthly, kv: k.disposableMonthly, cls: 'hh-bs-bottom' },
+        ];
+    }
 
     tbody.innerHTML = rows.map(r => {
         const hv = r.bv + r.kv;
         return `<tr class="${r.cls}">
             <td>${r.label}</td>
-            <td>${formatUSD(r.bv * m)}</td>
-            <td>${formatUSD(r.kv * m)}</td>
-            <td>${formatUSD(hv * m)}</td>
+            <td>${formatUSD(r.bv)}</td>
+            <td>${formatUSD(r.kv)}</td>
+            <td>${formatUSD(hv)}</td>
         </tr>`;
     }).join('');
 }
