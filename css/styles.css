@@ -1200,6 +1200,100 @@ body {
 }
 
 /* ── UTILITY ───────────────────────────────────────────────────── */
+/* ── YEAR TOGGLE (big buttons) ──────────────────────────────────── */
+.year-toggle-bar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+.year-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+    padding: var(--space-lg) var(--space-xl);
+    background: var(--bg-surface);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all 0.25s var(--ease-out);
+}
+
+.year-btn:hover {
+    border-color: var(--border-light);
+    background: var(--bg-elevated);
+    transform: translateY(-1px);
+}
+
+.year-btn--active {
+    border-color: var(--us-loan);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(59, 130, 246, 0.02));
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.1);
+}
+
+.year-btn-label {
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+}
+
+.year-btn--active .year-btn-label {
+    color: var(--us-loan-light);
+}
+
+.year-btn-sub {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    letter-spacing: 0.02em;
+}
+
+.year-btn--active .year-btn-sub {
+    color: var(--text-secondary);
+}
+
+/* Scope zone: visual border linking year buttons to affected sections */
+.year-scope-zone {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-lg);
+    background: linear-gradient(180deg, rgba(59, 130, 246, 0.02) 0%, transparent 15%);
+    position: relative;
+}
+
+.year-scope-zone::before {
+    content: 'Affected by year selection';
+    position: absolute;
+    top: -9px;
+    left: var(--space-lg);
+    background: var(--bg-deep);
+    padding: 0 var(--space-sm);
+    font-family: var(--font-heading);
+    font-size: 0.58rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+@media (max-width: 768px) {
+    .year-btn {
+        padding: var(--space-md);
+    }
+    .year-btn-label {
+        font-size: 1.1rem;
+    }
+    .year-scope-zone {
+        padding: var(--space-md);
+    }
+}
+
 /* ── METHODOLOGY NOTES ──────────────────────────────────────────── */
 .methodology {
     margin-top: var(--space-md);

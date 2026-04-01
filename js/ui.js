@@ -101,7 +101,7 @@ function initTabs() {
 /* ── TOGGLE BUTTONS ────────────────────────────────────────────── */
 let payoffProgram = 'booth';
 let payoffSource = 'us';
-let loanYear = 'total';       // 'total', '1', or '2'
+let loanYear = '1';            // '1' or '2'
 let breakevenProgram = 'booth';
 
 function initToggleGroup(btnIds, stateSetter) {
@@ -124,9 +124,15 @@ function initToggles() {
     initToggleGroup(['payoff-us', 'payoff-india'], el => {
         payoffSource = el.dataset.source;
     });
-    initToggleGroup(['loan-year-total', 'loan-year-1', 'loan-year-2'], el => {
-        loanYear = el.dataset.year;
-    });
+    // Year buttons use their own active class
+    for (const id of ['loan-year-1', 'loan-year-2']) {
+        $(id).addEventListener('click', () => {
+            document.querySelectorAll('.year-btn').forEach(b => b.classList.remove('year-btn--active'));
+            $(id).classList.add('year-btn--active');
+            loanYear = $(id).dataset.year;
+            scheduleUpdate();
+        });
+    }
     initToggleGroup(['breakeven-booth', 'breakeven-kellogg'], el => {
         breakevenProgram = el.dataset.program;
     });
@@ -195,28 +201,19 @@ function updateCalculations() {
     $('total-cost-diff').parentElement.querySelector('.card-detail').textContent =
         diff >= 0 ? 'Kellogg costs more' : 'Booth costs more';
 
-    // ── Loan principal based on year selection ──
-    let loanBoothPrincipal, loanKelloggPrincipal, loanBoothQuarters, loanKelloggQuarters;
-    const noteEl = $('loan-year-note');
+    // ── Loan principal based on year selection (always year-specific) ──
+    const yr = parseInt(loanYear) || 1;
+    const boothYr = calcYearCost('booth', yr, scholarshipBooth, rentMonthly, foodMonthly);
+    const kelloggYr = calcYearCost('kellogg', yr, scholarshipKellogg, rentMonthly, foodMonthly);
+    const loanBoothPrincipal = boothYr.total;
+    const loanKelloggPrincipal = kelloggYr.total;
+    const loanBoothQuarters = boothYr.quarters;
+    const loanKelloggQuarters = kelloggYr.quarters;
 
-    if (loanYear === '1' || loanYear === '2') {
-        const yr = parseInt(loanYear);
-        const boothYr = calcYearCost('booth', yr, scholarshipBooth, rentMonthly, foodMonthly);
-        const kelloggYr = calcYearCost('kellogg', yr, scholarshipKellogg, rentMonthly, foodMonthly);
-        loanBoothPrincipal = boothYr.total;
-        loanKelloggPrincipal = kelloggYr.total;
-        loanBoothQuarters = boothYr.quarters;
-        loanKelloggQuarters = kelloggYr.quarters;
-        if (noteEl) noteEl.textContent =
-            `Year ${yr}: Booth ${formatUSD(boothYr.tuition)} tuition + ${formatUSD(boothYr.fees)} fees + ${boothYr.months}mo living` +
-            ` · Kellogg ${formatUSD(kelloggYr.tuition)} tuition + ${formatUSD(kelloggYr.fees)} fees + ${kelloggYr.months}mo living`;
-    } else {
-        loanBoothPrincipal = totalBooth;
-        loanKelloggPrincipal = totalKellogg;
-        loanBoothQuarters = PROGRAMS.booth.quarters;
-        loanKelloggQuarters = PROGRAMS.kellogg.quarters;
-        if (noteEl) noteEl.textContent = '';
-    }
+    const noteEl = $('loan-year-note');
+    if (noteEl) noteEl.textContent =
+        `Booth: ${formatUSD(boothYr.tuition)} tuition + ${formatUSD(boothYr.fees)} fees + ${boothYr.months}mo living` +
+        `  ·  Kellogg: ${formatUSD(kelloggYr.tuition)} tuition + ${formatUSD(kelloggYr.fees)} fees + ${kelloggYr.months}mo living`;
 
     // ── US Loan ──
     const usBoothLoan = calcUSLoan(loanBoothPrincipal, usRate, usTerm);
@@ -256,9 +253,9 @@ function updateCalculations() {
     $('india-kellogg-tcs-cost').textContent = formatINR(indiaKelloggLoan.tcsAmount);
     $('india-kellogg-effective-total').textContent = formatUSD(indiaKelloggLoan.effectiveTotalUSD);
 
-    // ── Breakeven Chart ──
-    const breakevenPrincipal = breakevenProgram === 'booth' ? totalBooth : totalKellogg;
-    const breakevenQuarters = breakevenProgram === 'booth' ? PROGRAMS.booth.quarters : PROGRAMS.kellogg.quarters;
+    // ── Breakeven Chart (uses same year selection as loan section) ──
+    const breakevenPrincipal = breakevenProgram === 'booth' ? loanBoothPrincipal : loanKelloggPrincipal;
+    const breakevenQuarters = breakevenProgram === 'booth' ? loanBoothQuarters : loanKelloggQuarters;
     const depRates = [
         Math.max(indiaDepreciation - 1.5, -2),
         indiaDepreciation,
@@ -282,12 +279,13 @@ function updateCalculations() {
         payoffNote = ` Early payoff: US in <strong>${usEarlyPayoff}yr</strong>, India in <strong>${indiaEarlyPayoff}yr</strong>.`;
     }
     const progLabel = breakevenProgram === 'booth' ? 'Booth' : 'Kellogg';
+    const yearLabel = `Year ${yr}`;
     if (breakevenResult.rate !== null) {
         $('breakeven-text').innerHTML =
-            `<strong>${progLabel}</strong>: At <strong>${indiaDepreciation}%</strong> annual INR depreciation, an Indian bank loan is cheaper when the rate is below <strong>${breakevenResult.rate.toFixed(2)}%</strong>. ` +
+            `<strong>${progLabel} ${yearLabel}</strong> (${formatUSD(breakevenPrincipal)} principal): Indian loan is cheaper when rate is below <strong>${breakevenResult.rate.toFixed(2)}%</strong> at <strong>${indiaDepreciation}%</strong> depreciation. ` +
             `US loan at <strong>${usRate}%</strong> APR.` + payoffNote;
     } else {
-        $('breakeven-text').innerHTML = `<strong>${progLabel}</strong>: ` + breakevenResult.message + payoffNote;
+        $('breakeven-text').innerHTML = `<strong>${progLabel} ${yearLabel}</strong>: ` + breakevenResult.message + payoffNote;
     }
 
     // ── Cost Comparison Bar Chart ──
