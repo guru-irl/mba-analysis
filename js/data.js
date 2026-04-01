@@ -13,9 +13,9 @@ const PROGRAMS = {
         programMonths: 21,
         // Per-year breakdown for year-over-year loan analysis
         years: {
-            1: { tuition: 96084, fees: 4690, months: 12, quarters: 3 },
+            1: { tuition: 96084, fees: 4690, months: 9, quarters: 3 },
             // fees: services $1,509 + admin $3,100 + transcript $81
-            2: { tuition: 92619, fees: 1509, months: 9, quarters: 3 },
+            2: { tuition: 92619, fees: 1509, months: 12, quarters: 3 },
             // fees: services $1,509 only
         },
     },

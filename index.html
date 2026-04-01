@@ -47,7 +47,7 @@
 <section id="tab-cost" class="tab-panel active" role="tabpanel">
 
     <!-- ── TUITION COMPARISON ──────────────────────────────────── -->
-    <div class="section-label">Tuition Comparison</div>
+    <div class="section-label">Program Costs</div>
     <div class="program-grid">
 
         <!-- Booth Card -->
@@ -57,25 +57,13 @@
                 <div class="card-header">
                     <span class="school-badge school-badge--booth">BOOTH</span>
                     <h3 class="program-name">MBA / MPCS</h3>
-                    <p class="school-name">University of Chicago</p>
+                    <p class="school-name">University of Chicago · 21 months</p>
                 </div>
                 <table class="tuition-table">
-                    <tr>
-                        <td class="tuition-label">Year 1 (3 qtrs)</td>
-                        <td class="tuition-amount">$96,084</td>
-                    </tr>
-                    <tr>
-                        <td class="tuition-label">Year 2 (3 qtrs)</td>
-                        <td class="tuition-amount">$92,619</td>
-                    </tr>
-                    <tr>
-                        <td class="tuition-label">Program Fees</td>
-                        <td class="tuition-amount">$6,199</td>
-                    </tr>
-                    <tr class="tuition-total-row">
-                        <td class="tuition-label">Gross Total</td>
-                        <td class="tuition-amount tuition-amount--total">$194,902</td>
-                    </tr>
+                    <tr><td class="tuition-label">Year 1 (3 qtrs)</td><td class="tuition-amount">$96,084</td></tr>
+                    <tr><td class="tuition-label">Year 2 (3 qtrs)</td><td class="tuition-amount">$92,619</td></tr>
+                    <tr><td class="tuition-label">Program Fees</td><td class="tuition-amount">$6,199</td></tr>
+                    <tr class="tuition-total-row"><td class="tuition-label">Gross Tuition</td><td class="tuition-amount tuition-amount--total">$194,902</td></tr>
                 </table>
                 <div class="scholarship-block">
                     <label class="input-label" for="scholarship-booth">Scholarship Award</label>
@@ -92,6 +80,40 @@
                         <span class="computed-value mono" id="booth-net-tuition">$194,902</span>
                     </div>
                 </div>
+                <div class="living-block">
+                    <label class="input-label">Monthly Living Expenses</label>
+                    <div class="slider-row">
+                        <label class="slider-label" for="rent-booth">Rent</label>
+                        <div class="slider-control">
+                            <input type="range" id="rent-booth" class="slider" min="500" max="5000" step="50" value="2200">
+                            <div class="slider-value">
+                                <span class="currency-symbol">$</span>
+                                <input type="number" id="rent-booth-num" class="num-input" min="500" max="5000" step="50" value="2200">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slider-row">
+                        <label class="slider-label" for="food-booth">Food</label>
+                        <div class="slider-control">
+                            <input type="range" id="food-booth" class="slider" min="100" max="2000" step="25" value="600">
+                            <div class="slider-value">
+                                <span class="currency-symbol">$</span>
+                                <input type="number" id="food-booth-num" class="num-input" min="100" max="2000" step="25" value="600">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="computed-row">
+                        <span class="computed-label">Total Living (21 mo)</span>
+                        <span class="computed-value mono" id="booth-living-total">$58,800</span>
+                    </div>
+                </div>
+                <div class="cost-of-attendance-row">
+                    <div class="coa-label-group">
+                        <span class="coa-label">Cost of Attendance</span>
+                        <span class="coa-duration">9 + 12 months</span>
+                    </div>
+                    <span class="coa-value mono" id="total-cost-booth">—</span>
+                </div>
             </div>
         </div>
 
@@ -102,25 +124,13 @@
                 <div class="card-header">
                     <span class="school-badge school-badge--kellogg">KELLOGG</span>
                     <h3 class="program-name">MMM</h3>
-                    <p class="school-name">Northwestern University</p>
+                    <p class="school-name">Northwestern University · 24 months</p>
                 </div>
                 <table class="tuition-table">
-                    <tr>
-                        <td class="tuition-label">Year 1 (4 qtrs incl. summer)</td>
-                        <td class="tuition-amount">$115,160</td>
-                    </tr>
-                    <tr>
-                        <td class="tuition-label">Year 2 (3 qtrs)</td>
-                        <td class="tuition-amount">$86,370</td>
-                    </tr>
-                    <tr>
-                        <td class="tuition-label">Program Fees</td>
-                        <td class="tuition-amount">$7,603</td>
-                    </tr>
-                    <tr class="tuition-total-row">
-                        <td class="tuition-label">Gross Total</td>
-                        <td class="tuition-amount tuition-amount--total">$209,133</td>
-                    </tr>
+                    <tr><td class="tuition-label">Year 1 (4 qtrs incl. summer)</td><td class="tuition-amount">$115,160</td></tr>
+                    <tr><td class="tuition-label">Year 2 (3 qtrs)</td><td class="tuition-amount">$86,370</td></tr>
+                    <tr><td class="tuition-label">Program Fees</td><td class="tuition-amount">$7,603</td></tr>
+                    <tr class="tuition-total-row"><td class="tuition-label">Gross Tuition</td><td class="tuition-amount tuition-amount--total">$209,133</td></tr>
                 </table>
                 <div class="scholarship-block">
                     <label class="input-label" for="scholarship-kellogg">Scholarship Award</label>
@@ -137,84 +147,73 @@
                         <span class="computed-value mono" id="kellogg-net-tuition">$209,133</span>
                     </div>
                 </div>
+                <div class="living-block">
+                    <label class="input-label">Monthly Living Expenses</label>
+                    <div class="slider-row">
+                        <label class="slider-label" for="rent-kellogg">Rent</label>
+                        <div class="slider-control">
+                            <input type="range" id="rent-kellogg" class="slider" min="500" max="5000" step="50" value="2200">
+                            <div class="slider-value">
+                                <span class="currency-symbol">$</span>
+                                <input type="number" id="rent-kellogg-num" class="num-input" min="500" max="5000" step="50" value="2200">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slider-row">
+                        <label class="slider-label" for="food-kellogg">Food</label>
+                        <div class="slider-control">
+                            <input type="range" id="food-kellogg" class="slider" min="100" max="2000" step="25" value="600">
+                            <div class="slider-value">
+                                <span class="currency-symbol">$</span>
+                                <input type="number" id="food-kellogg-num" class="num-input" min="100" max="2000" step="25" value="600">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="computed-row">
+                        <span class="computed-label">Total Living (24 mo)</span>
+                        <span class="computed-value mono" id="kellogg-living-total">$67,200</span>
+                    </div>
+                </div>
+                <div class="cost-of-attendance-row">
+                    <div class="coa-label-group">
+                        <span class="coa-label">Cost of Attendance</span>
+                        <span class="coa-duration">24 months</span>
+                    </div>
+                    <span class="coa-value mono" id="total-cost-kellogg">—</span>
+                </div>
             </div>
+        </div>
+    </div>
+
+    <!-- ── GRAND TOTAL BANNER ──────────────────────────────────── -->
+    <div class="grand-total-banner">
+        <div class="grand-total-cell grand-total-cell--booth">
+            <span class="grand-total-cell-value mono" id="grand-total-booth-mini">—</span>
+            <span class="grand-total-subtitle">Booth MBA/MPCS</span>
+        </div>
+        <div class="grand-total-op-cell"><span class="grand-total-op">+</span></div>
+        <div class="grand-total-cell grand-total-cell--kellogg">
+            <span class="grand-total-cell-value mono" id="grand-total-kellogg-mini">—</span>
+            <span class="grand-total-subtitle">Kellogg MMM</span>
+        </div>
+        <div class="grand-total-op-cell"><span class="grand-total-op">=</span></div>
+        <div class="grand-total-cell grand-total-cell--result">
+            <span class="grand-total-cell-value grand-total-cell-value--result mono" id="total-cost-grand">—</span>
+            <span class="grand-total-subtitle">Total Household Cost</span>
         </div>
     </div>
 
     <details class="methodology">
-        <summary>How we calculate tuition</summary>
+        <summary>How we calculate costs</summary>
         <div class="methodology-body">
-            <p>Tuition figures are sourced from official 2025-26 university pages. Booth MBA/MPCS charges a higher per-quarter rate than the standard MBA ($32,028 vs $29,118) to cover up to 2,400 coursework units. Kellogg MMM has the same per-quarter rate as the 2Y MBA ($28,790) but includes an extra summer quarter in Year 1.</p>
+            <p>Tuition figures are sourced from official 2025-26 university pages. Booth MBA/MPCS charges a higher per-quarter rate ($32,028 vs $29,118 standard MBA). Kellogg MMM has the same per-quarter rate as the 2Y MBA ($28,790) but includes an extra summer quarter in Year 1.</p>
             <ul>
-                <li><strong>Booth Y1:</strong> $96,084 tuition + $4,690 fees (services $1,509 + admin $3,100 + transcript $81)</li>
-                <li><strong>Booth Y2:</strong> $92,619 tuition + $1,509 fees (services only, continuing rate)</li>
-                <li><strong>Kellogg Y1:</strong> $115,160 tuition (4 qtrs incl. summer) + $5,091 fees</li>
-                <li><strong>Kellogg Y2:</strong> $86,370 tuition (3 qtrs, same as standard 2Y) + $2,512 fees</li>
+                <li><strong>Booth:</strong> Y1 $96,084 + $4,690 fees · Y2 $92,619 + $1,509 fees · 21 months living</li>
+                <li><strong>Kellogg:</strong> Y1 $115,160 + $5,091 fees · Y2 $86,370 + $2,512 fees · 24 months living</li>
             </ul>
-            <p>Scholarships are split proportionally by quarters per year. Booth: 3/6 per year. Kellogg: 4/7 in Y1 (summer quarter), 3/7 in Y2.</p>
+            <p>Scholarships split proportionally by quarters. Cost of Attendance = Net Tuition + Total Living.</p>
         </div>
     </details>
-
-    <!-- ── LIVING EXPENSES ─────────────────────────────────────── -->
-    <div class="section-label">Living Expenses <span class="section-note">Both programs in Chicago</span></div>
-    <div class="panel">
-        <div class="slider-grid">
-            <div class="slider-row">
-                <label class="slider-label" for="rent-monthly">Monthly Rent</label>
-                <div class="slider-control">
-                    <input type="range" id="rent-monthly" class="slider" min="500" max="5000" step="50" value="2200">
-                    <div class="slider-value">
-                        <span class="currency-symbol">$</span>
-                        <input type="number" id="rent-monthly-num" class="num-input" min="500" max="5000" step="50" value="2200">
-                    </div>
-                </div>
-            </div>
-            <div class="slider-row">
-                <label class="slider-label" for="food-monthly">Monthly Food</label>
-                <div class="slider-control">
-                    <input type="range" id="food-monthly" class="slider" min="100" max="2000" step="25" value="600">
-                    <div class="slider-value">
-                        <span class="currency-symbol">$</span>
-                        <input type="number" id="food-monthly-num" class="num-input" min="100" max="2000" step="25" value="600">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="living-summary">
-            <div class="summary-pill">
-                <span class="pill-label">Monthly Total</span>
-                <span class="pill-value mono" id="monthly-living">$2,800</span>
-            </div>
-            <div class="summary-pill summary-pill--booth">
-                <span class="pill-label">Booth · 21 mo</span>
-                <span class="pill-value mono" id="booth-living-total">$58,800</span>
-            </div>
-            <div class="summary-pill summary-pill--kellogg">
-                <span class="pill-label">Kellogg · 24 mo</span>
-                <span class="pill-value mono" id="kellogg-living-total">$67,200</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- ── TOTAL COST SUMMARY ──────────────────────────────────── -->
-    <div class="section-label">Total Cost of Attendance</div>
-    <div class="summary-cards">
-        <div class="summary-card summary-card--booth">
-            <span class="card-kicker">Booth MBA/MPCS</span>
-            <span class="card-figure mono" id="total-cost-booth">$253,702</span>
-            <span class="card-detail">Net Tuition + Living</span>
-        </div>
-        <div class="summary-card summary-card--kellogg">
-            <span class="card-kicker">Kellogg MMM</span>
-            <span class="card-figure mono" id="total-cost-kellogg">$267,933</span>
-            <span class="card-detail">Net Tuition + Living</span>
-        </div>
-        <div class="summary-card summary-card--diff">
-            <span class="card-kicker">Difference</span>
-            <span class="card-figure mono" id="total-cost-diff">+$14,231</span>
-            <span class="card-detail">Kellogg costs more</span>
-        </div>
-    </div>
 
     <!-- ── LOAN COMPARISON ─────────────────────────────────────── -->
     <div class="section-label">Loan Comparison</div>
@@ -230,13 +229,76 @@
     </div>
     <div class="loan-year-note" id="loan-year-note" style="font-size:0.78rem; color:var(--text-secondary); margin-bottom:var(--space-md); text-align:center;"></div>
     <div class="year-scope-zone">
+
+    <!-- ── CURRENCY & FX SECTION ───────────────────────────────── -->
+    <div class="section-label" style="margin-top: 0;">Currency &amp; Exchange Rate</div>
+    <div class="panel" style="margin-bottom: var(--space-lg);">
+        <div class="slider-grid">
+            <div class="inline-input-group">
+                <label class="slider-label" for="fx-rate">Current INR/USD Rate <span id="fx-rate-status" class="fx-status"></span></label>
+                <div class="currency-input">
+                    <span class="currency-symbol">₹</span>
+                    <input type="number" id="fx-rate" class="num-input" min="60" max="120" step="0.5" value="93">
+                </div>
+            </div>
+            <div class="slider-row">
+                <label class="slider-label" for="india-depreciation">Annual INR Depreciation</label>
+                <div class="slider-control">
+                    <input type="range" id="india-depreciation" class="slider slider--india" min="-2" max="10" step="0.1" value="3.5">
+                    <div class="slider-value">
+                        <input type="number" id="india-depreciation-num" class="num-input" min="-2" max="10" step="0.1" value="3.5">
+                        <span class="unit">%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="chart-container chart-container--sm" style="margin-top: var(--space-md);">
+            <canvas id="fx-history-chart"></canvas>
+        </div>
+        <details class="methodology">
+            <summary>About this data</summary>
+            <div class="methodology-body">
+                <p>Bars show year-over-year INR depreciation (red = weaker, green = stronger). The line tracks the absolute INR/USD rate. Historical data uses year-end approximate rates from 2016-2025.</p>
+                <p>The 2026* data point is the <strong>live rate</strong> fetched from <code>open.er-api.com</code> on page load. Its depreciation is computed against the 2025 year-end rate (&#8377;88.72).</p>
+                <p><strong>10-year average:</strong> ~3.5% annual depreciation (CAGR). Excluding the 2021 anomaly (rupee strengthened during COVID recovery), the average is ~4.2%. Worst year: 2022 at 9.1% (Ukraine war, Fed hikes). This historical range informs the default depreciation slider.</p>
+            </div>
+        </details>
+    </div>
+
+    <!-- ── PER-YEAR COST CARDS ─────────────────────────────────── -->
+    <div class="section-label">Loan Amount for This Year</div>
+    <div class="grand-total-banner grand-total-banner--with-details" style="margin-top: 0; margin-bottom: var(--space-lg);">
+        <div class="grand-total-cell grand-total-cell--booth">
+            <span class="grand-total-cell-value mono" id="year-cost-booth">—</span>
+            <span class="grand-total-subtitle">Booth</span>
+        </div>
+        <div class="grand-total-op-cell"><span class="grand-total-op">+</span></div>
+        <div class="grand-total-cell grand-total-cell--kellogg">
+            <span class="grand-total-cell-value mono" id="year-cost-kellogg">—</span>
+            <span class="grand-total-subtitle">Kellogg</span>
+        </div>
+        <div class="grand-total-op-cell"><span class="grand-total-op">=</span></div>
+        <div class="grand-total-cell grand-total-cell--result">
+            <span class="grand-total-cell-value grand-total-cell-value--result mono" id="year-cost-grand">—</span>
+            <span class="grand-total-subtitle">Combined This Year</span>
+        </div>
+        <div class="grand-total-detail-cell grand-total-detail-cell--booth" id="year-cost-booth-detail">tuition + fees + living</div>
+        <div class="grand-total-detail-cell grand-total-detail-cell--kellogg" id="year-cost-kellogg-detail">tuition + fees + living</div>
+        <div class="grand-total-detail-cell grand-total-detail-cell--result" id="year-cost-grand-detail">combined breakdown</div>
+    </div>
+
+    <!-- ── LOAN TERMS & RESULTS ────────────────────────────────── -->
+    <div class="section-label">Loan Terms &amp; Repayment Costs</div>
     <div class="loan-grid">
 
         <!-- US Loan Panel -->
         <div class="loan-panel loan-panel--us">
-            <div class="loan-header">
-                <h3 class="loan-title">US Loan <span class="loan-provider">(Earnest)</span></h3>
-                <span class="loan-badge loan-badge--green">No fees</span>
+            <div class="loan-header loan-header--us">
+                <h3 class="loan-title">US Loan</h3>
+                <div class="loan-badges">
+                    <span class="loan-badge loan-badge--us-provider">Earnest</span>
+                    <span class="loan-badge loan-badge--green">No fees</span>
+                </div>
             </div>
             <div class="loan-sliders">
                 <div class="slider-row">
@@ -262,33 +324,57 @@
             </div>
             <div class="loan-results-grid">
                 <div class="loan-result-block loan-result-block--booth">
-                    <h4 class="result-school">Booth</h4>
-                    <div class="result-row">
-                        <span>Monthly Payment</span>
-                        <span class="mono" id="us-booth-monthly">—</span>
-                    </div>
-                    <div class="result-row">
-                        <span>Total Interest</span>
-                        <span class="mono" id="us-booth-total-interest">—</span>
-                    </div>
-                    <div class="result-row result-row--total">
-                        <span>Total Cost</span>
-                        <span class="mono" id="us-booth-total-cost">—</span>
+                    <div class="result-content">
+                        <h4 class="result-school">Booth</h4>
+                        <div class="result-row">
+                            <span>Monthly Payment</span>
+                            <span class="mono" id="us-booth-monthly">—</span>
+                        </div>
+                        <div class="result-totals">
+                            <div class="result-row result-row--total">
+                                <span>Total Interest (USD)</span>
+                                <span class="mono" id="us-booth-total-interest">—</span>
+                            </div>
+                            <div class="result-row result-row--total">
+                                <span>Total Interest (INR) <span class="tooltip-wrap">?<span class="tooltip-text">USD interest converted month-by-month at depreciation-adjusted rates. As INR weakens, each USD payment costs more rupees.</span></span></span>
+                                <span class="mono" id="us-booth-total-interest-inr">—</span>
+                            </div>
+                            <div class="result-row result-row--total">
+                                <span>Total Repayment (USD)</span>
+                                <span class="mono" id="us-booth-total-cost">—</span>
+                            </div>
+                            <div class="result-row result-row--total">
+                                <span>Total Repayment (INR) <span class="tooltip-wrap">?<span class="tooltip-text">USD payments converted month-by-month at depreciation-adjusted rates. Reflects the true INR cost if earning in rupees.</span></span></span>
+                                <span class="mono" id="us-booth-total-cost-inr">—</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="loan-result-block loan-result-block--kellogg">
-                    <h4 class="result-school">Kellogg</h4>
-                    <div class="result-row">
-                        <span>Monthly Payment</span>
-                        <span class="mono" id="us-kellogg-monthly">—</span>
-                    </div>
-                    <div class="result-row">
-                        <span>Total Interest</span>
-                        <span class="mono" id="us-kellogg-total-interest">—</span>
-                    </div>
-                    <div class="result-row result-row--total">
-                        <span>Total Cost</span>
-                        <span class="mono" id="us-kellogg-total-cost">—</span>
+                    <div class="result-content">
+                        <h4 class="result-school">Kellogg</h4>
+                        <div class="result-row">
+                            <span>Monthly Payment</span>
+                            <span class="mono" id="us-kellogg-monthly">—</span>
+                        </div>
+                        <div class="result-totals">
+                            <div class="result-row result-row--total">
+                                <span>Total Interest (USD)</span>
+                                <span class="mono" id="us-kellogg-total-interest">—</span>
+                            </div>
+                            <div class="result-row result-row--total">
+                                <span>Total Interest (INR) <span class="tooltip-wrap">?<span class="tooltip-text">USD interest converted month-by-month at depreciation-adjusted rates. As INR weakens, each USD payment costs more rupees.</span></span></span>
+                                <span class="mono" id="us-kellogg-total-interest-inr">—</span>
+                            </div>
+                            <div class="result-row result-row--total">
+                                <span>Total Repayment (USD)</span>
+                                <span class="mono" id="us-kellogg-total-cost">—</span>
+                            </div>
+                            <div class="result-row result-row--total">
+                                <span>Total Repayment (INR) <span class="tooltip-wrap">?<span class="tooltip-text">USD payments converted month-by-month at depreciation-adjusted rates. Reflects the true INR cost if earning in rupees.</span></span></span>
+                                <span class="mono" id="us-kellogg-total-cost-inr">—</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -296,9 +382,9 @@
 
         <!-- Indian Loan Panel -->
         <div class="loan-panel loan-panel--india">
-            <div class="loan-header">
+            <div class="loan-header loan-header--india">
                 <h3 class="loan-title">Indian Bank Loan</h3>
-                <span class="loan-badge loan-badge--amber">SBI / HDFC / ICICI</span>
+                <span class="loan-badge loan-badge--india-provider">SBI / HDFC / ICICI</span>
             </div>
             <div class="loan-sliders">
                 <div class="slider-row">
@@ -350,73 +436,88 @@
                         </div>
                     </div>
                     <div class="inline-input-group">
-                        <label class="slider-label" for="fx-rate">Current INR/USD Rate <span id="fx-rate-status" class="fx-status"></span></label>
-                        <div class="currency-input currency-input--sm">
-                            <span class="currency-symbol">₹</span>
-                            <input type="number" id="fx-rate" class="num-input" min="60" max="120" step="0.5" value="93">
-                        </div>
-                    </div>
-                    <div class="inline-input-group">
                         <label class="slider-label">TCS Rate</label>
                         <div class="static-value mono">0.5%</div>
-                    </div>
-                </div>
-                <div class="slider-row">
-                    <label class="slider-label" for="india-depreciation">Annual INR Depreciation</label>
-                    <div class="slider-control">
-                        <input type="range" id="india-depreciation" class="slider slider--india" min="-2" max="10" step="0.1" value="3.5">
-                        <div class="slider-value">
-                            <input type="number" id="india-depreciation-num" class="num-input" min="-2" max="10" step="0.1" value="3.5">
-                            <span class="unit">%</span>
-                        </div>
                     </div>
                 </div>
             </div>
             <div class="loan-results-grid">
                 <div class="loan-result-block loan-result-block--booth">
-                    <h4 class="result-school">Booth</h4>
-                    <div class="result-row">
-                        <span>EMI (₹)</span>
-                        <span class="mono" id="india-booth-emi">—</span>
-                    </div>
-                    <div class="result-row">
-                        <span>Processing + GST</span>
-                        <span class="mono" id="india-booth-processing-cost">—</span>
-                    </div>
-                    <div class="result-row">
-                        <span>Forex + SWIFT Costs</span>
-                        <span class="mono" id="india-booth-forex-cost">—</span>
-                    </div>
-                    <div class="result-row">
-                        <span>TCS (refundable)</span>
-                        <span class="mono" id="india-booth-tcs-cost">—</span>
-                    </div>
-                    <div class="result-row result-row--total">
-                        <span>Effective Total (USD)</span>
-                        <span class="mono" id="india-booth-effective-total">—</span>
+                    <div class="result-content">
+                        <h4 class="result-school">Booth</h4>
+                        <div class="result-row">
+                            <span>Monthly EMI</span>
+                            <span class="mono" id="india-booth-emi">—</span>
+                        </div>
+                        <div class="result-row result-row--small">
+                            <span>Processing + GST</span>
+                            <span class="mono" id="india-booth-processing-cost">—</span>
+                        </div>
+                        <div class="result-row result-row--small">
+                            <span>Forex + SWIFT</span>
+                            <span class="mono" id="india-booth-forex-cost">—</span>
+                        </div>
+                        <div class="result-row result-row--small">
+                            <span>TCS (refundable)</span>
+                            <span class="mono" id="india-booth-tcs-cost">—</span>
+                        </div>
+                        <div class="result-totals">
+                            <div class="result-row result-row--total">
+                                <span>Total Interest (USD) <span class="tooltip-wrap">?<span class="tooltip-text">INR interest converted month-by-month at depreciation-adjusted rates. As INR weakens, each EMI costs fewer dollars.</span></span></span>
+                                <span class="mono" id="india-booth-interest-usd">—</span>
+                            </div>
+                            <div class="result-row result-row--total">
+                                <span>Total Interest (INR)</span>
+                                <span class="mono" id="india-booth-interest-inr">—</span>
+                            </div>
+                            <div class="result-row result-row--total">
+                                <span>Total Repayment (USD) <span class="tooltip-wrap">?<span class="tooltip-text">Each monthly INR EMI converted to USD at the projected depreciation rate + disbursement fees + TCS. This is your real dollar cost.</span></span></span>
+                                <span class="mono" id="india-booth-effective-total">—</span>
+                            </div>
+                            <div class="result-row result-row--total">
+                                <span>Total Repayment (INR)</span>
+                                <span class="mono" id="india-booth-total-inr">—</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="loan-result-block loan-result-block--kellogg">
-                    <h4 class="result-school">Kellogg</h4>
-                    <div class="result-row">
-                        <span>EMI (₹)</span>
-                        <span class="mono" id="india-kellogg-emi">—</span>
-                    </div>
-                    <div class="result-row">
-                        <span>Processing + GST</span>
-                        <span class="mono" id="india-kellogg-processing-cost">—</span>
-                    </div>
-                    <div class="result-row">
-                        <span>Forex + SWIFT Costs</span>
-                        <span class="mono" id="india-kellogg-forex-cost">—</span>
-                    </div>
-                    <div class="result-row">
-                        <span>TCS (refundable)</span>
-                        <span class="mono" id="india-kellogg-tcs-cost">—</span>
-                    </div>
-                    <div class="result-row result-row--total">
-                        <span>Effective Total (USD)</span>
-                        <span class="mono" id="india-kellogg-effective-total">—</span>
+                    <div class="result-content">
+                        <h4 class="result-school">Kellogg</h4>
+                        <div class="result-row">
+                            <span>Monthly EMI</span>
+                            <span class="mono" id="india-kellogg-emi">—</span>
+                        </div>
+                        <div class="result-row result-row--small">
+                            <span>Processing + GST</span>
+                            <span class="mono" id="india-kellogg-processing-cost">—</span>
+                        </div>
+                        <div class="result-row result-row--small">
+                            <span>Forex + SWIFT</span>
+                            <span class="mono" id="india-kellogg-forex-cost">—</span>
+                        </div>
+                        <div class="result-row result-row--small">
+                            <span>TCS (refundable)</span>
+                            <span class="mono" id="india-kellogg-tcs-cost">—</span>
+                        </div>
+                        <div class="result-totals">
+                            <div class="result-row result-row--total">
+                                <span>Total Interest (USD) <span class="tooltip-wrap">?<span class="tooltip-text">INR interest converted month-by-month at depreciation-adjusted rates. As INR weakens, each EMI costs fewer dollars.</span></span></span>
+                                <span class="mono" id="india-kellogg-interest-usd">—</span>
+                            </div>
+                            <div class="result-row result-row--total">
+                                <span>Total Interest (INR)</span>
+                                <span class="mono" id="india-kellogg-interest-inr">—</span>
+                            </div>
+                            <div class="result-row result-row--total">
+                                <span>Total Repayment (USD) <span class="tooltip-wrap">?<span class="tooltip-text">Each monthly INR EMI converted to USD at the projected depreciation rate + disbursement fees + TCS. This is your real dollar cost.</span></span></span>
+                                <span class="mono" id="india-kellogg-effective-total">—</span>
+                            </div>
+                            <div class="result-row result-row--total">
+                                <span>Total Repayment (INR)</span>
+                                <span class="mono" id="india-kellogg-total-inr">—</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -426,32 +527,45 @@
     <details class="methodology">
         <summary>How we calculate loan costs</summary>
         <div class="methodology-body">
-            <p><strong>US Loan (Earnest):</strong> Standard amortization. Monthly payment <code>M = P &times; r(1+r)^n / ((1+r)^n - 1)</code> where P = principal, r = monthly rate, n = total payments. Earnest charges zero origination fees, late fees, or prepayment penalties.</p>
-            <p><strong>Indian Bank Loan:</strong> More complex because of currency conversion costs and FX depreciation.</p>
+            <p><strong>Amortization formula</strong> (same for both loan types):</p>
+            <p style="text-align:center;"><code>EMI = P &times; r(1+r)^n / ((1+r)^n - 1)</code></p>
+            <p>where P = principal, r = monthly rate (APR/12), n = total monthly payments.</p>
+
+            <p><strong>US Loan (Earnest):</strong> Borrowed and repaid in USD. Zero fees. The 4 total rows show:</p>
             <ul>
-                <li><strong>Principal:</strong> Converted to INR at the current spot rate</li>
-                <li><strong>Processing fee:</strong> % of INR principal + 18% GST on the fee</li>
-                <li><strong>TCS:</strong> 0.5% tax collected at source on amounts exceeding &#8377;7,00,000 (refundable in tax filing)</li>
-                <li><strong>Disbursement costs:</strong> Each quarterly tranche incurs forex markup (% of tranche) + SWIFT fee ($20) + correspondent bank fee ($25)</li>
-                <li><strong>EMI:</strong> Computed in INR on (principal + processing fee) using standard amortization</li>
-                <li><strong>USD-equivalent cost:</strong> Each month's INR EMI is divided by the projected FX rate: <code>EMI&#8377; / (spot &times; (1 + depreciation)^(month/12))</code>. As INR weakens, each EMI costs fewer USD — this is the FX advantage for USD earners</li>
-                <li><strong>Effective total:</strong> Sum of all USD-equivalent EMIs + disbursement costs + TCS</li>
+                <li><strong>Total Interest / Repayment (USD)</strong> — direct: EMI &times; n and interest portion from amortization schedule</li>
+                <li><strong>Total Interest / Repayment (INR)</strong> — each month's USD payment converted to INR at the depreciation-adjusted rate: <code>payment$ &times; FX &times; (1 + dep%)^(month/12)</code>. As INR weakens, each USD payment costs <em>more</em> rupees. This shows the true INR burden if comparing against an Indian loan</li>
             </ul>
-            <p><strong>Year-over-year view:</strong> When "Year 1" or "Year 2" is selected, the loan principal = that year's tuition + fees - proportional scholarship + living costs for that year's duration. Kellogg Y1 is notably higher due to the summer quarter.</p>
+
+            <p><strong>Indian Bank Loan:</strong> Borrowed and repaid in INR, but you need USD to pay tuition.</p>
+            <p><em>Disbursement costs (USD &rarr; INR):</em></p>
+            <ul>
+                <li>Processing fee: <code>P&#8377; &times; fee% &times; 1.18</code> (18% GST)</li>
+                <li>TCS: <code>0.5% &times; max(P&#8377; - &#8377;7L, 0)</code> — refundable</li>
+                <li>Per-tranche: <code>(tranche$ &times; forex%) + SWIFT + correspondent</code> &times; quarters</li>
+            </ul>
+            <p><em>The 4 total rows show:</em></p>
+            <ul>
+                <li><strong>Total Interest / Repayment (INR)</strong> — direct from INR amortization schedule</li>
+                <li><strong>Total Interest (USD)</strong> — each month's INR interest portion divided by the depreciation-adjusted rate: <code>interest&#8377; / (FX &times; (1 + dep%)^(month/12))</code>. As INR weakens, each EMI costs <em>fewer</em> dollars</li>
+                <li><strong>Total Repayment (USD)</strong> — &sum; of all depreciation-adjusted monthly EMIs + disbursement costs + TCS. This is your effective dollar cost</li>
+            </ul>
+
+            <p><strong>Year 2:</strong> Starting FX rate is compounded: <code>FX &times; (1 + dep%)</code>, reflecting one year of depreciation before disbursement.</p>
+            <p><strong>Year-over-year:</strong> Principal = that year's tuition + fees - proportional scholarship + living. Kellogg Y1 is higher ($115k, summer quarter) while Y2 is $86k.</p>
         </div>
     </details>
 
     <!-- ── BREAKEVEN ANALYSIS ──────────────────────────────────── -->
     <div class="section-label">Breakeven Analysis <span class="section-note">At what Indian rate does US win?</span></div>
 
-    <div class="config-bar" style="margin-bottom: var(--space-md);">
-        <div class="toggle-group">
-            <span class="toggle-label">Program</span>
-            <div class="toggle-btns">
-                <button class="toggle-btn toggle-btn--booth active" id="breakeven-booth" data-program="booth">Booth</button>
-                <button class="toggle-btn toggle-btn--kellogg" id="breakeven-kellogg" data-program="kellogg">Kellogg</button>
-            </div>
-        </div>
+    <div class="program-toggle-bar">
+        <button class="program-btn program-btn--booth program-btn--active" id="breakeven-booth" data-program="booth">
+            <span class="program-btn-label">Booth MBA/MPCS</span>
+        </button>
+        <button class="program-btn program-btn--kellogg" id="breakeven-kellogg" data-program="kellogg">
+            <span class="program-btn-label">Kellogg MMM</span>
+        </button>
     </div>
     <div class="panel" style="margin-bottom: var(--space-md);">
         <div class="slider-grid">
@@ -498,27 +612,19 @@
             </div>
         </details>
     </div>
-    </div><!-- /.year-scope-zone -->
 
-    <!-- ── COST COMPARISON CHART ───────────────────────────────── -->
-    <div class="section-label">Total Loan Cost Comparison</div>
+    <!-- ── COST COMPARISON CHART (inside scope zone) ───────────── -->
+    <div class="section-label" style="margin-top: var(--space-xl);">Year Cost Comparison <span class="section-note">Accounts for depreciation, early payoff &amp; all fees</span></div>
     <div class="panel">
         <div class="config-bar" style="margin-bottom: var(--space-md); padding: var(--space-sm) var(--space-md);">
             <div class="toggle-group">
-                <span class="toggle-label">Currency</span>
+                <span class="toggle-label">Display Currency</span>
                 <div class="toggle-btns">
                     <button class="toggle-btn active" id="cost-currency-usd" data-currency="usd">USD ($)</button>
                     <button class="toggle-btn" id="cost-currency-inr" data-currency="inr">INR (&#8377;)</button>
                 </div>
             </div>
-            <div class="toggle-group">
-                <span class="toggle-label">Exchange Rate</span>
-                <div class="currency-input currency-input--sm">
-                    <span class="currency-symbol">&#8377;</span>
-                    <input type="number" id="cost-fx-rate" class="num-input" min="60" max="120" step="0.5" value="93">
-                    <span class="fx-status" id="cost-fx-status"></span>
-                </div>
-            </div>
+            <span style="font-size:0.72rem; color:var(--text-muted);">Uses exchange rate set above</span>
         </div>
         <div class="chart-container">
             <canvas id="cost-comparison-chart"></canvas>
@@ -526,32 +632,19 @@
         <details class="methodology">
             <summary>How to read this chart</summary>
             <div class="methodology-body">
-                <p>Stacked bars show the total cost of each loan broken into three components:</p>
+                <p>Stacked bars show the total cost for the selected year's loan, factoring in early payoff period, INR depreciation, and all transaction fees:</p>
                 <ul>
-                    <li><strong>Principal</strong> (gray): The amount you actually borrow — net tuition + fees + living expenses</li>
-                    <li><strong>Interest</strong> (blue): Total interest paid over the loan term. For Indian loans, this is the USD-equivalent interest after accounting for FX depreciation</li>
-                    <li><strong>Fees &amp; FX costs</strong> (amber): Indian loan only — processing fee + GST, forex markup on each quarterly disbursement, SWIFT/correspondent fees, and TCS</li>
+                    <li><strong>Principal</strong> (gray): The amount borrowed for this year — tuition + fees - scholarship + living</li>
+                    <li><strong>Interest</strong> (blue): Interest paid over the payoff period (not the full loan term if paying early). For Indian loans this is the USD-equivalent after FX depreciation reduces each EMI's dollar cost over time</li>
+                    <li><strong>Fees &amp; FX costs</strong> (amber): Indian loan only — processing + GST, forex markup per quarterly tranche, SWIFT/correspondent fees, TCS</li>
                 </ul>
-                <p>US loans (Earnest) have zero fees, so the bar is just principal + interest. Indian loans have an additional fees layer. Compare the total bar height to see which option is cheaper overall.</p>
+                <p>If paying off early, both US and Indian totals reflect: regular EMI payments for the payoff period + lump-sum of remaining balance. The Indian loan benefits from depreciation during the payoff window — a shorter window means less FX advantage.</p>
             </div>
         </details>
     </div>
+    </div><!-- /.year-scope-zone -->
 
     <!-- ── HISTORICAL FX ───────────────────────────────────────── -->
-    <div class="section-label">Historical INR/USD Depreciation <span class="section-note">2016–2025 · 2026* = live rate</span></div>
-    <div class="panel">
-        <div class="chart-container chart-container--sm">
-            <canvas id="fx-history-chart"></canvas>
-        </div>
-        <details class="methodology">
-            <summary>About this data</summary>
-            <div class="methodology-body">
-                <p>Bars show year-over-year INR depreciation (red = weaker, green = stronger). The line tracks the absolute INR/USD rate. Historical data uses year-end approximate rates from 2016-2025.</p>
-                <p>The 2026* data point is the <strong>live rate</strong> fetched from <code>open.er-api.com</code> on page load. Its depreciation is computed against the 2025 year-end rate (&#8377;88.72).</p>
-                <p><strong>10-year average:</strong> ~3.5% annual depreciation (CAGR). Excluding the 2021 anomaly (rupee strengthened during COVID recovery), the average is ~4.2%. Worst year: 2022 at 9.1% (Ukraine war, Fed hikes). This historical range informs the default depreciation slider.</p>
-            </div>
-        </details>
-    </div>
 
 </section>
 

@@ -113,6 +113,24 @@ function calcUSLoan(principal, annualRate, termYears) {
 }
 
 /**
+ * Convert US loan to INR-equivalent using depreciation-adjusted rates.
+ * If you earn in INR and repay a USD loan, each payment costs more INR over time.
+ */
+function calcUSLoanINREquivalent(usLoanResult, fxRate, depreciation) {
+    const depRate = depreciation / 100;
+    let totalPaidINR = 0;
+    let totalInterestINR = 0;
+
+    for (const entry of usLoanResult.schedule) {
+        const fxAtMonth = fxRate * Math.pow(1 + depRate, entry.month / 12);
+        totalPaidINR += entry.payment * fxAtMonth;
+        totalInterestINR += entry.interest * fxAtMonth;
+    }
+
+    return { totalPaidINR, totalInterestINR };
+}
+
+/**
  * Indian Bank Loan calculation with FX modeling.
  *
  * Returns effective total cost in USD, including:
@@ -125,7 +143,9 @@ function calcIndianLoan(principalUSD, annualRate, termYears, params) {
     if (principalUSD <= 0) {
         return {
             principalINR: 0, processingFeeINR: 0, gstOnProcessing: 0,
-            tcsAmount: 0, tcsUSD: 0, emiINR: 0, totalRepaymentINR: 0,
+            tcsAmount: 0, tcsUSD: 0, emiINR: 0,
+            totalRepaymentINR: 0, totalInterestINR: 0,
+            totalRepaymentUSD: 0, totalInterestUSD: 0,
             disbursementCostUSD: 0, effectiveTotalUSD: 0,
             monthlyPaymentsUSD: [], schedule: [],
         };
@@ -171,12 +191,18 @@ function calcIndianLoan(principalUSD, annualRate, termYears, params) {
     const depRate = depreciation / 100;
     const monthlyPaymentsUSD = [];
     let totalRepaymentUSD = 0;
+    let totalInterestUSD = 0;
+    const scheduleINR = calcAmortizationSchedule(loanAmountINR, annualRate, termYears);
 
     for (let i = 1; i <= n; i++) {
         const fxRateAtMonth = fxRate * Math.pow(1 + depRate, i / 12);
         const emiUSD = emiINR / fxRateAtMonth;
         monthlyPaymentsUSD.push(emiUSD);
         totalRepaymentUSD += emiUSD;
+        // Interest portion for this month in USD
+        if (i <= scheduleINR.length) {
+            totalInterestUSD += scheduleINR[i - 1].interest / fxRateAtMonth;
+        }
     }
 
     // TCS in USD (paid upfront, refundable after ~1 year)
@@ -185,8 +211,8 @@ function calcIndianLoan(principalUSD, annualRate, termYears, params) {
     // Effective total cost in USD
     const effectiveTotalUSD = totalRepaymentUSD + disbursementCostUSD + tcsUSD;
 
-    // Amortization schedule in INR
-    const schedule = calcAmortizationSchedule(loanAmountINR, annualRate, termYears);
+    // Interest in INR (total repayment - loan amount)
+    const totalInterestINR = totalRepaymentINR - loanAmountINR;
 
     return {
         principalINR,
@@ -196,10 +222,13 @@ function calcIndianLoan(principalUSD, annualRate, termYears, params) {
         tcsUSD,
         emiINR,
         totalRepaymentINR,
+        totalInterestINR,
+        totalInterestUSD,
+        totalRepaymentUSD,
         disbursementCostUSD,
         effectiveTotalUSD,
         monthlyPaymentsUSD,
-        schedule,
+        schedule: scheduleINR,
     };
 }
 

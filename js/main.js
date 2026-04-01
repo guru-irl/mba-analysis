@@ -30,11 +30,6 @@ function fetchLiveFxRate() {
                 const rate = Math.round(data.rates.INR * 100) / 100;
                 liveFxRate = rate;
                 fxInput.value = rate;
-                // Sync cost comparison FX rate input
-                const costFxInput = document.getElementById('cost-fx-rate');
-                const costFxStatus = document.getElementById('cost-fx-status');
-                if (costFxInput) costFxInput.value = rate;
-                if (costFxStatus) costFxStatus.textContent = '(live)';
                 if (statusEl) statusEl.textContent = '(live)';
 
                 // Recreate FX history chart with the live data point
