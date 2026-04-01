@@ -1780,7 +1780,8 @@ body {
     color: var(--text-primary);
 }
 
-.methodology-body ul {
+.methodology-body ul,
+.methodology-body ol {
     margin: var(--space-sm) 0;
     padding-left: var(--space-lg);
 }

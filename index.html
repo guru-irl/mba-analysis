@@ -897,7 +897,7 @@
                 <li><strong>Tax:</strong> Computed per person per location, summed</li>
                 <li><strong>Interest Paid:</strong> Sum of monthly interest portions from loan payments</li>
                 <li><strong>Disposable:</strong> Leftover after savings + loan payment. Not added to net worth during repayment</li>
-                <li><strong>Loan Balance:</strong> Combined year-end balance for both loans</li>
+                <li><strong>Loan Balance:</strong> Year-end principal + projected next year&rsquo;s interest</li>
                 <li><strong>Net Worth:</strong> Combined year-end net worth for both persons</li>
             </ul>
         </div>
@@ -967,7 +967,6 @@
                         <th>Living</th>
                         <th>Savings</th>
                         <th>Loan Payments</th>
-                        <th>Interest Paid</th>
                         <th>Disposable</th>
                         <th>Loan Balance</th>
                         <th>Net Worth</th>
@@ -988,7 +987,7 @@
                     <li><strong>Loan Payments:</strong> Total principal + interest paid that year</li>
                     <li><strong>Interest Paid:</strong> The interest component of loan payments</li>
                     <li><strong>Disposable:</strong> Leftover after savings + loan. Not in net worth during repayment; added after payoff</li>
-                    <li><strong>Loan Balance:</strong> Combined year-end outstanding balance</li>
+                    <li><strong>Loan Balance:</strong> Year-end principal + projected next year&rsquo;s interest, so Year N balance &asymp; Year N+1 payments</li>
                     <li><strong>Net Worth:</strong> Starting NW + cumulative savings − loan balance. Green = positive</li>
                 </ul>
             </div>

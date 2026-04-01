@@ -531,7 +531,7 @@ function updateCalculations() {
         });
 
         return {
-            result, salary, living, saveRate, loc,
+            result, salary, living, saveRate, loc, rate,
             // Monthly figures (base salary only)
             monthlyTax, monthlySav, disposableMonthly, required,
             // Yearly figures (salary + bonus + signing)
@@ -688,7 +688,7 @@ function renderHouseholdCashFlowTable(boothPerson, kelloggPerson) {
 
     function addToYear(timeline, person, loc) {
         for (const e of timeline) {
-            if (!years[e.year]) years[e.year] = { year: e.year, income: 0, tax: 0, living: 0, savings: 0, loan: 0, interest: 0, disposable: 0 };
+            if (!years[e.year]) years[e.year] = { year: e.year, income: 0, tax: 0, living: 0, savings: 0, loan: 0, disposable: 0 };
             const monthlyGross = (e.totalComp || e.salary) / 12;
             const tax = calcPostTax(e.totalComp || e.salary, 'single', loc);
             years[e.year].income += monthlyGross;
@@ -696,7 +696,6 @@ function renderHouseholdCashFlowTable(boothPerson, kelloggPerson) {
             years[e.year].living += person.living;
             years[e.year].savings += e.monthlySavings || 0;
             years[e.year].loan += e.payment;
-            years[e.year].interest += e.interest || 0;
             years[e.year].disposable += e.leftover || 0;
         }
     }
@@ -707,7 +706,11 @@ function renderHouseholdCashFlowTable(boothPerson, kelloggPerson) {
     for (const row of Object.values(years)) {
         const boothEnd = boothPerson.result.timeline.filter(e => e.year === row.year).pop();
         const kelloggEnd = kelloggPerson.result.timeline.filter(e => e.year === row.year).pop();
-        row.balance = (boothEnd?.balance || 0) + (kelloggEnd?.balance || 0);
+        // Balance includes next year's projected interest so
+        // Year N balance ≈ Year N+1 loan payments
+        const bBal = boothEnd?.balance || 0;
+        const kBal = kelloggEnd?.balance || 0;
+        row.balance = bBal * (1 + boothPerson.rate / 100) + kBal * (1 + kelloggPerson.rate / 100);
         row.netWorth = (boothEnd?.netWorth || 0) + (kelloggEnd?.netWorth || 0);
 
         const nwColor = row.netWorth >= 0 ? 'var(--positive)' : 'var(--negative)';
@@ -720,7 +723,6 @@ function renderHouseholdCashFlowTable(boothPerson, kelloggPerson) {
             <td>${formatUSD(row.living)}</td>
             <td>${formatUSD(row.savings)}</td>
             <td>${formatUSD(row.loan)}</td>
-            <td>${formatUSD(row.interest)}</td>
             <td style="color:${dispColor};">${formatUSD(row.disposable)}</td>
             <td>${formatUSD(row.balance)}</td>
             <td style="color:${nwColor}; font-weight:600;">${formatUSD(row.netWorth)}</td>
