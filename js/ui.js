@@ -710,9 +710,10 @@ function renderHouseholdCashFlowTable(boothPerson, kelloggPerson) {
 
     // Compute annual totals and remaining balance
     for (const row of Object.values(years)) {
-        const boothBal = boothPerson.result.timeline.filter(e => e.year === row.year).pop()?.balance || 0;
-        const kelloggBal = kelloggPerson.result.timeline.filter(e => e.year === row.year).pop()?.balance || 0;
-        row.balance = boothBal + kelloggBal;
+        const boothEnd = boothPerson.result.timeline.filter(e => e.year === row.year).pop();
+        const kelloggEnd = kelloggPerson.result.timeline.filter(e => e.year === row.year).pop();
+        row.balance = (boothEnd?.balance || 0) + (kelloggEnd?.balance || 0);
+        row.netWorth = (boothEnd?.netWorth || 0) + (kelloggEnd?.netWorth || 0);
         // Convert monthly sums to annual
         const monthsInYear = boothPerson.result.timeline.filter(e => e.year === row.year).length || 12;
         row.incomeAnnual = row.income / monthsInYear * 12;
@@ -720,6 +721,7 @@ function renderHouseholdCashFlowTable(boothPerson, kelloggPerson) {
         row.livingAnnual = row.living / monthsInYear * 12;
         row.savingsAnnual = row.savings;
 
+        const nwColor = row.netWorth >= 0 ? 'var(--positive)' : 'var(--negative)';
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>Year ${row.year}</td>
@@ -729,6 +731,7 @@ function renderHouseholdCashFlowTable(boothPerson, kelloggPerson) {
             <td>${formatUSD(row.savingsAnnual)}</td>
             <td>${formatUSD(row.loan)}</td>
             <td>${formatUSD(row.balance)}</td>
+            <td style="color:${nwColor}; font-weight:600;">${formatUSD(row.netWorth)}</td>
         `;
         tbody.appendChild(tr);
     }
