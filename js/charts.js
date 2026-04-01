@@ -370,7 +370,9 @@ function createPayoffChart(canvasId, data) {
     destroyChart(canvasId);
     const ctx = document.getElementById(canvasId).getContext('2d');
 
-    const balanceData = data.timeline.map(e => ({ x: e.month, y: e.balance }));
+    // Remaining amount = principal + future interest (cumulative interest remaining)
+    const totalInterest = data.totalInterest || 0;
+    const balanceData = data.timeline.map(e => ({ x: e.month, y: e.balance + (totalInterest - e.cumulativeInterest) }));
     const cumPaidData = data.timeline.map(e => ({ x: e.month, y: e.cumulativePaid }));
 
     const options = deepMerge(DARK_THEME, {
@@ -389,7 +391,7 @@ function createPayoffChart(canvasId, data) {
             },
             y: {
                 position: 'left',
-                title: { display: true, text: 'Remaining Balance', color: CHART_COLORS.textSecondary, font: { family: "'Sora', sans-serif", size: 11 } },
+                title: { display: true, text: 'Remaining (Principal + Interest)', color: CHART_COLORS.textSecondary, font: { family: "'Sora', sans-serif", size: 11 } },
             },
             y2: {
                 position: 'right',
@@ -409,7 +411,7 @@ function createPayoffChart(canvasId, data) {
         data: {
             datasets: [
                 {
-                    label: 'Remaining Balance',
+                    label: 'Remaining (Principal + Interest)',
                     data: balanceData,
                     borderColor: CHART_COLORS.negative.main,
                     backgroundColor: CHART_COLORS.negative.light,

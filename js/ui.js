@@ -628,16 +628,19 @@ function createHouseholdPayoffChart(canvasId, boothResult, kelloggResult) {
     const options = deepMerge(DARK_THEME, {
         scales: {
             x: { type: 'linear', min: 0, title: { display: true, text: 'Months After Graduation', color: CHART_COLORS.textSecondary, font: { family: "'Sora', sans-serif", size: 11 } }, ticks: { color: CHART_COLORS.textMuted, font: { family: "'JetBrains Mono', monospace", size: 10 }, callback: function(v) { return v % 12 === 0 ? 'Yr ' + (v / 12) : ''; }, stepSize: 6 }, grid: { color: CHART_COLORS.grid, lineWidth: 0.5 } },
-            y: { title: { display: true, text: 'Remaining Balance', color: CHART_COLORS.textSecondary, font: { family: "'Sora', sans-serif", size: 11 } } },
+            y: { title: { display: true, text: 'Remaining (Principal + Interest)', color: CHART_COLORS.textSecondary, font: { family: "'Sora', sans-serif", size: 11 } } },
         },
     });
+
+    const bTotalInt = boothResult.totalInterest || 0;
+    const kTotalInt = kelloggResult.totalInterest || 0;
 
     chartInstances.payoff = new Chart(ctx, {
         type: 'line',
         data: {
             datasets: [
-                { label: 'Booth Balance', data: boothResult.timeline.map(e => ({ x: e.month, y: e.balance })), borderColor: CHART_COLORS.booth.main, backgroundColor: CHART_COLORS.booth.light, fill: true, borderWidth: 2, pointRadius: 0, tension: 0.2 },
-                { label: 'Kellogg Balance', data: kelloggResult.timeline.map(e => ({ x: e.month, y: e.balance })), borderColor: CHART_COLORS.kellogg.main, backgroundColor: CHART_COLORS.kellogg.light, fill: true, borderWidth: 2, pointRadius: 0, tension: 0.2 },
+                { label: 'Booth', data: boothResult.timeline.map(e => ({ x: e.month, y: e.balance + (bTotalInt - e.cumulativeInterest) })), borderColor: CHART_COLORS.booth.main, backgroundColor: CHART_COLORS.booth.light, fill: true, borderWidth: 2, pointRadius: 0, tension: 0.2 },
+                { label: 'Kellogg', data: kelloggResult.timeline.map(e => ({ x: e.month, y: e.balance + (kTotalInt - e.cumulativeInterest) })), borderColor: CHART_COLORS.kellogg.main, backgroundColor: CHART_COLORS.kellogg.light, fill: true, borderWidth: 2, pointRadius: 0, tension: 0.2 },
             ],
         },
         options,
@@ -688,7 +691,7 @@ function renderHouseholdCashFlowTable(boothPerson, kelloggPerson) {
 
     function addToYear(timeline, person, loc) {
         for (const e of timeline) {
-            if (!years[e.year]) years[e.year] = { year: e.year, income: 0, tax: 0, living: 0, savings: 0, loan: 0, disposable: 0 };
+            if (!years[e.year]) years[e.year] = { year: e.year, income: 0, tax: 0, living: 0, savings: 0, loan: 0, interest: 0, disposable: 0 };
             const monthlyGross = (e.totalComp || e.salary) / 12;
             const tax = calcPostTax(e.totalComp || e.salary, 'single', loc);
             years[e.year].income += monthlyGross;
@@ -696,6 +699,7 @@ function renderHouseholdCashFlowTable(boothPerson, kelloggPerson) {
             years[e.year].living += person.living;
             years[e.year].savings += e.monthlySavings || 0;
             years[e.year].loan += e.payment;
+            years[e.year].interest += e.interest || 0;
             years[e.year].disposable += e.leftover || 0;
         }
     }
@@ -703,21 +707,31 @@ function renderHouseholdCashFlowTable(boothPerson, kelloggPerson) {
     addToYear(boothPerson.result.timeline, boothPerson, boothLocation);
     addToYear(kelloggPerson.result.timeline, kelloggPerson, kelloggLocation);
 
-    for (const row of Object.values(years)) {
-        const boothEnd = boothPerson.result.timeline.filter(e => e.year === row.year).pop();
-        const kelloggEnd = kelloggPerson.result.timeline.filter(e => e.year === row.year).pop();
-        // Balance includes next year's projected interest so
-        // Year N balance ≈ Year N+1 loan payments
-        const bBal = boothEnd?.balance || 0;
-        const kBal = kelloggEnd?.balance || 0;
-        row.balance = bBal * (1 + boothPerson.rate / 100) + kBal * (1 + kelloggPerson.rate / 100);
+    // First pass: compute balance and net worth per year
+    const yearKeys = Object.keys(years).map(Number).sort((a, b) => a - b);
+    for (const yr of yearKeys) {
+        const row = years[yr];
+        const boothEnd = boothPerson.result.timeline.filter(e => e.year === yr).pop();
+        const kelloggEnd = kelloggPerson.result.timeline.filter(e => e.year === yr).pop();
+        row.principalBalance = (boothEnd?.balance || 0) + (kelloggEnd?.balance || 0);
         row.netWorth = (boothEnd?.netWorth || 0) + (kelloggEnd?.netWorth || 0);
+    }
 
+    // Second pass: add next year's interest to this year's balance
+    for (let i = 0; i < yearKeys.length; i++) {
+        const row = years[yearKeys[i]];
+        const nextYear = years[yearKeys[i + 1]];
+        row.balance = row.principalBalance + (nextYear ? nextYear.interest : 0);
+    }
+
+    // Render
+    for (const yr of yearKeys) {
+        const row = years[yr];
         const nwColor = row.netWorth >= 0 ? 'var(--positive)' : 'var(--negative)';
         const dispColor = row.disposable >= 0 ? 'var(--positive)' : 'var(--negative)';
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td>Year ${row.year}</td>
+            <td>Year ${yr}</td>
             <td>${formatUSD(row.income)}</td>
             <td>${formatUSD(row.tax)}</td>
             <td>${formatUSD(row.living)}</td>
