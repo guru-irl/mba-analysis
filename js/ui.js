@@ -12,7 +12,7 @@ function formatUSD(val) {
 
 function formatINR(val) {
     if (val == null || isNaN(val)) return '—';
-    return '₹' + Math.round(val).toLocaleString('en-IN');
+    return '₹' + Math.round(val).toLocaleString('en-US');
 }
 
 function formatPercent(val, decimals) {

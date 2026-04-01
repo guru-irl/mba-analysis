@@ -200,7 +200,7 @@ function createCostComparisonChart(canvasId, data) {
         if (isINR) {
             if (Math.abs(val) >= 10000000) return ctx.dataset.label + ': ₹' + (val / 10000000).toFixed(2) + ' Cr';
             if (Math.abs(val) >= 100000) return ctx.dataset.label + ': ₹' + (val / 100000).toFixed(2) + ' L';
-            return ctx.dataset.label + ': ₹' + val.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+            return ctx.dataset.label + ': ₹' + val.toLocaleString('en-US', { maximumFractionDigits: 0 });
         }
         return ctx.dataset.label + ': $' + val.toLocaleString('en-US', { maximumFractionDigits: 0 });
     };
