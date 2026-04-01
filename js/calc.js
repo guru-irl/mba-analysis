@@ -465,9 +465,9 @@ function calcPayoffTimeline(params) {
             currentSalary *= (1 + salaryGrowth / 100);
         }
 
-        // Total comp = salary + bonus (signing bonus only in month 1)
+        // Total comp = salary + bonus + stock (signing bonus only in month 1)
         const annualBonus = currentSalary * bonusPct;
-        const totalAnnualComp = currentSalary + annualBonus + (month === 1 ? (signingBonus || 0) : 0);
+        const totalAnnualComp = currentSalary + annualBonus + (annualStock || 0) + (month === 1 ? (signingBonus || 0) : 0);
         const tax = calcPostTax(totalAnnualComp, filingStatus, location);
         const disposable = tax.netMonthly - monthlyLiving;
         const monthlySavings = Math.max(disposable * savPct, 0);
@@ -492,7 +492,8 @@ function calcPayoffTimeline(params) {
         cumulativePaid += payment;
         cumulativeInterest += interestThisMonth;
         cumulativeSavings += monthlySavings;
-        cumulativeStock += monthlyStock;
+        // Stock is already in totalAnnualComp → taxed → disposable → savings
+        // No separate cumulativeStock to avoid double counting
 
         const balanceGrowing = payment < interestThisMonth;
 
@@ -508,8 +509,7 @@ function calcPayoffTimeline(params) {
             cumulativePaid,
             cumulativeInterest,
             cumulativeSavings,
-            cumulativeStock,
-            netWorth: baseNetWorth + cumulativeSavings + cumulativeStock - balance,
+            netWorth: baseNetWorth + cumulativeSavings - balance,
             disposable,
             monthlySavings,
             warning: balanceGrowing ? 'Balance growing' : null,
@@ -529,12 +529,13 @@ function calcPayoffTimeline(params) {
                 currentSalary *= (1 + salaryGrowth / 100);
             }
             const annualBonus = currentSalary * bonusPct;
-            const totalAnnualComp = currentSalary + annualBonus;
+            const totalAnnualComp = currentSalary + annualBonus + (annualStock || 0);
             const tax = calcPostTax(totalAnnualComp, filingStatus, location);
             const disposable = tax.netMonthly - monthlyLiving;
             // After payoff, all disposable goes to savings
             cumulativeSavings += Math.max(disposable, 0);
-            cumulativeStock += monthlyStock;
+            // Stock is already in totalAnnualComp → taxed → disposable → savings
+        // No separate cumulativeStock to avoid double counting
             timeline.push({
                 month,
                 year: Math.ceil(month / 12),
@@ -547,8 +548,7 @@ function calcPayoffTimeline(params) {
                 cumulativePaid,
                 cumulativeInterest,
                 cumulativeSavings,
-                cumulativeStock,
-                netWorth: baseNetWorth + cumulativeSavings + cumulativeStock,
+                    netWorth: baseNetWorth + cumulativeSavings,
                 disposable,
                 monthlySavings: Math.max(disposable, 0),
                 warning: null,
