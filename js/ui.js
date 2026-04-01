@@ -427,7 +427,10 @@ function updateCalculations() {
         const bonus = parseFloat($(prefix === 'booth' ? 'bonus-booth' : 'bonus-kellogg').value) || 0;
         const signing = parseFloat($(prefix === 'booth' ? 'signing-booth' : 'signing-kellogg').value) || 0;
         const annualStock = parseFloat($(prefix === 'booth' ? 'stock-booth' : 'stock-kellogg').value) || 0;
-        const startingNetWorth = parseFloat($(prefix === 'booth' ? 'networth-booth' : 'networth-kellogg').value) || 0;
+        const internStipend = parseFloat($(prefix === 'booth' ? 'intern-booth' : 'intern-kellogg').value) || 0;
+        const rawNetWorth = parseFloat($(prefix === 'booth' ? 'networth-booth' : 'networth-kellogg').value) || 0;
+        // Internship stipend is earned during MBA — adds to starting net worth
+        const startingNetWorth = rawNetWorth + internStipend;
         const living = parseFloat($(prefix === 'booth' ? 'living-booth' : 'living-kellogg').value) || 0;
         const saveRate = parseFloat($(prefix === 'booth' ? 'save-booth' : 'save-kellogg').value) || 0;
         const payoffYr = parseInt($(prefix === 'booth' ? 'payoff-yr-booth' : 'payoff-yr-kellogg').value) || 10;
@@ -445,61 +448,64 @@ function updateCalculations() {
         const annualBonus = salary * (bonus / 100);
         $('bonus-' + prefix + '-dollar').textContent = formatUSD(annualBonus);
 
-        // Monthly: base salary only (no bonus, no signing)
+        // Monthly: base salary only (no bonus, no signing, no stock)
         const monthlyTax = calcPostTax(salary, 'single', loc);
-        // Yearly: salary + bonus + signing (Year 1)
-        const yearlyComp = salary + annualBonus + signing;
+        // Yearly: salary + bonus + signing + stock (all taxable)
+        const yearlyComp = salary + annualBonus + signing + annualStock;
         const yearlyTax = calcPostTax(yearlyComp, 'single', loc);
 
         const required = calcMonthlyPayment(principal, rate, payoffYr);
         const monthlySav = Math.max((monthlyTax.netMonthly - living) * (saveRate / 100), 0);
         const disposableMonthly = monthlyTax.netMonthly - living - monthlySav - required;
 
-        // Yearly disposable includes bonus + signing
         const yearlySav = Math.max((yearlyTax.netAnnual - living * 12) * (saveRate / 100), 0);
         const disposableYearly = yearlyTax.netAnnual - living * 12 - yearlySav - required * 12;
 
-        // Balance sheet — monthly or yearly
+        // Balance sheet
         const bsPeriod = prefix === 'booth' ? boothBsPeriod : kelloggBsPeriod;
         const isYearly = bsPeriod === 'yearly';
         const stateLabel = LOCATIONS.find(l => l.key === loc)?.state || 'IL';
+        const p = 'p2-' + prefix;
+
+        // Show/hide yearly-only breakdown rows
+        $(p + '-row-bonus').style.display = isYearly ? '' : 'none';
+        $(p + '-row-signing').style.display = isYearly && signing > 0 ? '' : 'none';
+        $(p + '-row-stock').style.display = isYearly && annualStock > 0 ? '' : 'none';
 
         if (isYearly) {
-            $('p2-' + prefix + '-pretax').textContent = formatUSD(yearlyComp);
-            $('p2-' + prefix + '-federal').textContent = '-' + formatUSD(yearlyTax.federal);
-            $('p2-' + prefix + '-state').textContent = '-' + formatUSD(yearlyTax.state);
-            $('p2-' + prefix + '-fica').textContent = '-' + formatUSD(yearlyTax.fica);
-            $('p2-' + prefix + '-net-monthly').textContent = formatUSD(yearlyTax.netAnnual);
-            $('p2-' + prefix + '-bs-living').textContent = '-' + formatUSD(living * 12);
-            $('p2-' + prefix + '-bs-savings').textContent = '-' + formatUSD(yearlySav);
-            $('p2-' + prefix + '-bs-payment').textContent = '-' + formatUSD(required * 12);
-            const dispEl = $('p2-' + prefix + '-disposable');
+            $(p + '-bs-base').textContent = formatUSD(salary);
+            $(p + '-bs-bonus').textContent = formatUSD(annualBonus);
+            $(p + '-bs-signing').textContent = formatUSD(signing);
+            $(p + '-bs-stock').textContent = formatUSD(annualStock);
+            $(p + '-pretax').textContent = formatUSD(yearlyComp);
+            $(p + '-federal').textContent = '-' + formatUSD(yearlyTax.federal);
+            $(p + '-state').textContent = '-' + formatUSD(yearlyTax.state);
+            $(p + '-fica').textContent = '-' + formatUSD(yearlyTax.fica);
+            $(p + '-net-monthly').textContent = formatUSD(yearlyTax.netAnnual);
+            $(p + '-bs-living').textContent = '-' + formatUSD(living * 12);
+            $(p + '-bs-savings').textContent = '-' + formatUSD(yearlySav);
+            $(p + '-bs-payment').textContent = '-' + formatUSD(required * 12);
+            const dispEl = $(p + '-disposable');
             dispEl.textContent = formatUSD(disposableYearly);
             dispEl.style.color = disposableYearly >= 0 ? 'var(--positive)' : 'var(--negative)';
         } else {
-            $('p2-' + prefix + '-pretax').textContent = formatUSD(salary / 12);
-            $('p2-' + prefix + '-federal').textContent = '-' + formatUSD(monthlyTax.federal / 12);
-            $('p2-' + prefix + '-state').textContent = '-' + formatUSD(monthlyTax.state / 12);
-            $('p2-' + prefix + '-fica').textContent = '-' + formatUSD(monthlyTax.fica / 12);
-            $('p2-' + prefix + '-net-monthly').textContent = formatUSD(monthlyTax.netMonthly);
-            $('p2-' + prefix + '-bs-living').textContent = '-' + formatUSD(living);
-            $('p2-' + prefix + '-bs-savings').textContent = '-' + formatUSD(monthlySav);
-            $('p2-' + prefix + '-bs-payment').textContent = '-' + formatUSD(required);
-            const dispEl = $('p2-' + prefix + '-disposable');
+            $(p + '-bs-base').textContent = formatUSD(salary / 12);
+            $(p + '-pretax').textContent = formatUSD(salary / 12);
+            $(p + '-federal').textContent = '-' + formatUSD(monthlyTax.federal / 12);
+            $(p + '-state').textContent = '-' + formatUSD(monthlyTax.state / 12);
+            $(p + '-fica').textContent = '-' + formatUSD(monthlyTax.fica / 12);
+            $(p + '-net-monthly').textContent = formatUSD(monthlyTax.netMonthly);
+            $(p + '-bs-living').textContent = '-' + formatUSD(living);
+            $(p + '-bs-savings').textContent = '-' + formatUSD(monthlySav);
+            $(p + '-bs-payment').textContent = '-' + formatUSD(required);
+            const dispEl = $(p + '-disposable');
             dispEl.textContent = formatUSD(disposableMonthly);
             dispEl.style.color = disposableMonthly >= 0 ? 'var(--positive)' : 'var(--negative)';
         }
 
-        $('p2-' + prefix + '-state-label').textContent = stateLabel;
-        $('p2-' + prefix + '-save-pct').textContent = saveRate;
-        $('p2-' + prefix + '-payment').textContent = formatUSD(required);
-
-        // Stock row — only in yearly view
-        const stockRow = $('p2-' + prefix + '-stock-row');
-        if (stockRow) {
-            stockRow.style.display = isYearly && annualStock > 0 ? '' : 'none';
-            $('p2-' + prefix + '-bs-stock').textContent = formatUSD(annualStock);
-        }
+        $(p + '-state-label').textContent = stateLabel;
+        $(p + '-save-pct').textContent = saveRate;
+        $(p + '-payment').textContent = formatUSD(required);
 
         // Payoff simulation
         const result = calcPayoffTimeline({
@@ -569,7 +575,13 @@ function renderHouseholdBalanceSheet(b, k) {
     let rows;
     if (isYearly) {
         rows = [
-            { label: 'Pre-Tax Income', bv: b.yearlyComp, kv: k.yearlyComp, cls: '' },
+            { label: 'Base Salary', bv: b.salary, kv: k.salary, cls: '' },
+            { label: 'Annual Bonus', bv: b.annualBonus, kv: k.annualBonus, cls: '' },
+        ];
+        if (b.signing > 0 || k.signing > 0) rows.push({ label: 'Signing Bonus', bv: b.signing, kv: k.signing, cls: '' });
+        if (b.annualStock > 0 || k.annualStock > 0) rows.push({ label: 'Stock/Equity', bv: b.annualStock, kv: k.annualStock, cls: '' });
+        rows.push(
+            { label: 'Total Pre-Tax Income', bv: b.yearlyComp, kv: k.yearlyComp, cls: 'hh-bs-net' },
             { label: 'Federal Tax', bv: -b.yearlyTax.federal, kv: -k.yearlyTax.federal, cls: 'hh-bs-sub' },
             { label: `State Tax (${bState}/${kState})`, bv: -b.yearlyTax.state, kv: -k.yearlyTax.state, cls: 'hh-bs-sub' },
             { label: 'FICA', bv: -b.yearlyTax.fica, kv: -k.yearlyTax.fica, cls: 'hh-bs-sub' },
@@ -577,15 +589,8 @@ function renderHouseholdBalanceSheet(b, k) {
             { label: 'Living Expenses', bv: -b.living * 12, kv: -k.living * 12, cls: 'hh-bs-expense' },
             { label: `Savings (${b.saveRate}%/${k.saveRate}%)`, bv: -b.yearlySav, kv: -k.yearlySav, cls: 'hh-bs-expense' },
             { label: 'Loan Repayment', bv: -b.required * 12, kv: -k.required * 12, cls: 'hh-bs-expense' },
-            { label: 'Stock/Equity (vesting)', bv: b.annualStock, kv: k.annualStock, cls: '' },
-            { label: 'Disposable', bv: b.disposableYearly + b.annualStock, kv: k.disposableYearly + k.annualStock, cls: 'hh-bs-bottom' },
-        ];
-        // Remove stock row if both are 0
-        if (b.annualStock === 0 && k.annualStock === 0) {
-            rows = rows.filter(r => r.label !== 'Stock/Equity (vesting)');
-            rows.find(r => r.label === 'Disposable').bv = b.disposableYearly;
-            rows.find(r => r.label === 'Disposable').kv = k.disposableYearly;
-        }
+            { label: 'Disposable', bv: b.disposableYearly, kv: k.disposableYearly, cls: 'hh-bs-bottom' },
+        );
     } else {
         rows = [
             { label: 'Pre-Tax Income', bv: b.salary / 12, kv: k.salary / 12, cls: '' },

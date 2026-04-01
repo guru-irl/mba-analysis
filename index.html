@@ -714,7 +714,11 @@
             <div class="section-label">Balance Sheet <div class="toggle-btns toggle-btns--inline"><button class="toggle-btn active" id="bs-booth-monthly" data-period="monthly">Monthly</button><button class="toggle-btn" id="bs-booth-yearly" data-period="yearly">Yearly</button></div></div>
             <div class="panel">
                 <div class="balance-sheet">
-                    <div class="bs-row bs-row--income"><span>Pre-Tax Income</span><span class="mono" id="p2-booth-pretax">—</span></div>
+                    <div class="bs-row" id="p2-booth-row-base-salary"><span>Base Salary</span><span class="mono" id="p2-booth-bs-base">—</span></div>
+                    <div class="bs-row" id="p2-booth-row-bonus" style="display:none;"><span>Annual Bonus</span><span class="mono" id="p2-booth-bs-bonus">—</span></div>
+                    <div class="bs-row" id="p2-booth-row-signing" style="display:none;"><span>Signing Bonus</span><span class="mono" id="p2-booth-bs-signing">—</span></div>
+                    <div class="bs-row" id="p2-booth-row-stock" style="display:none;"><span>Stock/Equity</span><span class="mono" id="p2-booth-bs-stock">—</span></div>
+                    <div class="bs-row bs-row--income"><span>Total Pre-Tax Income</span><span class="mono" id="p2-booth-pretax">—</span></div>
                     <div class="bs-row bs-row--sub"><span>Federal Tax</span><span class="mono" id="p2-booth-federal">—</span></div>
                     <div class="bs-row bs-row--sub"><span>State Tax (<span id="p2-booth-state-label">IL</span>)</span><span class="mono" id="p2-booth-state">—</span></div>
                     <div class="bs-row bs-row--sub"><span>FICA</span><span class="mono" id="p2-booth-fica">—</span></div>
@@ -722,7 +726,6 @@
                     <div class="bs-row bs-row--expense"><span>Living Expenses</span><span class="mono" id="p2-booth-bs-living">—</span></div>
                     <div class="bs-row bs-row--expense"><span>Savings (<span id="p2-booth-save-pct">10</span>%)</span><span class="mono" id="p2-booth-bs-savings">—</span></div>
                     <div class="bs-row bs-row--expense"><span>Loan Repayment</span><span class="mono" id="p2-booth-bs-payment">—</span></div>
-                    <div class="bs-row bs-row--income" id="p2-booth-stock-row" style="display:none;"><span>Stock/Equity (vesting)</span><span class="mono" id="p2-booth-bs-stock">—</span></div>
                     <div class="bs-row bs-row--bottom"><span>Disposable</span><span class="mono" id="p2-booth-disposable">—</span></div>
                 </div>
             </div>
@@ -795,7 +798,11 @@
             <div class="section-label">Balance Sheet <div class="toggle-btns toggle-btns--inline"><button class="toggle-btn active" id="bs-kellogg-monthly" data-period="monthly">Monthly</button><button class="toggle-btn" id="bs-kellogg-yearly" data-period="yearly">Yearly</button></div></div>
             <div class="panel">
                 <div class="balance-sheet">
-                    <div class="bs-row bs-row--income"><span>Pre-Tax Income</span><span class="mono" id="p2-kellogg-pretax">—</span></div>
+                    <div class="bs-row" id="p2-kellogg-row-base-salary"><span>Base Salary</span><span class="mono" id="p2-kellogg-bs-base">—</span></div>
+                    <div class="bs-row" id="p2-kellogg-row-bonus" style="display:none;"><span>Annual Bonus</span><span class="mono" id="p2-kellogg-bs-bonus">—</span></div>
+                    <div class="bs-row" id="p2-kellogg-row-signing" style="display:none;"><span>Signing Bonus</span><span class="mono" id="p2-kellogg-bs-signing">—</span></div>
+                    <div class="bs-row" id="p2-kellogg-row-stock" style="display:none;"><span>Stock/Equity</span><span class="mono" id="p2-kellogg-bs-stock">—</span></div>
+                    <div class="bs-row bs-row--income"><span>Total Pre-Tax Income</span><span class="mono" id="p2-kellogg-pretax">—</span></div>
                     <div class="bs-row bs-row--sub"><span>Federal Tax</span><span class="mono" id="p2-kellogg-federal">—</span></div>
                     <div class="bs-row bs-row--sub"><span>State Tax (<span id="p2-kellogg-state-label">IL</span>)</span><span class="mono" id="p2-kellogg-state">—</span></div>
                     <div class="bs-row bs-row--sub"><span>FICA</span><span class="mono" id="p2-kellogg-fica">—</span></div>
@@ -803,7 +810,6 @@
                     <div class="bs-row bs-row--expense"><span>Living Expenses</span><span class="mono" id="p2-kellogg-bs-living">—</span></div>
                     <div class="bs-row bs-row--expense"><span>Savings (<span id="p2-kellogg-save-pct">10</span>%)</span><span class="mono" id="p2-kellogg-bs-savings">—</span></div>
                     <div class="bs-row bs-row--expense"><span>Loan Repayment</span><span class="mono" id="p2-kellogg-bs-payment">—</span></div>
-                    <div class="bs-row bs-row--income" id="p2-kellogg-stock-row" style="display:none;"><span>Stock/Equity (vesting)</span><span class="mono" id="p2-kellogg-bs-stock">—</span></div>
                     <div class="bs-row bs-row--bottom"><span>Disposable</span><span class="mono" id="p2-kellogg-disposable">—</span></div>
                 </div>
             </div>
