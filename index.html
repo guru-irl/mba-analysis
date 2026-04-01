@@ -828,77 +828,74 @@
     <details class="methodology">
         <summary>How we calculate everything on this page</summary>
         <div class="methodology-body">
-            <p><strong>Loan Repayment &amp; In-School Interest</strong></p>
-            <p>During the 2-year MBA, interest accrues on the loan and capitalizes (adds to principal). The balance at graduation is:</p>
-            <p style="text-align:center;"><code>Balance = Principal &times; (1 + r)^24</code></p>
-            <p>where r = monthly rate, 24 = months in school. Monthly payment is then computed on this capitalized balance:</p>
+            <p><strong>1. In-School Interest Capitalization</strong></p>
+            <p>During the 2-year MBA, interest accrues monthly and capitalizes (adds to principal):</p>
+            <p style="text-align:center;"><code>Balance at graduation = Principal &times; (1 + r)^24</code></p>
+            <p>where r = monthly rate (APR/12), 24 = months in school. This capitalized balance is what you see in the loan summary and what the monthly payment is computed on. Tab 1 shows raw loan costs; this page shows post-capitalization repayment.</p>
+
+            <p><strong>2. Monthly Payment</strong></p>
             <p style="text-align:center;"><code>M = Balance &times; r(1+r)^n / ((1+r)^n - 1)</code></p>
-            <p>where n = target payoff years &times; 12. Note: Tab 1 (Cost &amp; Loan Analysis) shows raw loan costs without in-school deferral. Tab 2 (this page) shows the actual repayment after capitalization.</p>
+            <p>where Balance = capitalized amount, n = target payoff years &times; 12. You choose the payoff period; the payment adjusts accordingly.</p>
 
-            <p><strong>Income &amp; Tax (per person)</strong></p>
+            <p><strong>3. Income &amp; Tax</strong></p>
             <ul>
-                <li><strong>Monthly view:</strong> Pre-tax = base salary / 12. Taxes computed on base salary only (no bonus, signing, or stock)</li>
-                <li><strong>Yearly view:</strong> Pre-tax = base salary + annual bonus (% of salary) + signing bonus (Year 1) + stock/equity. All are taxable</li>
-                <li><strong>Federal tax:</strong> 2025 brackets, standard deduction $14,600 (single). Progressive 10%–37%</li>
-                <li><strong>FICA:</strong> Social Security 6.2% (capped at $168,600) + Medicare 1.45% + additional 0.9% above $200k</li>
-                <li><strong>State tax:</strong> Illinois 4.95% flat · New York 4%–10.9% progressive · California 1%–12.3% progressive</li>
-                <li><strong>Post-tax income:</strong> <code>Gross - Federal - State - FICA</code></li>
+                <li><strong>Monthly balance sheet:</strong> Uses base salary only. Taxes computed on base salary (no bonus, signing, or stock)</li>
+                <li><strong>Yearly balance sheet:</strong> Uses full comp = base salary + annual bonus + signing bonus (Year 1) + stock/equity. All components are taxable</li>
+                <li><strong>Federal tax:</strong> 2025 brackets, $14,600 standard deduction (single), progressive 10%–37%</li>
+                <li><strong>FICA:</strong> SS 6.2% (capped $168,600) + Medicare 1.45% + 0.9% above $200k</li>
+                <li><strong>State tax:</strong> IL 4.95% flat · NY 4%–10.9% progressive · CA 1%–12.3% progressive</li>
             </ul>
 
-            <p><strong>Balance Sheet</strong></p>
+            <p><strong>4. Balance Sheet Flow</strong></p>
+            <p style="text-align:center;"><code>Post-tax &rarr; - Living &rarr; - Savings (rate%) &rarr; - Loan payment &rarr; = Disposable</code></p>
+
+            <p><strong>5. One-Off Payments &amp; Stock</strong></p>
             <ul>
-                <li><strong>Disposable:</strong> <code>Post-tax monthly - Living expenses</code></li>
-                <li><strong>Savings:</strong> <code>Disposable &times; savings rate %</code></li>
-                <li><strong>Available for loan:</strong> <code>Disposable - Savings</code></li>
-                <li><strong>Leftover (Disposable column):</strong> <code>Available for loan - Loan payment</code></li>
+                <li><strong>Internship stipend:</strong> Pre-graduation income. Added to starting net worth directly</li>
+                <li><strong>Signing bonus:</strong> Month 1 of employment. Taxed as part of Year 1 total comp, flows into disposable</li>
+                <li><strong>Stock/equity:</strong> Taxable income (included in total comp &rarr; taxed &rarr; disposable &rarr; savings). Not separately added to net worth to avoid double counting. Only appears in yearly view</li>
             </ul>
 
-            <p><strong>One-Off Payments</strong></p>
-            <ul>
-                <li><strong>Internship stipend:</strong> Earned during MBA (before graduation). Added directly to starting net worth</li>
-                <li><strong>Signing bonus:</strong> Received in month 1 of employment. Included in Year 1 total comp &rarr; taxed &rarr; flows through to disposable income in month 1</li>
-            </ul>
-
-            <p><strong>Stock/Equity</strong></p>
-            <ul>
-                <li>Annual vesting amount is treated as taxable income (included in total comp for tax calculation)</li>
-                <li>Post-tax stock value flows through disposable &rarr; savings. No separate accumulation to avoid double counting</li>
-                <li>Not included in monthly view (vesting is typically annual)</li>
-            </ul>
-
-            <p><strong>Payoff Simulation (month by month)</strong></p>
+            <p><strong>6. Payoff Simulation (month by month)</strong></p>
             <ol>
-                <li>Salary grows annually by growth rate: <code>salary &times; (1 + growth%)^year</code></li>
+                <li>Salary grows annually: <code>salary &times; (1 + growth%)</code></li>
                 <li>Total comp = salary + bonus + stock + signing (month 1 only)</li>
-                <li>Tax computed on total comp using federal + state + FICA</li>
-                <li>Disposable = post-tax monthly - living expenses</li>
+                <li>Tax on total comp &rarr; net monthly</li>
+                <li>Disposable = net monthly - living</li>
                 <li>Savings = disposable &times; savings rate %</li>
                 <li>Available for loan = disposable - savings</li>
-                <li>Actual payment = min(required payment, available, remaining balance + interest)</li>
-                <li>Interest accrues: <code>balance &times; monthly rate</code> (for Indian loans: converted via FX depreciation)</li>
-                <li>New balance = old balance - (payment - interest)</li>
-                <li>Simulation continues 24 months past payoff to show savings trajectory</li>
+                <li>Payment = min(required, available, balance + interest)</li>
+                <li>Interest = <code>balance &times; monthly rate</code></li>
+                <li>New balance = balance - (payment - interest). If payment &lt; interest, balance grows</li>
+                <li>Leftover = available - payment (shown in cash flow as Disposable)</li>
+                <li>Continues 24 months past payoff for net worth trajectory</li>
             </ol>
 
-            <p><strong>Net Worth</strong></p>
+            <p><strong>7. Net Worth</strong></p>
             <p style="text-align:center;"><code>Net Worth = Starting NW + Internship + Cumulative Savings - Loan Balance</code></p>
             <ul>
-                <li><strong>Starting NW:</strong> From the slider (can be negative)</li>
-                <li><strong>Internship:</strong> One-time addition at start</li>
-                <li><strong>Cumulative savings:</strong> During repayment: only explicit savings (rate %). After payoff: savings + leftover (since no loan payment)</li>
-                <li><strong>Loan balance:</strong> Decreases as principal is paid off</li>
+                <li><strong>During repayment:</strong> Only explicit savings (rate %) accumulate. Leftover disposable is NOT added</li>
+                <li><strong>After payoff:</strong> All disposable (savings + leftover) accumulates since no loan payment</li>
+                <li>Starting NW includes the slider value + internship stipend</li>
                 <li>No investment returns or asset appreciation modeled</li>
             </ul>
 
-            <p><strong>Cash Flow Table</strong></p>
+            <p><strong>8. Payoff Charts</strong></p>
             <ul>
-                <li>Each row aggregates monthly values for that year across both persons</li>
-                <li><strong>Income:</strong> Monthly gross &times; months in that year (includes bonus + stock + signing in Year 1)</li>
-                <li><strong>Tax:</strong> Computed per person per location, summed</li>
-                <li><strong>Interest Paid:</strong> Sum of monthly interest portions from loan payments</li>
-                <li><strong>Disposable:</strong> Leftover after savings + loan payment. Not added to net worth during repayment</li>
-                <li><strong>Loan Balance:</strong> Year-end principal + projected next year&rsquo;s interest</li>
-                <li><strong>Net Worth:</strong> Combined year-end net worth for both persons</li>
+                <li><strong>Individual:</strong> "Remaining" = principal balance + future interest yet to be paid: <code>balance + (totalInterest - interestPaidSoFar)</code>. Starts at total lifetime cost, declines to 0</li>
+                <li><strong>Household:</strong> Stacked area of Booth + Kellogg remaining amounts</li>
+            </ul>
+
+            <p><strong>9. Cash Flow Table Columns</strong></p>
+            <ul>
+                <li><strong>Income:</strong> Combined monthly gross for both persons (includes bonus + stock + signing in Year 1)</li>
+                <li><strong>Tax:</strong> Federal + state + FICA, computed per person at their selected location</li>
+                <li><strong>Living:</strong> Monthly expenses &times; months, both persons</li>
+                <li><strong>Savings:</strong> Explicit savings (rate % of disposable), both persons</li>
+                <li><strong>Loan Payments:</strong> Total principal + interest paid that year</li>
+                <li><strong>Disposable:</strong> Leftover after savings + loan payment. Not in net worth during repayment; added after payoff</li>
+                <li><strong>Loan Balance:</strong> Year-end principal + next year&rsquo;s projected interest (so Year N balance &asymp; Year N+1 payments)</li>
+                <li><strong>Net Worth:</strong> Combined year-end for both persons (green = positive)</li>
             </ul>
         </div>
     </details>
@@ -980,15 +977,14 @@
             <summary>Column definitions</summary>
             <div class="methodology-body">
                 <ul>
-                    <li><strong>Income:</strong> Combined monthly gross (salary + bonus + stock + signing in Y1) &times; months</li>
+                    <li><strong>Income:</strong> Combined monthly gross (salary + bonus + stock + signing in Y1)</li>
                     <li><strong>Tax:</strong> Federal + State + FICA, computed per person at their location</li>
-                    <li><strong>Living:</strong> Monthly living expenses &times; months, both persons</li>
+                    <li><strong>Living:</strong> Monthly living expenses, both persons</li>
                     <li><strong>Savings:</strong> Explicit savings (rate % of disposable), both persons</li>
                     <li><strong>Loan Payments:</strong> Total principal + interest paid that year</li>
-                    <li><strong>Interest Paid:</strong> The interest component of loan payments</li>
-                    <li><strong>Disposable:</strong> Leftover after savings + loan. Not in net worth during repayment; added after payoff</li>
-                    <li><strong>Loan Balance:</strong> Year-end remaining principal. Note: Year N+1 payments &gt; Year N balance because payments include interest accrued during Year N+1</li>
-                    <li><strong>Net Worth:</strong> Starting NW + cumulative savings − loan balance. Green = positive</li>
+                    <li><strong>Disposable:</strong> Leftover after savings + loan payment. Not added to net worth during repayment; added after payoff</li>
+                    <li><strong>Loan Balance:</strong> Year-end principal + next year&rsquo;s projected interest, so Year N balance &asymp; Year N+1 payments</li>
+                    <li><strong>Net Worth:</strong> Starting NW + internship + cumulative savings &minus; loan balance. Green = positive</li>
                 </ul>
             </div>
         </details>

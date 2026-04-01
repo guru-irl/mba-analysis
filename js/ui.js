@@ -628,7 +628,7 @@ function createHouseholdPayoffChart(canvasId, boothResult, kelloggResult) {
     const options = deepMerge(DARK_THEME, {
         scales: {
             x: { type: 'linear', min: 0, title: { display: true, text: 'Months After Graduation', color: CHART_COLORS.textSecondary, font: { family: "'Sora', sans-serif", size: 11 } }, ticks: { color: CHART_COLORS.textMuted, font: { family: "'JetBrains Mono', monospace", size: 10 }, callback: function(v) { return v % 12 === 0 ? 'Yr ' + (v / 12) : ''; }, stepSize: 6 }, grid: { color: CHART_COLORS.grid, lineWidth: 0.5 } },
-            y: { title: { display: true, text: 'Remaining (Principal + Interest)', color: CHART_COLORS.textSecondary, font: { family: "'Sora', sans-serif", size: 11 } } },
+            y: { stacked: true, title: { display: true, text: 'Remaining (Principal + Interest)', color: CHART_COLORS.textSecondary, font: { family: "'Sora', sans-serif", size: 11 } } },
         },
     });
 
@@ -639,8 +639,8 @@ function createHouseholdPayoffChart(canvasId, boothResult, kelloggResult) {
         type: 'line',
         data: {
             datasets: [
-                { label: 'Booth', data: boothResult.timeline.map(e => ({ x: e.month, y: e.balance + (bTotalInt - e.cumulativeInterest) })), borderColor: CHART_COLORS.booth.main, backgroundColor: CHART_COLORS.booth.light, fill: true, borderWidth: 2, pointRadius: 0, tension: 0.2 },
-                { label: 'Kellogg', data: kelloggResult.timeline.map(e => ({ x: e.month, y: e.balance + (kTotalInt - e.cumulativeInterest) })), borderColor: CHART_COLORS.kellogg.main, backgroundColor: CHART_COLORS.kellogg.light, fill: true, borderWidth: 2, pointRadius: 0, tension: 0.2 },
+                { label: 'Booth', data: boothResult.timeline.map(e => ({ x: e.month, y: e.balance + (bTotalInt - e.cumulativeInterest) })), borderColor: CHART_COLORS.booth.main, backgroundColor: 'rgba(165, 42, 42, 0.3)', fill: true, borderWidth: 2, pointRadius: 0, tension: 0.2, stack: 'stack' },
+                { label: 'Kellogg', data: kelloggResult.timeline.map(e => ({ x: e.month, y: e.balance + (kTotalInt - e.cumulativeInterest) })), borderColor: CHART_COLORS.kellogg.main, backgroundColor: 'rgba(123, 82, 171, 0.3)', fill: true, borderWidth: 2, pointRadius: 0, tension: 0.2, stack: 'stack' },
             ],
         },
         options,
