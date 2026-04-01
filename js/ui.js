@@ -681,55 +681,43 @@ function renderHouseholdCashFlowTable(boothPerson, kelloggPerson) {
     const tbody = $('cashflow-table-body');
     tbody.innerHTML = '';
 
-    const maxLen = Math.max(boothPerson.result.timeline.length, kelloggPerson.result.timeline.length);
+    // Aggregate by year from both timelines
     const years = {};
 
-    for (let i = 0; i < maxLen; i++) {
-        const be = i < boothPerson.result.timeline.length ? boothPerson.result.timeline[i] : null;
-        const ke = i < kelloggPerson.result.timeline.length ? kelloggPerson.result.timeline[i] : null;
-        const yr = be ? be.year : ke.year;
-        if (!years[yr]) years[yr] = { year: yr, income: 0, tax: 0, living: 0, savings: 0, loan: 0, balance: 0 };
-        if (be) {
-            const bTax = calcPostTax(be.totalComp || be.salary, 'single', boothLocation);
-            years[yr].income += (be.totalComp || be.salary) / 12;
-            years[yr].tax += bTax.totalTax / 12;
-            years[yr].living += boothPerson.living;
-            years[yr].savings += be.monthlySavings || 0;
-            years[yr].loan += be.payment;
-            years[yr].balance = (years[yr].balance || 0);
-        }
-        if (ke) {
-            const kTax = calcPostTax(ke.totalComp || ke.salary, 'single', kelloggLocation);
-            years[yr].income += (ke.totalComp || ke.salary) / 12;
-            years[yr].tax += kTax.totalTax / 12;
-            years[yr].living += kelloggPerson.living;
-            years[yr].savings += ke.monthlySavings || 0;
-            years[yr].loan += ke.payment;
+    function addToYear(timeline, person, loc) {
+        for (const e of timeline) {
+            if (!years[e.year]) years[e.year] = { year: e.year, income: 0, tax: 0, living: 0, savings: 0, loan: 0, disposable: 0 };
+            const monthlyGross = (e.totalComp || e.salary) / 12;
+            const tax = calcPostTax(e.totalComp || e.salary, 'single', loc);
+            years[e.year].income += monthlyGross;
+            years[e.year].tax += tax.totalTax / 12;
+            years[e.year].living += person.living;
+            years[e.year].savings += e.monthlySavings || 0;
+            years[e.year].loan += e.payment;
+            years[e.year].disposable += e.leftover || 0;
         }
     }
 
-    // Compute annual totals and remaining balance
+    addToYear(boothPerson.result.timeline, boothPerson, boothLocation);
+    addToYear(kelloggPerson.result.timeline, kelloggPerson, kelloggLocation);
+
     for (const row of Object.values(years)) {
         const boothEnd = boothPerson.result.timeline.filter(e => e.year === row.year).pop();
         const kelloggEnd = kelloggPerson.result.timeline.filter(e => e.year === row.year).pop();
         row.balance = (boothEnd?.balance || 0) + (kelloggEnd?.balance || 0);
         row.netWorth = (boothEnd?.netWorth || 0) + (kelloggEnd?.netWorth || 0);
-        // Convert monthly sums to annual
-        const monthsInYear = boothPerson.result.timeline.filter(e => e.year === row.year).length || 12;
-        row.incomeAnnual = row.income / monthsInYear * 12;
-        row.taxAnnual = row.tax / monthsInYear * 12;
-        row.livingAnnual = row.living / monthsInYear * 12;
-        row.savingsAnnual = row.savings;
 
         const nwColor = row.netWorth >= 0 ? 'var(--positive)' : 'var(--negative)';
+        const dispColor = row.disposable >= 0 ? 'var(--positive)' : 'var(--negative)';
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>Year ${row.year}</td>
-            <td>${formatUSD(row.incomeAnnual)}</td>
-            <td>${formatUSD(row.taxAnnual)}</td>
-            <td>${formatUSD(row.livingAnnual)}</td>
-            <td>${formatUSD(row.savingsAnnual)}</td>
+            <td>${formatUSD(row.income)}</td>
+            <td>${formatUSD(row.tax)}</td>
+            <td>${formatUSD(row.living)}</td>
+            <td>${formatUSD(row.savings)}</td>
             <td>${formatUSD(row.loan)}</td>
+            <td style="color:${dispColor};">${formatUSD(row.disposable)}</td>
             <td>${formatUSD(row.balance)}</td>
             <td style="color:${nwColor}; font-weight:600;">${formatUSD(row.netWorth)}</td>
         `;

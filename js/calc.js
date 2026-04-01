@@ -491,9 +491,8 @@ function calcPayoffTimeline(params) {
         balance = Math.max(balance - principalPortion, 0);
         cumulativePaid += payment;
         cumulativeInterest += interestThisMonth;
+        // Only explicit savings accumulate
         cumulativeSavings += monthlySavings;
-        // Stock is already in totalAnnualComp → taxed → disposable → savings
-        // No separate cumulativeStock to avoid double counting
 
         const balanceGrowing = payment < interestThisMonth;
 
@@ -511,6 +510,7 @@ function calcPayoffTimeline(params) {
             cumulativeSavings,
             netWorth: baseNetWorth + cumulativeSavings - balance,
             disposable,
+            leftover: disposable - monthlySavings - payment,
             monthlySavings,
             warning: balanceGrowing ? 'Balance growing' : null,
         });
