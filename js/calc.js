@@ -182,19 +182,73 @@ function calcIndianLoan(principalUSD, annualRate, termYears, params) {
 }
 
 /**
+ * Total cost of a US loan with early payoff.
+ * Pay regular EMI for payoffYears, then lump-sum the remaining balance.
+ */
+function calcUSLoanTotalCost(principal, annualRate, termYears, payoffYears) {
+    if (principal <= 0) return 0;
+    payoffYears = Math.min(payoffYears || termYears, termYears);
+    if (payoffYears >= termYears) {
+        return calcUSLoan(principal, annualRate, termYears).totalPaid;
+    }
+    const schedule = calcAmortizationSchedule(principal, annualRate, termYears);
+    const payoffMonth = payoffYears * 12;
+    let totalPaid = 0;
+    for (let i = 0; i < payoffMonth && i < schedule.length; i++) {
+        totalPaid += schedule[i].payment;
+    }
+    // Lump-sum remaining balance
+    if (payoffMonth > 0 && payoffMonth <= schedule.length) {
+        totalPaid += schedule[payoffMonth - 1].balance;
+    }
+    return totalPaid;
+}
+
+/**
+ * Total cost (USD-equivalent) of an Indian loan with early payoff.
+ * Pay EMI for payoffYears, then lump-sum remaining INR balance at that month's FX rate.
+ */
+function calcIndianLoanTotalCostUSD(principalUSD, annualRate, termYears, payoffYears, params) {
+    if (principalUSD <= 0) return 0;
+    const result = calcIndianLoan(principalUSD, annualRate, termYears, params);
+    payoffYears = Math.min(payoffYears || termYears, termYears);
+    if (payoffYears >= termYears) {
+        return result.effectiveTotalUSD;
+    }
+    const payoffMonth = payoffYears * 12;
+    const depRate = params.depreciation / 100;
+    const fxRate = params.fxRate;
+
+    // Sum monthly USD-equivalent payments for payoff period
+    let totalRepaymentUSD = 0;
+    for (let i = 0; i < payoffMonth && i < result.monthlyPaymentsUSD.length; i++) {
+        totalRepaymentUSD += result.monthlyPaymentsUSD[i];
+    }
+
+    // Lump-sum remaining INR balance converted to USD at payoff month's rate
+    if (payoffMonth > 0 && payoffMonth <= result.schedule.length) {
+        const remainingINR = result.schedule[payoffMonth - 1].balance;
+        const fxRateAtPayoff = fxRate * Math.pow(1 + depRate, payoffMonth / 12);
+        totalRepaymentUSD += remainingINR / fxRateAtPayoff;
+    }
+
+    return totalRepaymentUSD + result.disbursementCostUSD + result.tcsUSD;
+}
+
+/**
  * Find the Indian loan interest rate where total cost equals US loan cost.
- * Uses bisection method.
+ * Uses bisection method. Supports early payoff scenario.
  * Returns null if no crossover in [low, high] range.
  */
-function calcBreakevenRate(principalUSD, usRate, usTerm, indiaParams) {
-    const usTotal = calcUSLoan(principalUSD, usRate, usTerm).totalPaid;
+function calcBreakevenRate(principalUSD, usRate, usTerm, indiaParams, payoffYears) {
+    const usTotal = calcUSLoanTotalCost(principalUSD, usRate, usTerm, payoffYears);
 
     const low = 1;
     const high = 25;
 
     // Check if crossover exists
-    const costAtLow = calcIndianLoan(principalUSD, low, indiaParams.term, indiaParams).effectiveTotalUSD;
-    const costAtHigh = calcIndianLoan(principalUSD, high, indiaParams.term, indiaParams).effectiveTotalUSD;
+    const costAtLow = calcIndianLoanTotalCostUSD(principalUSD, low, indiaParams.term, payoffYears, indiaParams);
+    const costAtHigh = calcIndianLoanTotalCostUSD(principalUSD, high, indiaParams.term, payoffYears, indiaParams);
 
     if (costAtLow >= usTotal) return { rate: null, message: 'Indian loan is always more expensive in this range.' };
     if (costAtHigh <= usTotal) return { rate: null, message: 'Indian loan is always cheaper in this range.' };
@@ -203,7 +257,7 @@ function calcBreakevenRate(principalUSD, usRate, usTerm, indiaParams) {
     let lo = low, hi = high;
     for (let i = 0; i < 50; i++) {
         const mid = (lo + hi) / 2;
-        const cost = calcIndianLoan(principalUSD, mid, indiaParams.term, indiaParams).effectiveTotalUSD;
+        const cost = calcIndianLoanTotalCostUSD(principalUSD, mid, indiaParams.term, payoffYears, indiaParams);
         if (cost < usTotal) {
             lo = mid;
         } else {
@@ -217,9 +271,10 @@ function calcBreakevenRate(principalUSD, usRate, usTerm, indiaParams) {
 
 /**
  * Generate breakeven chart data: sweep Indian rate from min to max.
+ * Supports early payoff scenario.
  */
-function calcBreakevenChartData(principalUSD, usRate, usTerm, indiaParams, depRates) {
-    const usTotal = calcUSLoan(principalUSD, usRate, usTerm).totalPaid;
+function calcBreakevenChartData(principalUSD, usRate, usTerm, indiaParams, depRates, payoffYears) {
+    const usTotal = calcUSLoanTotalCost(principalUSD, usRate, usTerm, payoffYears);
     const ratePoints = [];
     for (let r = 4; r <= 15; r += 0.25) {
         ratePoints.push(r);
@@ -228,7 +283,7 @@ function calcBreakevenChartData(principalUSD, usRate, usTerm, indiaParams, depRa
     const datasets = depRates.map(dep => {
         const params = { ...indiaParams, depreciation: dep };
         const costs = ratePoints.map(r =>
-            calcIndianLoan(principalUSD, r, indiaParams.term, params).effectiveTotalUSD
+            calcIndianLoanTotalCostUSD(principalUSD, r, indiaParams.term, payoffYears, params)
         );
         return { depreciation: dep, costs };
     });

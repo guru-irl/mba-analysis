@@ -400,6 +400,16 @@
     <!-- ── BREAKEVEN ANALYSIS ──────────────────────────────────── -->
     <div class="section-label">Breakeven Analysis <span class="section-note">At what Indian rate does US win?</span></div>
     <div class="panel">
+        <div class="slider-row" style="max-width: 480px; margin-bottom: var(--space-lg);">
+            <label class="slider-label" for="early-payoff">Actual Payoff Period <span class="section-note">(pay off early = less interest)</span></label>
+            <div class="slider-control">
+                <input type="range" id="early-payoff" class="slider" min="1" max="20" step="1" value="10">
+                <div class="slider-value">
+                    <input type="number" id="early-payoff-num" class="num-input" min="1" max="20" step="1" value="10">
+                    <span class="unit">yr</span>
+                </div>
+            </div>
+        </div>
         <div class="chart-container chart-container--lg">
             <canvas id="breakeven-chart"></canvas>
         </div>
@@ -415,7 +425,7 @@
     </div>
 
     <!-- ── HISTORICAL FX ───────────────────────────────────────── -->
-    <div class="section-label">Historical INR/USD Depreciation <span class="section-note">2016–2025</span></div>
+    <div class="section-label">Historical INR/USD Depreciation <span class="section-note">2016–2025 · 2026* = live rate</span></div>
     <div class="panel">
         <div class="chart-container chart-container--sm">
             <canvas id="fx-history-chart"></canvas>

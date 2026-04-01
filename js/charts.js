@@ -234,13 +234,42 @@ function createCostComparisonChart(canvasId, data) {
 }
 
 /* ── FX HISTORY CHART ──────────────────────────────────────────── */
-function createFxHistoryChart(canvasId) {
+function createFxHistoryChart(canvasId, currentLiveRate) {
     destroyChart('fxHistory');
     const ctx = document.getElementById(canvasId).getContext('2d');
 
     const years = FX_HISTORY.map(d => d.year.toString());
     const depRates = FX_HISTORY.map(d => d.depreciation);
     const fxRates = FX_HISTORY.map(d => d.rate);
+
+    // If we have a live rate, add 2026 data point
+    const lastHistorical = FX_HISTORY[FX_HISTORY.length - 1]; // 2025
+    if (currentLiveRate && lastHistorical) {
+        const depFromLast = ((currentLiveRate - lastHistorical.rate) / lastHistorical.rate) * 100;
+        const depRounded = Math.round(depFromLast * 10) / 10;
+        years.push('2026*');
+        depRates.push(depRounded);
+        fxRates.push(currentLiveRate);
+    }
+
+    // Bar colors: red for depreciation, green for appreciation, highlight 2026
+    const barColors = depRates.map((d, i) => {
+        if (i === depRates.length - 1 && currentLiveRate) {
+            // Highlight current year
+            return d >= 0 ? 'rgba(245, 158, 11, 0.85)' : 'rgba(16, 185, 129, 0.85)';
+        }
+        return d >= 0 ? 'rgba(239, 68, 68, 0.6)' : 'rgba(16, 185, 129, 0.6)';
+    });
+
+    // Point colors for line: highlight current year
+    const pointColors = fxRates.map((_, i) => {
+        if (i === fxRates.length - 1 && currentLiveRate) return '#FBBF24';
+        return CHART_COLORS.indiaLoan.main;
+    });
+    const pointRadii = fxRates.map((_, i) => {
+        if (i === fxRates.length - 1 && currentLiveRate) return 7;
+        return 4;
+    });
 
     const options = deepMerge(DARK_THEME, {
         scales: {
@@ -270,9 +299,7 @@ function createFxHistoryChart(canvasId) {
                 {
                     label: 'YoY Depreciation',
                     data: depRates,
-                    backgroundColor: depRates.map(d =>
-                        d >= 0 ? 'rgba(239, 68, 68, 0.6)' : 'rgba(16, 185, 129, 0.6)'
-                    ),
+                    backgroundColor: barColors,
                     borderRadius: 4,
                     yAxisID: 'y',
                     order: 2,
@@ -284,8 +311,9 @@ function createFxHistoryChart(canvasId) {
                     borderColor: CHART_COLORS.indiaLoan.main,
                     backgroundColor: 'transparent',
                     borderWidth: 2,
-                    pointRadius: 4,
-                    pointBackgroundColor: CHART_COLORS.indiaLoan.main,
+                    pointRadius: pointRadii,
+                    pointBackgroundColor: pointColors,
+                    pointBorderColor: pointColors,
                     yAxisID: 'y2',
                     tension: 0.3,
                     order: 1,

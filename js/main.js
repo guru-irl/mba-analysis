@@ -2,6 +2,9 @@
    main.js — Entry point
    ═══════════════════════════════════════════════════════════════ */
 
+// Store the live rate globally so the FX chart can use it
+let liveFxRate = null;
+
 document.addEventListener('DOMContentLoaded', () => {
     initTabs();
     initSliders();
@@ -12,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /**
  * Fetch live USD→INR rate from open.er-api.com (free, no key, CORS-friendly).
- * Updates the fx-rate input and recalculates on success.
+ * Updates the fx-rate input, FX history chart, and recalculates.
  */
 function fetchLiveFxRate() {
     const statusEl = document.getElementById('fx-rate-status');
@@ -25,8 +28,14 @@ function fetchLiveFxRate() {
         .then(data => {
             if (data.result === 'success' && data.rates && data.rates.INR) {
                 const rate = Math.round(data.rates.INR * 100) / 100;
+                liveFxRate = rate;
                 fxInput.value = rate;
                 if (statusEl) statusEl.textContent = '(live)';
+
+                // Recreate FX history chart with the live data point
+                destroyChart('fxHistory');
+                createFxHistoryChart('fx-history-chart', liveFxRate);
+
                 scheduleUpdate();
             } else {
                 if (statusEl) statusEl.textContent = '(fallback)';

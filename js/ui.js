@@ -44,6 +44,7 @@ const SLIDER_PAIRS = [
     ['salary-growth', 'salary-growth-num'],
     ['post-mba-living', 'post-mba-living-num'],
     ['extra-payment', 'extra-payment-num'],
+    ['early-payoff', 'early-payoff-num'],
 ];
 
 function initSliders() {
@@ -157,6 +158,8 @@ function updateCalculations() {
     const fxRate = parseFloat($('fx-rate').value) || 93;
     const indiaDepreciation = parseFloat($('india-depreciation').value) || 0;
 
+    const earlyPayoff = parseInt($('early-payoff').value) || 10;
+
     const annualSalary = parseFloat($('annual-salary').value) || 0;
     const salaryGrowth = parseFloat($('salary-growth').value) || 0;
     const postMbaLiving = parseFloat($('post-mba-living').value) || 0;
@@ -238,24 +241,27 @@ function updateCalculations() {
         Math.min(indiaDepreciation + 1.5, 10),
     ];
 
+    const breakevenIndiaParams = { ...indiaParams, quarters: breakevenQuarters, term: indiaTerm };
     const breakevenData = calcBreakevenChartData(
         breakevenPrincipal, usRate, usTerm,
-        { ...indiaParams, quarters: breakevenQuarters, term: indiaTerm },
-        depRates
+        breakevenIndiaParams, depRates, earlyPayoff
     );
     createBreakevenChart('breakeven-chart', breakevenData);
 
     // Breakeven text
     const breakevenResult = calcBreakevenRate(
         breakevenPrincipal, usRate, usTerm,
-        { ...indiaParams, quarters: breakevenQuarters, term: indiaTerm }
+        breakevenIndiaParams, earlyPayoff
     );
+    const payoffNote = earlyPayoff < Math.min(usTerm, indiaTerm)
+        ? ` Assumes early payoff in <strong>${earlyPayoff}</strong> years.`
+        : '';
     if (breakevenResult.rate !== null) {
         $('breakeven-text').innerHTML =
             `At <strong>${indiaDepreciation}%</strong> annual INR depreciation, an Indian bank loan is cheaper when the rate is below <strong>${breakevenResult.rate.toFixed(2)}%</strong>. ` +
-            `Currently comparing against US loan at <strong>${usRate}%</strong> APR.`;
+            `Currently comparing against US loan at <strong>${usRate}%</strong> APR.` + payoffNote;
     } else {
-        $('breakeven-text').textContent = breakevenResult.message;
+        $('breakeven-text').innerHTML = breakevenResult.message + payoffNote;
     }
 
     // ── Cost Comparison Bar Chart ──
@@ -270,9 +276,9 @@ function updateCalculations() {
         fees: [0, indiaBoothLoan.disbursementCostUSD + indiaBoothLoan.tcsUSD, 0, indiaKelloggLoan.disbursementCostUSD + indiaKelloggLoan.tcsUSD],
     });
 
-    // ── FX History (static, only create once) ──
+    // ── FX History (create once, recreated when live rate arrives) ──
     if (!chartInstances.fxHistory) {
-        createFxHistoryChart('fx-history-chart');
+        createFxHistoryChart('fx-history-chart', liveFxRate);
     }
 
     // ── Tab 2: Payoff Analysis ──
