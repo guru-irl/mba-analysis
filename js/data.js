@@ -107,13 +107,48 @@ const FEDERAL_TAX = {
     },
 };
 
-// Illinois state tax (flat rate)
+// State income taxes by location
 const STATE_TAX = {
     illinois: {
-        rate: 0.0495,
+        label: 'Illinois',
         type: 'flat',
+        rate: 0.0495,
+    },
+    newyork: {
+        label: 'New York',
+        type: 'progressive',
+        brackets: [
+            { limit: 8500,    rate: 0.04 },
+            { limit: 11700,   rate: 0.045 },
+            { limit: 13900,   rate: 0.0525 },
+            { limit: 80650,   rate: 0.055 },
+            { limit: 215400,  rate: 0.06 },
+            { limit: 1077550, rate: 0.0685 },
+            { limit: Infinity, rate: 0.0965 },
+        ],
+    },
+    california: {
+        label: 'California',
+        type: 'progressive',
+        brackets: [
+            { limit: 10412,  rate: 0.01 },
+            { limit: 24684,  rate: 0.02 },
+            { limit: 38959,  rate: 0.04 },
+            { limit: 54081,  rate: 0.06 },
+            { limit: 68350,  rate: 0.08 },
+            { limit: 349137, rate: 0.093 },
+            { limit: 418961, rate: 0.103 },
+            { limit: 698271, rate: 0.113 },
+            { limit: Infinity, rate: 0.123 },
+        ],
     },
 };
+
+const LOCATIONS = [
+    { key: 'illinois', name: 'Chicago', state: 'IL' },
+    { key: 'newyork', name: 'New York', state: 'NY' },
+    { key: 'california', name: 'San Francisco', state: 'CA' },
+];
 
 // Chart colors (reusable)
 const CHART_COLORS = {

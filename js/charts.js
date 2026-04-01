@@ -357,7 +357,7 @@ function createFxHistoryChart(canvasId, currentLiveRate) {
 
 /* ── PAYOFF TRAJECTORY CHART ───────────────────────────────────── */
 function createPayoffChart(canvasId, data) {
-    destroyChart('payoff');
+    destroyChart(canvasId);
     const ctx = document.getElementById(canvasId).getContext('2d');
 
     const balanceData = data.timeline.map(e => ({ x: e.month, y: e.balance }));
@@ -394,7 +394,7 @@ function createPayoffChart(canvasId, data) {
         },
     });
 
-    chartInstances.payoff = new Chart(ctx, {
+    chartInstances[canvasId] = new Chart(ctx, {
         type: 'line',
         data: {
             datasets: [
@@ -427,7 +427,7 @@ function createPayoffChart(canvasId, data) {
 
 /* ── NET WORTH CHART ───────────────────────────────────────────── */
 function createNetWorthChart(canvasId, data) {
-    destroyChart('netWorth');
+    destroyChart(canvasId);
     const ctx = document.getElementById(canvasId).getContext('2d');
 
     const netWorthData = data.timeline.map(e => ({ x: e.month, y: e.netWorth }));
@@ -497,7 +497,7 @@ function createNetWorthChart(canvasId, data) {
         },
     });
 
-    chartInstances.netWorth = new Chart(ctx, {
+    chartInstances[canvasId] = new Chart(ctx, {
         type: 'line',
         data: {
             datasets: [{

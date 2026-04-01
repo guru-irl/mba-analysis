@@ -653,184 +653,236 @@
      ╚═══════════════════════════════════════════════════════════════╝ -->
 <section id="tab-payoff" class="tab-panel" role="tabpanel">
 
-    <!-- ── CONFIGURATION BAR ───────────────────────────────────── -->
-    <div class="config-bar">
-        <div class="toggle-group">
-            <span class="toggle-label">Program</span>
-            <div class="toggle-btns">
-                <button class="toggle-btn toggle-btn--booth active" id="payoff-booth" data-program="booth">Booth</button>
-                <button class="toggle-btn toggle-btn--kellogg" id="payoff-kellogg" data-program="kellogg">Kellogg</button>
+    <!-- ══════ DUAL PERSON SPLIT ══════════════════════════════════ -->
+    <div class="dual-split">
+
+        <!-- ── LEFT: BOOTH (You) ───────────────────────────────── -->
+        <div class="dual-split-col">
+            <div class="card-header" style="margin-bottom: var(--space-md);">
+                <span class="school-badge school-badge--booth">YOU</span>
+                <h3 class="program-name">Booth MBA / MPCS</h3>
             </div>
+
+            <div class="section-label" style="margin-top:0;">Loan</div>
+            <div class="selector-bar selector-bar--2col">
+                <button class="selector-btn selector-btn--us active" id="payoff-booth-us" data-source="us">US Loan</button>
+                <button class="selector-btn selector-btn--india" id="payoff-booth-india" data-source="india">Indian Loan</button>
+            </div>
+            <div class="panel">
+                <div class="loan-summary-values">
+                    <div class="loan-summary-item"><span class="loan-summary-label">Principal</span><span class="loan-summary-value mono" id="p2-booth-principal">—</span></div>
+                    <div class="loan-summary-item"><span class="loan-summary-label">Rate</span><span class="loan-summary-value mono" id="p2-booth-rate">—</span></div>
+                </div>
+                <div class="slider-row" style="margin-top: var(--space-md);"><label class="slider-label" for="payoff-yr-booth">Target Payoff</label><div class="slider-control"><input type="range" id="payoff-yr-booth" class="slider slider--green" min="1" max="20" step="1" value="10"><div class="slider-value"><input type="number" id="payoff-yr-booth-num" class="num-input" min="1" max="20" step="1" value="10"><span class="unit">yr</span></div></div></div>
+                <div class="budget-total" style="margin-top: var(--space-sm);">
+                    <div class="budget-total-row budget-total-row--big"><span>Monthly Payment</span><span class="mono" id="p2-booth-payment">—</span></div>
+                </div>
+            </div>
+
+            <div class="section-label">Location</div>
+            <div class="selector-bar selector-bar--3col">
+                <button class="selector-btn active" id="loc-booth-il" data-loc="illinois">Chicago (IL)</button>
+                <button class="selector-btn" id="loc-booth-ny" data-loc="newyork">New York</button>
+                <button class="selector-btn" id="loc-booth-ca" data-loc="california">San Francisco</button>
+            </div>
+
+            <div class="section-label">Current Net Worth</div>
+            <div class="panel">
+                <div class="slider-row"><label class="slider-label" for="networth-booth">Starting Net Worth</label><div class="slider-control"><input type="range" id="networth-booth" class="slider slider--green" min="-50000" max="200000" step="5000" value="0"><div class="slider-value"><span class="currency-symbol">$</span><input type="number" id="networth-booth-num" class="num-input" min="-50000" max="200000" step="5000" value="0"></div></div></div>
+            </div>
+
+            <div class="section-label">One-Off Payments</div>
+            <div class="panel">
+                <div class="slider-row"><label class="slider-label" for="intern-booth">Internship Stipend <span class="section-note">(summer)</span></label><div class="slider-control"><input type="range" id="intern-booth" class="slider slider--green" min="0" max="50000" step="1000" value="0"><div class="slider-value"><span class="currency-symbol">$</span><input type="number" id="intern-booth-num" class="num-input" min="0" max="50000" step="1000" value="0"></div></div></div>
+                <div class="slider-row"><label class="slider-label" for="signing-booth">Signing Bonus <span class="section-note">(Year 1)</span></label><div class="slider-control"><input type="range" id="signing-booth" class="slider slider--green" min="0" max="100000" step="1000" value="0"><div class="slider-value"><span class="currency-symbol">$</span><input type="number" id="signing-booth-num" class="num-input" min="0" max="100000" step="1000" value="0"></div></div></div>
+            </div>
+
+            <div class="section-label">Full-Time Compensation</div>
+            <div class="panel">
+                <div class="slider-row"><label class="slider-label" for="salary-booth">Base Salary</label><div class="slider-control"><input type="range" id="salary-booth" class="slider slider--green" min="80000" max="400000" step="5000" value="180000"><div class="slider-value"><span class="currency-symbol">$</span><input type="number" id="salary-booth-num" class="num-input" min="80000" max="400000" step="5000" value="180000"></div></div></div>
+                <div class="slider-row"><label class="slider-label" for="growth-booth">Salary Growth</label><div class="slider-control"><input type="range" id="growth-booth" class="slider slider--green" min="0" max="10" step="0.5" value="3"><div class="slider-value"><input type="number" id="growth-booth-num" class="num-input" min="0" max="10" step="0.5" value="3"><span class="unit">%</span></div></div></div>
+                <div class="slider-row"><label class="slider-label" for="bonus-booth">Annual Bonus</label><div class="slider-control"><input type="range" id="bonus-booth" class="slider slider--green" min="0" max="50" step="1" value="15"><div class="slider-value"><input type="number" id="bonus-booth-num" class="num-input" min="0" max="50" step="1" value="15"><span class="unit">%</span></div></div><div class="slider-computed mono" id="bonus-booth-dollar">$27,000</div></div>
+                <div class="slider-row"><label class="slider-label" for="stock-booth">Annual Stock/Equity <span class="section-note">(net worth only)</span></label><div class="slider-control"><input type="range" id="stock-booth" class="slider slider--green" min="0" max="200000" step="5000" value="0"><div class="slider-value"><span class="currency-symbol">$</span><input type="number" id="stock-booth-num" class="num-input" min="0" max="200000" step="5000" value="0"></div></div></div>
+            </div>
+
+            <div class="section-label">Expenses</div>
+            <div class="panel">
+                <div class="slider-row"><label class="slider-label" for="living-booth">Living Expenses</label><div class="slider-control"><input type="range" id="living-booth" class="slider slider--green" min="1000" max="10000" step="100" value="4000"><div class="slider-value"><span class="currency-symbol">$</span><input type="number" id="living-booth-num" class="num-input" min="1000" max="10000" step="100" value="4000"></div></div></div>
+                <div class="slider-row"><label class="slider-label" for="save-booth">Savings Rate</label><div class="slider-control"><input type="range" id="save-booth" class="slider slider--green" min="0" max="50" step="1" value="10"><div class="slider-value"><input type="number" id="save-booth-num" class="num-input" min="0" max="50" step="1" value="10"><span class="unit">%</span></div></div></div>
+            </div>
+
+            <div class="section-label">Balance Sheet <div class="toggle-btns toggle-btns--inline"><button class="toggle-btn active" id="bs-booth-monthly" data-period="monthly">Monthly</button><button class="toggle-btn" id="bs-booth-yearly" data-period="yearly">Yearly</button></div></div>
+            <div class="panel">
+                <div class="balance-sheet">
+                    <div class="bs-row bs-row--income"><span>Pre-Tax Income</span><span class="mono" id="p2-booth-pretax">—</span></div>
+                    <div class="bs-row bs-row--sub"><span>Federal Tax</span><span class="mono" id="p2-booth-federal">—</span></div>
+                    <div class="bs-row bs-row--sub"><span>State Tax (<span id="p2-booth-state-label">IL</span>)</span><span class="mono" id="p2-booth-state">—</span></div>
+                    <div class="bs-row bs-row--sub"><span>FICA</span><span class="mono" id="p2-booth-fica">—</span></div>
+                    <div class="bs-row bs-row--net"><span>Post-Tax Income</span><span class="mono" id="p2-booth-net-monthly">—</span></div>
+                    <div class="bs-row bs-row--expense"><span>Living Expenses</span><span class="mono" id="p2-booth-bs-living">—</span></div>
+                    <div class="bs-row bs-row--expense"><span>Savings (<span id="p2-booth-save-pct">10</span>%)</span><span class="mono" id="p2-booth-bs-savings">—</span></div>
+                    <div class="bs-row bs-row--expense"><span>Loan Repayment</span><span class="mono" id="p2-booth-bs-payment">—</span></div>
+                    <div class="bs-row bs-row--bottom"><span>Disposable</span><span class="mono" id="p2-booth-disposable">—</span></div>
+                </div>
+            </div>
+
+            <div class="section-label">Payoff Trajectory</div>
+            <div class="panel"><div class="chart-container chart-container--sm"><canvas id="payoff-chart-booth"></canvas></div></div>
+
+            <div class="section-label">Net Worth</div>
+            <div class="panel"><div class="chart-container chart-container--sm"><canvas id="networth-chart-booth"></canvas></div></div>
         </div>
-        <div class="toggle-group">
-            <span class="toggle-label">Loan Source</span>
-            <div class="toggle-btns">
-                <button class="toggle-btn toggle-btn--us active" id="payoff-us" data-source="us">US Loan</button>
-                <button class="toggle-btn toggle-btn--india" id="payoff-india" data-source="india">Indian Loan</button>
+
+        <!-- ── DIVIDER ─────────────────────────────────────────── -->
+        <div class="dual-split-divider"></div>
+
+        <!-- ── RIGHT: KELLOGG (Partner) ────────────────────────── -->
+        <div class="dual-split-col">
+            <div class="card-header" style="margin-bottom: var(--space-md);">
+                <span class="school-badge school-badge--kellogg">PARTNER</span>
+                <h3 class="program-name">Kellogg MMM</h3>
             </div>
+
+            <div class="section-label" style="margin-top:0;">Loan</div>
+            <div class="selector-bar selector-bar--2col">
+                <button class="selector-btn selector-btn--us active" id="payoff-kellogg-us" data-source="us">US Loan</button>
+                <button class="selector-btn selector-btn--india" id="payoff-kellogg-india" data-source="india">Indian Loan</button>
+            </div>
+            <div class="panel">
+                <div class="loan-summary-values">
+                    <div class="loan-summary-item"><span class="loan-summary-label">Principal</span><span class="loan-summary-value mono" id="p2-kellogg-principal">—</span></div>
+                    <div class="loan-summary-item"><span class="loan-summary-label">Rate</span><span class="loan-summary-value mono" id="p2-kellogg-rate">—</span></div>
+                </div>
+                <div class="slider-row" style="margin-top: var(--space-md);"><label class="slider-label" for="payoff-yr-kellogg">Target Payoff</label><div class="slider-control"><input type="range" id="payoff-yr-kellogg" class="slider slider--green" min="1" max="20" step="1" value="10"><div class="slider-value"><input type="number" id="payoff-yr-kellogg-num" class="num-input" min="1" max="20" step="1" value="10"><span class="unit">yr</span></div></div></div>
+                <div class="budget-total" style="margin-top: var(--space-sm);">
+                    <div class="budget-total-row budget-total-row--big"><span>Monthly Payment</span><span class="mono" id="p2-kellogg-payment">—</span></div>
+                </div>
+            </div>
+
+            <div class="section-label">Location</div>
+            <div class="selector-bar selector-bar--3col">
+                <button class="selector-btn active" id="loc-kellogg-il" data-loc="illinois">Chicago (IL)</button>
+                <button class="selector-btn" id="loc-kellogg-ny" data-loc="newyork">New York</button>
+                <button class="selector-btn" id="loc-kellogg-ca" data-loc="california">San Francisco</button>
+            </div>
+
+            <div class="section-label">Current Net Worth</div>
+            <div class="panel">
+                <div class="slider-row"><label class="slider-label" for="networth-kellogg">Starting Net Worth</label><div class="slider-control"><input type="range" id="networth-kellogg" class="slider slider--green" min="-50000" max="200000" step="5000" value="0"><div class="slider-value"><span class="currency-symbol">$</span><input type="number" id="networth-kellogg-num" class="num-input" min="-50000" max="200000" step="5000" value="0"></div></div></div>
+            </div>
+
+            <div class="section-label">One-Off Payments</div>
+            <div class="panel">
+                <div class="slider-row"><label class="slider-label" for="intern-kellogg">Internship Stipend <span class="section-note">(summer)</span></label><div class="slider-control"><input type="range" id="intern-kellogg" class="slider slider--green" min="0" max="50000" step="1000" value="0"><div class="slider-value"><span class="currency-symbol">$</span><input type="number" id="intern-kellogg-num" class="num-input" min="0" max="50000" step="1000" value="0"></div></div></div>
+                <div class="slider-row"><label class="slider-label" for="signing-kellogg">Signing Bonus <span class="section-note">(Year 1)</span></label><div class="slider-control"><input type="range" id="signing-kellogg" class="slider slider--green" min="0" max="100000" step="1000" value="0"><div class="slider-value"><span class="currency-symbol">$</span><input type="number" id="signing-kellogg-num" class="num-input" min="0" max="100000" step="1000" value="0"></div></div></div>
+            </div>
+
+            <div class="section-label">Full-Time Compensation</div>
+            <div class="panel">
+                <div class="slider-row"><label class="slider-label" for="salary-kellogg">Base Salary</label><div class="slider-control"><input type="range" id="salary-kellogg" class="slider slider--green" min="80000" max="400000" step="5000" value="180000"><div class="slider-value"><span class="currency-symbol">$</span><input type="number" id="salary-kellogg-num" class="num-input" min="80000" max="400000" step="5000" value="180000"></div></div></div>
+                <div class="slider-row"><label class="slider-label" for="growth-kellogg">Salary Growth</label><div class="slider-control"><input type="range" id="growth-kellogg" class="slider slider--green" min="0" max="10" step="0.5" value="3"><div class="slider-value"><input type="number" id="growth-kellogg-num" class="num-input" min="0" max="10" step="0.5" value="3"><span class="unit">%</span></div></div></div>
+                <div class="slider-row"><label class="slider-label" for="bonus-kellogg">Annual Bonus</label><div class="slider-control"><input type="range" id="bonus-kellogg" class="slider slider--green" min="0" max="50" step="1" value="15"><div class="slider-value"><input type="number" id="bonus-kellogg-num" class="num-input" min="0" max="50" step="1" value="15"><span class="unit">%</span></div></div><div class="slider-computed mono" id="bonus-kellogg-dollar">$27,000</div></div>
+                <div class="slider-row"><label class="slider-label" for="stock-kellogg">Annual Stock/Equity <span class="section-note">(net worth only)</span></label><div class="slider-control"><input type="range" id="stock-kellogg" class="slider slider--green" min="0" max="200000" step="5000" value="0"><div class="slider-value"><span class="currency-symbol">$</span><input type="number" id="stock-kellogg-num" class="num-input" min="0" max="200000" step="5000" value="0"></div></div></div>
+            </div>
+
+            <div class="section-label">Expenses</div>
+            <div class="panel">
+                <div class="slider-row"><label class="slider-label" for="living-kellogg">Living Expenses</label><div class="slider-control"><input type="range" id="living-kellogg" class="slider slider--green" min="1000" max="10000" step="100" value="4000"><div class="slider-value"><span class="currency-symbol">$</span><input type="number" id="living-kellogg-num" class="num-input" min="1000" max="10000" step="100" value="4000"></div></div></div>
+                <div class="slider-row"><label class="slider-label" for="save-kellogg">Savings Rate</label><div class="slider-control"><input type="range" id="save-kellogg" class="slider slider--green" min="0" max="50" step="1" value="10"><div class="slider-value"><input type="number" id="save-kellogg-num" class="num-input" min="0" max="50" step="1" value="10"><span class="unit">%</span></div></div></div>
+            </div>
+
+            <div class="section-label">Balance Sheet <div class="toggle-btns toggle-btns--inline"><button class="toggle-btn active" id="bs-kellogg-monthly" data-period="monthly">Monthly</button><button class="toggle-btn" id="bs-kellogg-yearly" data-period="yearly">Yearly</button></div></div>
+            <div class="panel">
+                <div class="balance-sheet">
+                    <div class="bs-row bs-row--income"><span>Pre-Tax Income</span><span class="mono" id="p2-kellogg-pretax">—</span></div>
+                    <div class="bs-row bs-row--sub"><span>Federal Tax</span><span class="mono" id="p2-kellogg-federal">—</span></div>
+                    <div class="bs-row bs-row--sub"><span>State Tax (<span id="p2-kellogg-state-label">IL</span>)</span><span class="mono" id="p2-kellogg-state">—</span></div>
+                    <div class="bs-row bs-row--sub"><span>FICA</span><span class="mono" id="p2-kellogg-fica">—</span></div>
+                    <div class="bs-row bs-row--net"><span>Post-Tax Income</span><span class="mono" id="p2-kellogg-net-monthly">—</span></div>
+                    <div class="bs-row bs-row--expense"><span>Living Expenses</span><span class="mono" id="p2-kellogg-bs-living">—</span></div>
+                    <div class="bs-row bs-row--expense"><span>Savings (<span id="p2-kellogg-save-pct">10</span>%)</span><span class="mono" id="p2-kellogg-bs-savings">—</span></div>
+                    <div class="bs-row bs-row--expense"><span>Loan Repayment</span><span class="mono" id="p2-kellogg-bs-payment">—</span></div>
+                    <div class="bs-row bs-row--bottom"><span>Disposable</span><span class="mono" id="p2-kellogg-disposable">—</span></div>
+                </div>
+            </div>
+
+            <div class="section-label">Payoff Trajectory</div>
+            <div class="panel"><div class="chart-container chart-container--sm"><canvas id="payoff-chart-kellogg"></canvas></div></div>
+
+            <div class="section-label">Net Worth</div>
+            <div class="panel"><div class="chart-container chart-container--sm"><canvas id="networth-chart-kellogg"></canvas></div></div>
+        </div>
+
+    </div>
+
+    <p class="panel-note" style="text-align:center; margin: var(--space-md) 0;">Loan principal &amp; interest rates are inherited from the Cost &amp; Loan Analysis tab</p>
+
+    <!-- ══════ HOUSEHOLD COMBINED ══════════════════════════════════ -->
+    <div class="section-label">Household Summary</div>
+    <div class="grand-total-banner" style="margin-top: 0;">
+        <div class="grand-total-cell grand-total-cell--booth">
+            <span class="grand-total-cell-value mono" id="hh-booth-total-paid">—</span>
+            <span class="grand-total-subtitle">Booth Total Paid</span>
+        </div>
+        <div class="grand-total-op-cell"><span class="grand-total-op">+</span></div>
+        <div class="grand-total-cell grand-total-cell--kellogg">
+            <span class="grand-total-cell-value mono" id="hh-kellogg-total-paid">—</span>
+            <span class="grand-total-subtitle">Kellogg Total Paid</span>
+        </div>
+        <div class="grand-total-op-cell"><span class="grand-total-op">=</span></div>
+        <div class="grand-total-cell grand-total-cell--result">
+            <span class="grand-total-cell-value grand-total-cell-value--result mono" id="hh-total-paid">—</span>
+            <span class="grand-total-subtitle">Household Total</span>
         </div>
     </div>
 
-    <!-- ── INCOME & EXPENSE INPUTS ─────────────────────────────── -->
-    <div class="section-label">Income &amp; Expenses</div>
+    <!-- ── HOUSEHOLD BALANCE SHEET ────────────────────────────── -->
+    <div class="section-label">Household Balance Sheet <div class="toggle-btns toggle-btns--inline"><button class="toggle-btn active" id="bs-hh-monthly" data-period="monthly">Monthly</button><button class="toggle-btn" id="bs-hh-yearly" data-period="yearly">Yearly</button></div></div>
     <div class="panel">
-        <div class="slider-grid">
-            <div class="slider-row">
-                <label class="slider-label" for="annual-salary">Annual Salary (pre-tax)</label>
-                <div class="slider-control">
-                    <input type="range" id="annual-salary" class="slider slider--green" min="80000" max="400000" step="5000" value="180000">
-                    <div class="slider-value">
-                        <span class="currency-symbol">$</span>
-                        <input type="number" id="annual-salary-num" class="num-input" min="80000" max="400000" step="5000" value="180000">
-                    </div>
-                </div>
-            </div>
-            <div class="slider-row">
-                <label class="slider-label" for="salary-growth">Annual Salary Growth</label>
-                <div class="slider-control">
-                    <input type="range" id="salary-growth" class="slider slider--green" min="0" max="10" step="0.5" value="3">
-                    <div class="slider-value">
-                        <input type="number" id="salary-growth-num" class="num-input" min="0" max="10" step="0.5" value="3">
-                        <span class="unit">%</span>
-                    </div>
-                </div>
-            </div>
-            <div class="slider-row">
-                <label class="slider-label" for="post-mba-living">Monthly Living Expenses</label>
-                <div class="slider-control">
-                    <input type="range" id="post-mba-living" class="slider slider--green" min="1000" max="10000" step="100" value="4000">
-                    <div class="slider-value">
-                        <span class="currency-symbol">$</span>
-                        <input type="number" id="post-mba-living-num" class="num-input" min="1000" max="10000" step="100" value="4000">
-                    </div>
-                </div>
-            </div>
-            <div class="slider-row">
-                <label class="slider-label" for="extra-payment">Extra Monthly Loan Payment</label>
-                <div class="slider-control">
-                    <input type="range" id="extra-payment" class="slider slider--green" min="0" max="5000" step="100" value="0">
-                    <div class="slider-value">
-                        <span class="currency-symbol">$</span>
-                        <input type="number" id="extra-payment-num" class="num-input" min="0" max="5000" step="100" value="0">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <p class="panel-note">Tax: Federal 2025 brackets + FICA + Illinois 4.95% flat</p>
-        <details class="methodology">
-            <summary>How we calculate post-tax income</summary>
-            <div class="methodology-body">
-                <p>Take-home pay is computed by deducting three layers of tax from gross salary:</p>
-                <ul>
-                    <li><strong>Federal income tax:</strong> 2025 brackets with standard deduction ($14,600 single). Progressive rates from 10% to 37%</li>
-                    <li><strong>FICA:</strong> Social Security 6.2% (capped at $168,600) + Medicare 1.45% (no cap) + Additional Medicare 0.9% above $200k</li>
-                    <li><strong>Illinois state tax:</strong> Flat 4.95% on taxable income</li>
-                </ul>
-                <p>Disposable income = post-tax monthly income - monthly living expenses. This is what goes toward loan repayment (plus any extra payment you set).</p>
-            </div>
-        </details>
+        <table class="cashflow-table" style="margin: 0;">
+            <thead>
+                <tr><th></th><th>Booth</th><th>Kellogg</th><th>Household</th></tr>
+            </thead>
+            <tbody id="hh-bs-body">
+            </tbody>
+        </table>
     </div>
 
-    <!-- ── PAYOFF SUMMARY CARDS ────────────────────────────────── -->
-    <div class="section-label">Payoff Summary</div>
-    <div class="summary-cards">
-        <div class="summary-card summary-card--time">
-            <span class="card-kicker">Time to Pay Off</span>
-            <span class="card-figure mono" id="payoff-time">—</span>
-            <span class="card-detail">from graduation</span>
-        </div>
-        <div class="summary-card summary-card--paid">
-            <span class="card-kicker">Total Amount Paid</span>
-            <span class="card-figure mono" id="total-paid">—</span>
-            <span class="card-detail">principal + interest</span>
-        </div>
-        <div class="summary-card summary-card--interest">
-            <span class="card-kicker">Total Interest Paid</span>
-            <span class="card-figure mono" id="total-interest-paid">—</span>
-            <span class="card-detail">cost of borrowing</span>
-        </div>
-    </div>
-
-    <!-- ── PAYOFF TRAJECTORY CHART ─────────────────────────────── -->
-    <div class="section-label">Loan Payoff Trajectory</div>
+    <!-- ── HOUSEHOLD CHARTS ────────────────────────────────────── -->
+    <div class="section-label">Household Loan Payoff</div>
     <div class="panel">
         <div class="chart-container chart-container--lg">
             <canvas id="payoff-chart"></canvas>
         </div>
-        <details class="methodology">
-            <summary>How we simulate the payoff</summary>
-            <div class="methodology-body">
-                <p>Month-by-month simulation starting from graduation. Each month:</p>
-                <ul>
-                    <li>Salary grows annually at the growth rate you set</li>
-                    <li>Post-tax income is computed, then living expenses are subtracted</li>
-                    <li>All remaining disposable income (+ any extra payment) goes toward the loan</li>
-                    <li>Interest accrues on the remaining balance at the loan rate</li>
-                    <li>For Indian loans: interest accrues in INR but your payments are in USD, so each month's cost is adjusted for depreciation</li>
-                </ul>
-                <p>If your disposable income can't cover the monthly interest, the balance grows and a warning is shown. The simulation caps at 30 years.</p>
-                <p>The red area shows the declining loan balance (left axis). The green line shows cumulative amount paid (right axis).</p>
-            </div>
-        </details>
     </div>
 
-    <!-- ── NET WORTH TRAJECTORY ────────────────────────────────── -->
-    <div class="section-label">Net Worth Trajectory</div>
+    <div class="section-label">Household Net Worth</div>
     <div class="panel">
         <div class="chart-container">
             <canvas id="networth-chart"></canvas>
         </div>
-        <details class="methodology">
-            <summary>How we calculate net worth</summary>
-            <div class="methodology-body">
-                <p>Net worth = negative loan balance while repaying, then accumulated savings after payoff. The "Break Even" line at $0 marks when you've fully paid off the loan. After that, your disposable income accumulates as savings (simplified — no investment returns modeled).</p>
-                <p>The simulation runs 24 months past loan payoff to show the trajectory of savings accumulation. The green dot marks the exact break-even month.</p>
-            </div>
-        </details>
     </div>
 
-    <!-- ── SALARY SENSITIVITY ──────────────────────────────────── -->
-    <div class="section-label">Salary Sensitivity Analysis</div>
-    <div class="panel">
-        <div class="chart-container">
-            <canvas id="sensitivity-chart"></canvas>
-        </div>
-        <details class="methodology">
-            <summary>How we run the sensitivity analysis</summary>
-            <div class="methodology-body">
-                <p>Runs the same payoff simulation at five salary levels: your selected salary &plusmn;$20k and &plusmn;$40k. All other parameters (growth rate, living expenses, loan terms) stay the same.</p>
-                <p>The solid line is your current salary selection. Dashed lines show the alternatives. This helps you see how much salary matters — often a $20k salary difference changes payoff time by 1-2 years.</p>
-            </div>
-        </details>
-    </div>
-
-    <!-- ── ANNUAL CASH FLOW TABLE ──────────────────────────────── -->
-    <div class="section-label">Annual Cash Flow Projection</div>
+    <!-- ── HOUSEHOLD CASH FLOW TABLE ───────────────────────────── -->
+    <div class="section-label">Household Annual Cash Flow</div>
     <div class="panel panel--table">
         <div class="table-wrap">
             <table class="cashflow-table" id="cashflow-table">
                 <thead>
                     <tr>
                         <th>Year</th>
-                        <th>Gross Income</th>
+                        <th>Household Income</th>
                         <th>Total Tax</th>
-                        <th>Living Expenses</th>
-                        <th>Loan Payment</th>
-                        <th>Remaining Balance</th>
+                        <th>Living</th>
+                        <th>Savings</th>
+                        <th>Loan Payments</th>
+                        <th>Total Balance</th>
                     </tr>
                 </thead>
                 <tbody id="cashflow-table-body">
-                    <!-- Populated by JS -->
                 </tbody>
             </table>
         </div>
-        <details class="methodology">
-            <summary>How we project cash flow</summary>
-            <div class="methodology-body">
-                <p>Each row aggregates the month-by-month simulation into annual totals. Gross income grows at your set rate. Total tax = federal + FICA + Illinois state. Living expenses = monthly amount &times; 12. Loan payment = sum of all monthly payments that year. Balance = remaining loan at year-end.</p>
-                <p>Note: this assumes you start working immediately after graduation and allocate all disposable income to loan repayment. In practice, you may have a signing bonus, relocation costs, or other one-time events not modeled here.</p>
-            </div>
-        </details>
     </div>
 
 </section>

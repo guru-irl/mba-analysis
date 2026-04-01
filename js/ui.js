@@ -42,10 +42,26 @@ const SLIDER_PAIRS = [
     ['india-processing', 'india-processing-num'],
     ['india-forex', 'india-forex-num'],
     ['india-depreciation', 'india-depreciation-num'],
-    ['annual-salary', 'annual-salary-num'],
-    ['salary-growth', 'salary-growth-num'],
-    ['post-mba-living', 'post-mba-living-num'],
-    ['extra-payment', 'extra-payment-num'],
+    ['networth-booth', 'networth-booth-num'],
+    ['salary-booth', 'salary-booth-num'],
+    ['growth-booth', 'growth-booth-num'],
+    ['bonus-booth', 'bonus-booth-num'],
+    ['signing-booth', 'signing-booth-num'],
+    ['intern-booth', 'intern-booth-num'],
+    ['stock-booth', 'stock-booth-num'],
+    ['living-booth', 'living-booth-num'],
+    ['save-booth', 'save-booth-num'],
+    ['payoff-yr-booth', 'payoff-yr-booth-num'],
+    ['networth-kellogg', 'networth-kellogg-num'],
+    ['salary-kellogg', 'salary-kellogg-num'],
+    ['growth-kellogg', 'growth-kellogg-num'],
+    ['bonus-kellogg', 'bonus-kellogg-num'],
+    ['signing-kellogg', 'signing-kellogg-num'],
+    ['intern-kellogg', 'intern-kellogg-num'],
+    ['stock-kellogg', 'stock-kellogg-num'],
+    ['living-kellogg', 'living-kellogg-num'],
+    ['save-kellogg', 'save-kellogg-num'],
+    ['payoff-yr-kellogg', 'payoff-yr-kellogg-num'],
     ['us-early-payoff', 'us-early-payoff-num'],
     ['india-early-payoff', 'india-early-payoff-num'],
 ];
@@ -79,33 +95,46 @@ function initSliders() {
 }
 
 /* ── TAB SWITCHING ─────────────────────────────────────────────── */
-function initTabs() {
+function switchTab(target) {
     const tabBtns = document.querySelectorAll('.tab-btn');
-    tabBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            tabBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
-            btn.classList.add('active');
-            btn.setAttribute('aria-selected', 'true');
+    tabBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+    const activeBtn = document.querySelector(`.tab-btn[data-tab="${target}"]`);
+    if (activeBtn) { activeBtn.classList.add('active'); activeBtn.setAttribute('aria-selected', 'true'); }
 
-            const target = btn.dataset.tab;
-            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-            const panel = $('tab-' + target);
-            if (panel) panel.classList.add('active');
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    const panel = $('tab-' + target);
+    if (panel) panel.classList.add('active');
 
-            // Trigger chart resize on tab switch
-            setTimeout(() => {
-                Object.values(chartInstances).forEach(c => { if (c) c.resize(); });
-            }, 50);
-        });
+    location.hash = target;
+
+    setTimeout(() => {
+        Object.values(chartInstances).forEach(c => { if (c) c.resize(); });
+    }, 50);
+}
+
+function initTabs() {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
     });
+
+    // Restore tab from URL hash on load
+    const hash = location.hash.replace('#', '');
+    if (hash && $('tab-' + hash)) {
+        switchTab(hash);
+    }
 }
 
 /* ── TOGGLE BUTTONS ────────────────────────────────────────────── */
-let payoffProgram = 'booth';
-let payoffSource = 'us';
 let loanYear = '1';            // '1' or '2'
 let breakevenProgram = 'booth';
 let costCurrency = 'usd';      // 'usd' or 'inr'
+let boothLoanSource = 'us';
+let kelloggLoanSource = 'us';
+let boothLocation = 'illinois';
+let kelloggLocation = 'illinois';
+let boothBsPeriod = 'monthly';
+let kelloggBsPeriod = 'monthly';
+let hhBsPeriod = 'monthly';
 
 function initToggleGroup(btnIds, stateSetter) {
     for (const id of btnIds) {
@@ -121,11 +150,29 @@ function initToggleGroup(btnIds, stateSetter) {
 }
 
 function initToggles() {
-    initToggleGroup(['payoff-booth', 'payoff-kellogg'], el => {
-        payoffProgram = el.dataset.program;
+    // Per-person loan source toggles
+    initToggleGroup(['payoff-booth-us', 'payoff-booth-india'], el => {
+        boothLoanSource = el.dataset.source;
     });
-    initToggleGroup(['payoff-us', 'payoff-india'], el => {
-        payoffSource = el.dataset.source;
+    initToggleGroup(['payoff-kellogg-us', 'payoff-kellogg-india'], el => {
+        kelloggLoanSource = el.dataset.source;
+    });
+    // Per-person location toggles
+    initToggleGroup(['loc-booth-il', 'loc-booth-ny', 'loc-booth-ca'], el => {
+        boothLocation = el.dataset.loc;
+    });
+    initToggleGroup(['loc-kellogg-il', 'loc-kellogg-ny', 'loc-kellogg-ca'], el => {
+        kelloggLocation = el.dataset.loc;
+    });
+    // Balance sheet period toggles
+    initToggleGroup(['bs-booth-monthly', 'bs-booth-yearly'], el => {
+        boothBsPeriod = el.dataset.period;
+    });
+    initToggleGroup(['bs-kellogg-monthly', 'bs-kellogg-yearly'], el => {
+        kelloggBsPeriod = el.dataset.period;
+    });
+    initToggleGroup(['bs-hh-monthly', 'bs-hh-yearly'], el => {
+        hhBsPeriod = el.dataset.period;
     });
     // Year buttons use their own active class
     for (const id of ['loan-year-1', 'loan-year-2']) {
@@ -183,10 +230,7 @@ function updateCalculations() {
     const usEarlyPayoff = parseInt($('us-early-payoff').value) || 10;
     const indiaEarlyPayoff = parseInt($('india-early-payoff').value) || 10;
 
-    const annualSalary = parseFloat($('annual-salary').value) || 0;
-    const salaryGrowth = parseFloat($('salary-growth').value) || 0;
-    const postMbaLiving = parseFloat($('post-mba-living').value) || 0;
-    const extraPayment = parseFloat($('extra-payment').value) || 0;
+    // Tab 2 inputs are read per-person in the Tab 2 section below
 
     // ── Tuition calculations ──
     const boothTuition = calcNetTuition('booth', scholarshipBooth);
@@ -376,77 +420,252 @@ function updateCalculations() {
         createFxHistoryChart('fx-history-chart', liveFxRate);
     }
 
-    // ── Tab 2: Payoff Analysis ──
-    const selectedPrincipal = payoffProgram === 'booth' ? totalBooth : totalKellogg;
-    const selectedRate = payoffSource === 'us' ? usRate : indiaRate;
-    const isIndianLoan = payoffSource === 'india';
+    // ── Tab 2: Dual-Person Payoff Analysis ──
+    function computePerson(prefix, programKey, loanSource, loc) {
+        const salary = parseFloat($(prefix === 'booth' ? 'salary-booth' : 'salary-kellogg').value) || 0;
+        const growth = parseFloat($(prefix === 'booth' ? 'growth-booth' : 'growth-kellogg').value) || 0;
+        const bonus = parseFloat($(prefix === 'booth' ? 'bonus-booth' : 'bonus-kellogg').value) || 0;
+        const signing = parseFloat($(prefix === 'booth' ? 'signing-booth' : 'signing-kellogg').value) || 0;
+        const annualStock = parseFloat($(prefix === 'booth' ? 'stock-booth' : 'stock-kellogg').value) || 0;
+        const startingNetWorth = parseFloat($(prefix === 'booth' ? 'networth-booth' : 'networth-kellogg').value) || 0;
+        const living = parseFloat($(prefix === 'booth' ? 'living-booth' : 'living-kellogg').value) || 0;
+        const saveRate = parseFloat($(prefix === 'booth' ? 'save-booth' : 'save-kellogg').value) || 0;
+        const payoffYr = parseInt($(prefix === 'booth' ? 'payoff-yr-booth' : 'payoff-yr-kellogg').value) || 10;
 
-    const payoffResult = calcPayoffTimeline({
-        loanBalance: selectedPrincipal,
-        annualLoanRate: selectedRate,
-        salary: annualSalary,
-        salaryGrowth,
-        monthlyLiving: postMbaLiving,
-        extraPayment,
-        filingStatus: 'single',
-        isIndianLoan,
-        fxRate,
-        depreciation: indiaDepreciation,
-    });
+        const principal = programKey === 'booth' ? totalBooth : totalKellogg;
+        const rate = loanSource === 'us' ? usRate : indiaRate;
+        const term = loanSource === 'us' ? usTerm : indiaTerm;
+        const isIndian = loanSource === 'india';
 
-    // Summary cards
-    $('payoff-time').textContent = payoffResult.paidOff
-        ? formatMonths(payoffResult.totalMonths)
-        : '30+ years';
-    $('total-paid').textContent = formatUSD(payoffResult.totalPaid);
-    $('total-interest-paid').textContent = formatUSD(payoffResult.totalInterest);
+        // Loan summary
+        $('p2-' + prefix + '-principal').textContent = formatUSD(principal);
+        $('p2-' + prefix + '-rate').textContent = rate + '%';
 
-    if (!payoffResult.paidOff) {
-        $('payoff-time').parentElement.querySelector('.card-detail').textContent = 'may not pay off at this rate';
-    } else {
-        $('payoff-time').parentElement.querySelector('.card-detail').textContent = 'from graduation';
+        // Bonus dollar display
+        const annualBonus = salary * (bonus / 100);
+        $('bonus-' + prefix + '-dollar').textContent = formatUSD(annualBonus);
+
+        // Tax + budget
+        const totalComp = salary + annualBonus + signing;
+        const tax = calcPostTax(totalComp, 'single', loc);
+        const required = calcMonthlyPayment(principal, rate, payoffYr);
+        const monthlySav = Math.max((tax.netMonthly - living) * (saveRate / 100), 0);
+        const disposableAfterAll = tax.netMonthly - living - monthlySav - required;
+
+        // Balance sheet — monthly or yearly
+        const bsPeriod = prefix === 'booth' ? boothBsPeriod : kelloggBsPeriod;
+        const m = bsPeriod === 'yearly' ? 12 : 1;
+        const stateLabel = LOCATIONS.find(l => l.key === loc)?.state || 'IL';
+
+        $('p2-' + prefix + '-pretax').textContent = formatUSD(totalComp / 12 * m);
+        $('p2-' + prefix + '-federal').textContent = '-' + formatUSD(tax.federal / 12 * m);
+        $('p2-' + prefix + '-state-label').textContent = stateLabel;
+        $('p2-' + prefix + '-state').textContent = '-' + formatUSD(tax.state / 12 * m);
+        $('p2-' + prefix + '-fica').textContent = '-' + formatUSD(tax.fica / 12 * m);
+        $('p2-' + prefix + '-net-monthly').textContent = formatUSD(tax.netMonthly * m);
+        $('p2-' + prefix + '-bs-living').textContent = '-' + formatUSD(living * m);
+        $('p2-' + prefix + '-save-pct').textContent = saveRate;
+        $('p2-' + prefix + '-bs-savings').textContent = '-' + formatUSD(monthlySav * m);
+        $('p2-' + prefix + '-payment').textContent = formatUSD(required);
+        $('p2-' + prefix + '-bs-payment').textContent = '-' + formatUSD(required * m);
+        const dispEl = $('p2-' + prefix + '-disposable');
+        dispEl.textContent = formatUSD(disposableAfterAll * m);
+        // Color the disposable based on sign
+        dispEl.style.color = disposableAfterAll >= 0 ? 'var(--positive)' : 'var(--negative)';
+
+        // Payoff simulation
+        const result = calcPayoffTimeline({
+            loanBalance: principal,
+            annualLoanRate: rate,
+            salary,
+            salaryGrowth: growth,
+            monthlyLiving: living,
+            extraPayment: 0,
+            filingStatus: 'single',
+            location: loc,
+            isIndianLoan: isIndian,
+            fxRate,
+            depreciation: indiaDepreciation,
+            bonusPercent: bonus,
+            signingBonus: signing,
+            savingsRate: saveRate,
+            targetPayoffYears: payoffYr,
+            annualStock,
+            startingNetWorth,
+        });
+
+        return { result, salary, living, saveRate, totalComp, tax, required, monthlySav, disposableAfterAll, loc };
     }
 
-    // Payoff trajectory chart
-    createPayoffChart('payoff-chart', payoffResult);
+    const boothPerson = computePerson('booth', 'booth', boothLoanSource, boothLocation);
+    const kelloggPerson = computePerson('kellogg', 'kellogg', kelloggLoanSource, kelloggLocation);
 
-    // Net worth chart
-    createNetWorthChart('networth-chart', payoffResult);
+    // Per-person charts
+    createPayoffChart('payoff-chart-booth', boothPerson.result);
+    createNetWorthChart('networth-chart-booth', boothPerson.result);
+    createPayoffChart('payoff-chart-kellogg', kelloggPerson.result);
+    createNetWorthChart('networth-chart-kellogg', kelloggPerson.result);
 
-    // Salary sensitivity
-    const sensitivityData = calcSalarySensitivity(annualSalary, {
-        loanBalance: selectedPrincipal,
-        annualLoanRate: selectedRate,
-        salaryGrowth,
-        monthlyLiving: postMbaLiving,
-        extraPayment,
-        filingStatus: 'single',
-        isIndianLoan,
-        fxRate,
-        depreciation: indiaDepreciation,
-    });
-    createSensitivityChart('sensitivity-chart', sensitivityData);
+    // Household summary
+    $('hh-booth-total-paid').textContent = formatUSD(boothPerson.result.totalPaid);
+    $('hh-kellogg-total-paid').textContent = formatUSD(kelloggPerson.result.totalPaid);
+    $('hh-total-paid').textContent = formatUSD(boothPerson.result.totalPaid + kelloggPerson.result.totalPaid);
 
-    // Cash flow table
-    const cashFlow = calcAnnualCashFlow(
-        payoffResult.timeline, annualSalary, salaryGrowth, postMbaLiving, 'single'
-    );
-    renderCashFlowTable(cashFlow);
+    // Household balance sheet
+    renderHouseholdBalanceSheet(boothPerson, kelloggPerson);
+
+    // Household charts
+    createHouseholdPayoffChart('payoff-chart', boothPerson.result, kelloggPerson.result);
+    createHouseholdNetWorthChart('networth-chart', boothPerson.result, kelloggPerson.result);
+
+    // Household cash flow table
+    renderHouseholdCashFlowTable(boothPerson, kelloggPerson);
 }
 
-/* ── CASH FLOW TABLE RENDERER ──────────────────────────────────── */
-function renderCashFlowTable(cashFlow) {
+/* ── HOUSEHOLD BALANCE SHEET ────────────────────────────────────── */
+function renderHouseholdBalanceSheet(b, k) {
+    const m = hhBsPeriod === 'yearly' ? 12 : 1;
+    const tbody = $('hh-bs-body');
+    if (!tbody) return;
+
+    const rows = [
+        ['Pre-Tax Income', b.totalComp / 12, k.totalComp / 12],
+        ['Federal Tax', -b.tax.federal / 12, -k.tax.federal / 12],
+        ['State Tax', -b.tax.state / 12, -k.tax.state / 12],
+        ['FICA', -b.tax.fica / 12, -k.tax.fica / 12],
+        ['Post-Tax Income', b.tax.netMonthly, k.tax.netMonthly],
+        ['Living Expenses', -b.living, -k.living],
+        ['Savings', -b.monthlySav, -k.monthlySav],
+        ['Loan Repayment', -b.required, -k.required],
+        ['Disposable', b.disposableAfterAll, k.disposableAfterAll],
+    ];
+
+    const highlightRows = new Set(['Post-Tax Income', 'Disposable']);
+
+    tbody.innerHTML = rows.map(([label, bv, kv]) => {
+        const hv = bv + kv;
+        const cls = highlightRows.has(label) ? ' style="font-weight:600; border-top:2px solid var(--border-light);"' : '';
+        return `<tr${cls}>
+            <td>${label}</td>
+            <td>${formatUSD(bv * m)}</td>
+            <td>${formatUSD(kv * m)}</td>
+            <td>${formatUSD(hv * m)}</td>
+        </tr>`;
+    }).join('');
+}
+
+/* ── HOUSEHOLD CHARTS ──────────────────────────────────────────── */
+function createHouseholdPayoffChart(canvasId, boothResult, kelloggResult) {
+    destroyChart('payoff');
+    const ctx = document.getElementById(canvasId).getContext('2d');
+
+    const maxMonth = Math.max(boothResult.timeline.length, kelloggResult.timeline.length);
+
+    const options = deepMerge(DARK_THEME, {
+        scales: {
+            x: { type: 'linear', min: 0, title: { display: true, text: 'Months After Graduation', color: CHART_COLORS.textSecondary, font: { family: "'Sora', sans-serif", size: 11 } }, ticks: { color: CHART_COLORS.textMuted, font: { family: "'JetBrains Mono', monospace", size: 10 }, callback: function(v) { return v % 12 === 0 ? 'Yr ' + (v / 12) : ''; }, stepSize: 6 }, grid: { color: CHART_COLORS.grid, lineWidth: 0.5 } },
+            y: { title: { display: true, text: 'Remaining Balance', color: CHART_COLORS.textSecondary, font: { family: "'Sora', sans-serif", size: 11 } } },
+        },
+    });
+
+    chartInstances.payoff = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [
+                { label: 'Booth Balance', data: boothResult.timeline.map(e => ({ x: e.month, y: e.balance })), borderColor: CHART_COLORS.booth.main, backgroundColor: CHART_COLORS.booth.light, fill: true, borderWidth: 2, pointRadius: 0, tension: 0.2 },
+                { label: 'Kellogg Balance', data: kelloggResult.timeline.map(e => ({ x: e.month, y: e.balance })), borderColor: CHART_COLORS.kellogg.main, backgroundColor: CHART_COLORS.kellogg.light, fill: true, borderWidth: 2, pointRadius: 0, tension: 0.2 },
+            ],
+        },
+        options,
+    });
+}
+
+function createHouseholdNetWorthChart(canvasId, boothResult, kelloggResult) {
+    destroyChart('netWorth');
+    const ctx = document.getElementById(canvasId).getContext('2d');
+
+    const maxLen = Math.max(boothResult.timeline.length, kelloggResult.timeline.length);
+    const householdData = [];
+    for (let i = 0; i < maxLen; i++) {
+        const bNw = i < boothResult.timeline.length ? boothResult.timeline[i].netWorth : (boothResult.timeline[boothResult.timeline.length - 1]?.netWorth || 0);
+        const kNw = i < kelloggResult.timeline.length ? kelloggResult.timeline[i].netWorth : (kelloggResult.timeline[kelloggResult.timeline.length - 1]?.netWorth || 0);
+        const month = (i < boothResult.timeline.length ? boothResult.timeline[i].month : i + 1);
+        householdData.push({ x: month, y: bNw + kNw });
+    }
+
+    const options = deepMerge(DARK_THEME, {
+        scales: {
+            x: { type: 'linear', min: 0, title: { display: true, text: 'Months After Graduation', color: CHART_COLORS.textSecondary, font: { family: "'Sora', sans-serif", size: 11 } }, ticks: { color: CHART_COLORS.textMuted, font: { family: "'JetBrains Mono', monospace", size: 10 }, callback: function(v) { return v % 12 === 0 ? 'Yr ' + (v / 12) : ''; }, stepSize: 6 }, grid: { color: CHART_COLORS.grid, lineWidth: 0.5 } },
+            y: { title: { display: true, text: 'Net Worth', color: CHART_COLORS.textSecondary, font: { family: "'Sora', sans-serif", size: 11 } } },
+        },
+        plugins: { ...DARK_THEME.plugins, annotation: { annotations: { zeroLine: { type: 'line', yMin: 0, yMax: 0, borderColor: 'rgba(255,255,255,0.3)', borderWidth: 1, borderDash: [6, 3] } } } },
+    });
+
+    chartInstances.netWorth = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [
+                { label: 'Booth', data: boothResult.timeline.map(e => ({ x: e.month, y: e.netWorth })), borderColor: CHART_COLORS.booth.main, backgroundColor: 'transparent', borderWidth: 1.5, borderDash: [6, 3], pointRadius: 0, tension: 0.2 },
+                { label: 'Kellogg', data: kelloggResult.timeline.map(e => ({ x: e.month, y: e.netWorth })), borderColor: CHART_COLORS.kellogg.main, backgroundColor: 'transparent', borderWidth: 1.5, borderDash: [6, 3], pointRadius: 0, tension: 0.2 },
+                { label: 'Household', data: householdData, borderColor: CHART_COLORS.positive.main, backgroundColor: 'transparent', borderWidth: 2.5, pointRadius: 0, tension: 0.2 },
+            ],
+        },
+        options,
+    });
+}
+
+/* ── HOUSEHOLD CASH FLOW TABLE ─────────────────────────────────── */
+function renderHouseholdCashFlowTable(boothPerson, kelloggPerson) {
     const tbody = $('cashflow-table-body');
     tbody.innerHTML = '';
 
-    for (const row of cashFlow) {
+    const maxLen = Math.max(boothPerson.result.timeline.length, kelloggPerson.result.timeline.length);
+    const years = {};
+
+    for (let i = 0; i < maxLen; i++) {
+        const be = i < boothPerson.result.timeline.length ? boothPerson.result.timeline[i] : null;
+        const ke = i < kelloggPerson.result.timeline.length ? kelloggPerson.result.timeline[i] : null;
+        const yr = be ? be.year : ke.year;
+        if (!years[yr]) years[yr] = { year: yr, income: 0, tax: 0, living: 0, savings: 0, loan: 0, balance: 0 };
+        if (be) {
+            const bTax = calcPostTax(be.totalComp || be.salary, 'single', boothLocation);
+            years[yr].income += (be.totalComp || be.salary) / 12;
+            years[yr].tax += bTax.totalTax / 12;
+            years[yr].living += boothPerson.living;
+            years[yr].savings += be.monthlySavings || 0;
+            years[yr].loan += be.payment;
+            years[yr].balance = (years[yr].balance || 0);
+        }
+        if (ke) {
+            const kTax = calcPostTax(ke.totalComp || ke.salary, 'single', kelloggLocation);
+            years[yr].income += (ke.totalComp || ke.salary) / 12;
+            years[yr].tax += kTax.totalTax / 12;
+            years[yr].living += kelloggPerson.living;
+            years[yr].savings += ke.monthlySavings || 0;
+            years[yr].loan += ke.payment;
+        }
+    }
+
+    // Compute annual totals and remaining balance
+    for (const row of Object.values(years)) {
+        const boothBal = boothPerson.result.timeline.filter(e => e.year === row.year).pop()?.balance || 0;
+        const kelloggBal = kelloggPerson.result.timeline.filter(e => e.year === row.year).pop()?.balance || 0;
+        row.balance = boothBal + kelloggBal;
+        // Convert monthly sums to annual
+        const monthsInYear = boothPerson.result.timeline.filter(e => e.year === row.year).length || 12;
+        row.incomeAnnual = row.income / monthsInYear * 12;
+        row.taxAnnual = row.tax / monthsInYear * 12;
+        row.livingAnnual = row.living / monthsInYear * 12;
+        row.savingsAnnual = row.savings;
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>Year ${row.year}</td>
-            <td>${formatUSD(row.grossIncome)}</td>
-            <td>${formatUSD(row.totalTax)}</td>
-            <td>${formatUSD(row.livingExpenses)}</td>
-            <td>${formatUSD(row.loanPayments)}</td>
+            <td>${formatUSD(row.incomeAnnual)}</td>
+            <td>${formatUSD(row.taxAnnual)}</td>
+            <td>${formatUSD(row.livingAnnual)}</td>
+            <td>${formatUSD(row.savingsAnnual)}</td>
+            <td>${formatUSD(row.loan)}</td>
             <td>${formatUSD(row.balance)}</td>
         `;
         tbody.appendChild(tr);

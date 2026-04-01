@@ -377,12 +377,33 @@ function calcFICA(grossIncome) {
 }
 
 /**
+ * Calculate state income tax for a given location.
+ */
+function calcStateTax(grossIncome, location) {
+    const config = STATE_TAX[location] || STATE_TAX.illinois;
+    if (config.type === 'flat') {
+        return grossIncome * config.rate;
+    }
+    // Progressive brackets
+    let tax = 0;
+    let prev = 0;
+    for (const bracket of config.brackets) {
+        const taxable = Math.min(grossIncome, bracket.limit) - prev;
+        if (taxable <= 0) break;
+        tax += taxable * bracket.rate;
+        prev = bracket.limit;
+    }
+    return tax;
+}
+
+/**
  * Calculate total post-tax income.
  */
-function calcPostTax(grossAnnual, filingStatus) {
+function calcPostTax(grossAnnual, filingStatus, location) {
+    location = location || 'illinois';
     const federal = calcFederalTax(grossAnnual, filingStatus);
     const fica = calcFICA(grossAnnual);
-    const state = grossAnnual * STATE_TAX.illinois.rate;
+    const state = calcStateTax(grossAnnual, location);
     const totalTax = federal + fica + state;
     return {
         federal,
@@ -409,9 +430,16 @@ function calcPayoffTimeline(params) {
         monthlyLiving,
         extraPayment,
         filingStatus,
+        location,
         isIndianLoan,
         fxRate,
         depreciation,
+        bonusPercent,
+        signingBonus,
+        savingsRate,
+        targetPayoffYears,
+        annualStock,
+        startingNetWorth,
     } = params;
 
     const timeline = [];
@@ -419,7 +447,17 @@ function calcPayoffTimeline(params) {
     let currentSalary = salary;
     let cumulativePaid = 0;
     let cumulativeInterest = 0;
+    let cumulativeSavings = 0;
+    let cumulativeStock = 0;
     const monthlyRate = annualLoanRate / 100 / 12;
+    const savPct = (savingsRate || 0) / 100;
+    const bonusPct = (bonusPercent || 0) / 100;
+    const monthlyStock = (annualStock || 0) / 12;
+    const baseNetWorth = startingNetWorth || 0;
+
+    // Compute fixed monthly payment from target payoff period
+    const targetMonths = (targetPayoffYears || 10) * 12;
+    const fixedMonthlyPayment = calcMonthlyPayment(loanBalance, annualLoanRate, targetPayoffYears || 10);
 
     for (let month = 1; month <= 360; month++) {
         // Annual salary raise
@@ -427,46 +465,53 @@ function calcPayoffTimeline(params) {
             currentSalary *= (1 + salaryGrowth / 100);
         }
 
-        const tax = calcPostTax(currentSalary, filingStatus);
+        // Total comp = salary + bonus (signing bonus only in month 1)
+        const annualBonus = currentSalary * bonusPct;
+        const totalAnnualComp = currentSalary + annualBonus + (month === 1 ? (signingBonus || 0) : 0);
+        const tax = calcPostTax(totalAnnualComp, filingStatus, location);
         const disposable = tax.netMonthly - monthlyLiving;
+        const monthlySavings = Math.max(disposable * savPct, 0);
+        const availableForLoan = Math.max(disposable - monthlySavings, 0);
 
         // Interest accrual
         let interestThisMonth;
         if (isIndianLoan) {
-            // For Indian loan: interest accrues in INR, convert to USD
             const fxRateAtMonth = fxRate * Math.pow(1 + depreciation / 100, month / 12);
-            const balanceINR = balance * fxRate; // approximate
+            const balanceINR = balance * fxRate;
             const interestINR = balanceINR * monthlyRate;
             interestThisMonth = interestINR / fxRateAtMonth;
         } else {
             interestThisMonth = balance * monthlyRate;
         }
 
-        // Payment: use all disposable income + extra toward the loan
-        // Cap at balance + interest (don't overpay), floor at 0 (can't pay negative)
-        const affordable = Math.max(disposable + extraPayment, 0);
-        const payment = Math.min(affordable, balance + interestThisMonth);
+        // Payment: fixed monthly payment from target payoff, capped at what's affordable and balance
+        const payment = Math.min(fixedMonthlyPayment, availableForLoan, balance + interestThisMonth);
 
         const principalPortion = payment - interestThisMonth;
         balance = Math.max(balance - principalPortion, 0);
         cumulativePaid += payment;
         cumulativeInterest += interestThisMonth;
+        cumulativeSavings += monthlySavings;
+        cumulativeStock += monthlyStock;
 
-        // If payment doesn't cover interest, balance grows
         const balanceGrowing = payment < interestThisMonth;
 
         timeline.push({
             month,
             year: Math.ceil(month / 12),
             salary: currentSalary,
+            totalComp: totalAnnualComp,
             payment,
             interest: interestThisMonth,
             principal: principalPortion,
             balance,
             cumulativePaid,
             cumulativeInterest,
-            netWorth: -balance,
+            cumulativeSavings,
+            cumulativeStock,
+            netWorth: baseNetWorth + cumulativeSavings + cumulativeStock - balance,
             disposable,
+            monthlySavings,
             warning: balanceGrowing ? 'Balance growing' : null,
         });
 
@@ -478,27 +523,34 @@ function calcPayoffTimeline(params) {
 
     // Continue 24 months past payoff to show savings accumulation in net worth chart
     if (paidOff) {
-        let savings = 0;
         for (let m = 1; m <= 24; m++) {
             const month = payoffMonth + m;
             if ((month - 1) % 12 === 0) {
                 currentSalary *= (1 + salaryGrowth / 100);
             }
-            const tax = calcPostTax(currentSalary, filingStatus);
+            const annualBonus = currentSalary * bonusPct;
+            const totalAnnualComp = currentSalary + annualBonus;
+            const tax = calcPostTax(totalAnnualComp, filingStatus, location);
             const disposable = tax.netMonthly - monthlyLiving;
-            savings += Math.max(disposable, 0);
+            // After payoff, all disposable goes to savings
+            cumulativeSavings += Math.max(disposable, 0);
+            cumulativeStock += monthlyStock;
             timeline.push({
                 month,
                 year: Math.ceil(month / 12),
                 salary: currentSalary,
+                totalComp: totalAnnualComp,
                 payment: 0,
                 interest: 0,
                 principal: 0,
                 balance: 0,
                 cumulativePaid,
                 cumulativeInterest,
-                netWorth: savings,
+                cumulativeSavings,
+                cumulativeStock,
+                netWorth: baseNetWorth + cumulativeSavings + cumulativeStock,
                 disposable,
+                monthlySavings: Math.max(disposable, 0),
                 warning: null,
             });
         }
@@ -507,7 +559,7 @@ function calcPayoffTimeline(params) {
     const totalPaid = cumulativePaid;
     const totalInterest = cumulativeInterest;
 
-    return { timeline, totalMonths: payoffMonth, totalPaid, totalInterest, paidOff };
+    return { timeline, totalMonths: payoffMonth, totalPaid, totalInterest, paidOff, fixedMonthlyPayment };
 }
 
 /**

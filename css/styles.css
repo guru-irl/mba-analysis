@@ -511,7 +511,14 @@ body {
 }
 
 .slider-row {
-    margin-bottom: var(--space-xs);
+    margin-bottom: var(--space-md);
+}
+
+.slider-computed {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+    text-align: right;
 }
 
 .slider-label {
@@ -1780,6 +1787,340 @@ body {
 
 .methodology-body li {
     margin-bottom: 2px;
+}
+
+/* ── LOAN SUMMARY BOX ──────────────────────────────────────────── */
+.loan-summary-values {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+}
+
+.loan-summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-sm) var(--space-md);
+    background: var(--bg-elevated);
+    border-radius: var(--radius-sm);
+}
+
+.loan-summary-label {
+    font-family: var(--font-heading);
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.loan-summary-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* ── BUDGET FLOW ROWS ──────────────────────────────────────────── */
+.budget-flow {
+    display: flex;
+    flex-direction: column;
+}
+
+.budget-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-sm) 0;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border);
+}
+
+.budget-row:last-child {
+    border-bottom: none;
+}
+
+.budget-row .mono {
+    font-size: 0.88rem;
+    color: var(--text-primary);
+}
+
+.budget-row--header {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.88rem;
+}
+
+.budget-row--header .mono {
+    font-size: 1rem;
+}
+
+.budget-row--sub {
+    padding-left: var(--space-md);
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+.budget-row--sub .mono {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+}
+
+.budget-row--result {
+    border-top: 2px solid var(--border-light);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-top: var(--space-xs);
+    padding-top: var(--space-sm);
+}
+
+.budget-row--result .mono {
+    font-size: 1rem;
+    color: var(--positive);
+}
+
+/* Affordability verdict */
+.budget-row--affordable .mono { color: var(--positive); }
+.budget-row--shortfall { color: var(--negative); }
+.budget-row--shortfall .mono { color: var(--negative); }
+
+/* ── BUDGET TOTAL (computed summary rows) ──────────────────────── */
+.budget-total {
+    margin-top: var(--space-md);
+    background: var(--bg-elevated);
+    border-radius: var(--radius-md);
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid var(--border);
+}
+
+.budget-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-xs) 0;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.budget-total-row .mono {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.budget-total-row--highlight {
+    border-top: 1px solid var(--border);
+    margin-top: var(--space-xs);
+    padding-top: var(--space-sm);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.budget-total-row--highlight .mono {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--positive);
+}
+
+.budget-total-row--big {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.88rem;
+}
+
+.budget-total-row--big .mono {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* Verdict colors inside budget-total */
+.budget-total-row.budget-row--affordable .mono { color: var(--positive); }
+.budget-total-row.budget-row--shortfall { color: var(--negative); }
+.budget-total-row.budget-row--shortfall .mono { color: var(--negative); }
+
+/* ── COMPACT SELECTOR (Tab 2 columns) ──────────────────────────── */
+.selector-bar {
+    display: grid;
+    gap: var(--space-xs);
+    margin-bottom: var(--space-md);
+}
+
+.selector-bar--2col { grid-template-columns: 1fr 1fr; }
+.selector-bar--3col { grid-template-columns: 1fr 1fr 1fr; }
+
+.selector-btn {
+    font-family: var(--font-heading);
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-sm) var(--space-md);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s var(--ease-out);
+}
+
+.selector-btn:hover {
+    background: var(--bg-elevated);
+    border-color: var(--border-light);
+}
+
+.selector-btn.active {
+    color: var(--text-primary);
+    border-color: var(--us-loan);
+    background: rgba(59, 130, 246, 0.08);
+    font-weight: 600;
+}
+
+.selector-btn--us.active {
+    border-color: var(--us-loan);
+    background: linear-gradient(135deg, rgba(11, 38, 91, 0.3), rgba(59, 130, 246, 0.05));
+    color: #dce5f5;
+}
+
+.selector-btn--india.active {
+    border-color: var(--india-loan);
+    background: linear-gradient(135deg, rgba(255, 136, 17, 0.2), rgba(245, 158, 11, 0.05));
+    color: #f5e6d0;
+}
+
+/* ── BALANCE SHEET ──────────────────────────────────────────────── */
+.balance-sheet {
+    display: flex;
+    flex-direction: column;
+}
+
+.bs-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border);
+}
+
+.bs-row:last-child { border-bottom: none; }
+
+.bs-row .mono {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.bs-row--income {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.bs-row--income .mono {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.bs-row--sub {
+    padding-left: var(--space-md);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.bs-row--sub .mono {
+    font-size: 0.8rem;
+    color: var(--negative);
+    font-weight: 400;
+}
+
+.bs-row--net {
+    border-top: 2px solid var(--border-light);
+    margin-top: 2px;
+    padding-top: 8px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.bs-row--net .mono {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--positive);
+}
+
+.bs-row--expense .mono {
+    color: var(--negative);
+}
+
+.bs-row--bottom {
+    border-top: 2px solid var(--border-light);
+    margin-top: 2px;
+    padding-top: 8px;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.88rem;
+}
+
+.bs-row--bottom .mono {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--positive);
+}
+
+/* Inline toggle for monthly/yearly */
+.toggle-btns--inline {
+    display: inline-flex;
+    gap: 2px;
+    background: var(--bg-deep);
+    padding: 2px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    margin-left: var(--space-md);
+    vertical-align: middle;
+}
+
+.toggle-btns--inline .toggle-btn {
+    font-size: 0.62rem;
+    padding: 2px 8px;
+}
+
+/* ── DUAL SPLIT LAYOUT (Tab 2) ──────────────────────────────────── */
+.dual-split {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0;
+    margin-bottom: var(--space-lg);
+}
+
+.dual-split-col {
+    padding: 0 var(--space-lg);
+}
+
+.dual-split-col:first-child {
+    padding-left: 0;
+}
+
+.dual-split-col:last-child {
+    padding-right: 0;
+}
+
+.dual-split-divider {
+    width: 1px;
+    background: var(--border);
+    margin: var(--space-xl) 0;
+}
+
+@media (max-width: 1024px) {
+    .dual-split {
+        grid-template-columns: 1fr;
+    }
+    .dual-split-col {
+        padding: 0;
+    }
+    .dual-split-divider {
+        width: 100%;
+        height: 1px;
+        margin: var(--space-lg) 0;
+    }
 }
 
 .text-positive { color: var(--positive); }
