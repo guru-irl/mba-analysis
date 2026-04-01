@@ -154,7 +154,7 @@ function updateCalculations() {
     const indiaProcessing = parseFloat($('india-processing').value) || 0;
     const indiaForex = parseFloat($('india-forex').value) || 0;
     const indiaSwift = parseFloat($('india-swift').value) || 0;
-    const fxRate = parseFloat($('fx-rate').value) || 84;
+    const fxRate = parseFloat($('fx-rate').value) || 93;
     const indiaDepreciation = parseFloat($('india-depreciation').value) || 0;
 
     const annualSalary = parseFloat($('annual-salary').value) || 0;

@@ -69,7 +69,7 @@ const LOAN_DEFAULTS = {
         tcsRate: 0.5,                  // % on amounts > ₹7 Lacs
         tcsThreshold: 700000,          // ₹7,00,000
         gstRate: 18,                   // % on processing fee
-        defaultFxRate: 84,             // INR per USD
+        defaultFxRate: 93,             // INR per USD (updated at runtime via API)
         defaultDepreciation: 3.5,      // % annual
     },
 };

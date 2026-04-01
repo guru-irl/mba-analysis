@@ -1203,3 +1203,12 @@ body {
 .text-positive { color: var(--positive); }
 .text-negative { color: var(--negative); }
 .text-muted { color: var(--text-muted); }
+
+.fx-status {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 400;
+    color: var(--positive);
+    letter-spacing: 0;
+    text-transform: none;
+}
