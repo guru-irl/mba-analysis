@@ -218,7 +218,6 @@
 
     <!-- ── LOAN COMPARISON ─────────────────────────────────────── -->
     <div class="section-label">Loan Comparison</div>
-    <div class="year-scope-zone">
     <div class="year-toggle-bar">
         <button class="year-btn year-btn--active" id="loan-year-1" data-year="1">
             <span class="year-btn-label">Year 1</span>
@@ -229,7 +228,8 @@
             <span class="year-btn-sub" id="year-2-sub">2027 – 2028</span>
         </button>
     </div>
-    <div class="loan-year-note" id="loan-year-note" style="font-size:0.78rem; color:var(--text-secondary); margin-bottom:var(--space-lg); text-align:center;"></div>
+    <div class="loan-year-note" id="loan-year-note" style="font-size:0.78rem; color:var(--text-secondary); margin-bottom:var(--space-md); text-align:center;"></div>
+    <div class="year-scope-zone">
     <div class="loan-grid">
 
         <!-- US Loan Panel -->
@@ -443,17 +443,18 @@
 
     <!-- ── BREAKEVEN ANALYSIS ──────────────────────────────────── -->
     <div class="section-label">Breakeven Analysis <span class="section-note">At what Indian rate does US win?</span></div>
-    <div class="panel">
-        <div class="config-bar" style="margin-bottom: var(--space-lg); padding: var(--space-sm) var(--space-md);">
-            <div class="toggle-group">
-                <span class="toggle-label">Program</span>
-                <div class="toggle-btns">
-                    <button class="toggle-btn toggle-btn--booth active" id="breakeven-booth" data-program="booth">Booth</button>
-                    <button class="toggle-btn toggle-btn--kellogg" id="breakeven-kellogg" data-program="kellogg">Kellogg</button>
-                </div>
+
+    <div class="config-bar" style="margin-bottom: var(--space-md);">
+        <div class="toggle-group">
+            <span class="toggle-label">Program</span>
+            <div class="toggle-btns">
+                <button class="toggle-btn toggle-btn--booth active" id="breakeven-booth" data-program="booth">Booth</button>
+                <button class="toggle-btn toggle-btn--kellogg" id="breakeven-kellogg" data-program="kellogg">Kellogg</button>
             </div>
         </div>
-        <div class="slider-grid" style="margin-bottom: var(--space-lg);">
+    </div>
+    <div class="panel" style="margin-bottom: var(--space-md);">
+        <div class="slider-grid">
             <div class="slider-row">
                 <label class="slider-label" for="us-early-payoff">US Loan Payoff Period <span class="section-note">(early payoff = less interest)</span></label>
                 <div class="slider-control">
@@ -475,6 +476,9 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="panel">
         <div class="chart-container chart-container--lg">
             <canvas id="breakeven-chart"></canvas>
         </div>

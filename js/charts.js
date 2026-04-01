@@ -18,7 +18,9 @@ const DARK_THEME = {
                 font: { family: "'Sora', sans-serif", size: 11 },
                 padding: 16,
                 usePointStyle: true,
-                pointStyleWidth: 10,
+                pointStyle: 'circle',
+                boxWidth: 8,
+                boxHeight: 8,
             },
         },
         tooltip: {
