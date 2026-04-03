@@ -443,11 +443,25 @@ function calcPayoffTimeline(params) {
     } = params;
 
     const timeline = [];
-    // In-school interest capitalization: interest accrues during 2-year MBA
-    // and capitalizes (adds to principal) before repayment begins
+    // In-school + grace period interest capitalization
+    // US loans (Earnest): 25mo school + 9mo grace = 34 months, compound interest, $25/mo payment
+    // Indian loans: 30 months moratorium (24mo school + 6mo grace), SIMPLE interest (RBI)
     const monthlyRate = annualLoanRate / 100 / 12;
-    const inSchoolMonths = 24;
-    let balance = loanBalance * Math.pow(1 + monthlyRate, inSchoolMonths);
+    const annualRateDecimal = annualLoanRate / 100;
+    let balance;
+    if (isIndianLoan) {
+        // Simple interest per RBI guidelines
+        const moratoriumMonths = 30;
+        balance = loanBalance * (1 + annualRateDecimal * moratoriumMonths / 12);
+    } else {
+        // Monthly compound interest with $25/mo in-school payment (Earnest)
+        const deferralMonths = 34;
+        const inSchoolPayment = 25;
+        balance = loanBalance;
+        for (let m = 0; m < deferralMonths; m++) {
+            balance = balance * (1 + monthlyRate) - inSchoolPayment;
+        }
+    }
     let currentSalary = salary;
     let cumulativePaid = 0;
     let cumulativeInterest = 0;

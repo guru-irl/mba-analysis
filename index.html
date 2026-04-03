@@ -828,10 +828,13 @@
     <details class="methodology">
         <summary>How we calculate everything on this page</summary>
         <div class="methodology-body">
-            <p><strong>1. In-School Interest Capitalization</strong></p>
-            <p>During the 2-year MBA, interest accrues monthly and capitalizes (adds to principal):</p>
-            <p><code>Balance at graduation = Principal &times; (1 + r)^24</code></p>
-            <p>where r = monthly rate (APR/12), 24 = months in school. This capitalized balance is what you see in the loan summary and what the monthly payment is computed on. Tab 1 shows raw loan costs; this page shows post-capitalization repayment.</p>
+            <p><strong>1. In-School + Grace Period Interest Capitalization</strong></p>
+            <p>Interest accrues during MBA and a post-graduation grace period before repayment starts:</p>
+            <ul>
+                <li><strong>US loans (Earnest):</strong> 25mo school + 9mo grace = 34 months deferral. <strong>Compound interest</strong> with $25/mo in-school payment. Verified within ~2% of Earnest's actual quotes (difference due to daily vs monthly compounding and per-tranche disbursement timing)</li>
+                <li><strong>Indian loans:</strong> 30 months moratorium (school + 6mo grace). <strong>Simple interest</strong> per RBI guidelines: <code>Balance = Principal &times; (1 + annual_rate &times; 30/12)</code></li>
+            </ul>
+            <p>This capitalized balance is what you see in the loan summary and what the monthly payment is computed on. Tab 1 shows raw loan costs; this page shows post-capitalization repayment.</p>
 
             <p><strong>2. Monthly Payment</strong></p>
             <p><code>M = Balance &times; r(1+r)^n / ((1+r)^n - 1)</code></p>

@@ -440,9 +440,20 @@ function updateCalculations() {
         const term = loanSource === 'us' ? usTerm : indiaTerm;
         const isIndian = loanSource === 'india';
 
-        // Loan summary — show capitalized balance (includes 2yr in-school interest)
+        // Loan summary — show capitalized balance (in-school + grace period)
         const monthlyLoanRate = rate / 100 / 12;
-        const capitalizedBalance = principal * Math.pow(1 + monthlyLoanRate, 24);
+        const annualLoanRateDec = rate / 100;
+        let capitalizedBalance;
+        if (isIndian) {
+            // Simple interest per RBI: P × (1 + rate × 30/12)
+            capitalizedBalance = principal * (1 + annualLoanRateDec * 30 / 12);
+        } else {
+            // Compound with $25/mo in-school payment (Earnest), 34 months
+            capitalizedBalance = principal;
+            for (let m = 0; m < 34; m++) {
+                capitalizedBalance = capitalizedBalance * (1 + monthlyLoanRate) - 25;
+            }
+        }
         $('p2-' + prefix + '-principal').textContent = formatUSD(capitalizedBalance);
         $('p2-' + prefix + '-rate').textContent = rate + '%';
 
